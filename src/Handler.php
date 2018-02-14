@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
+use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
 
 /**
  * Class Handler
@@ -17,28 +18,33 @@ class Handler
     private static $cacheEnabled;
 
     /**
-     * @param array $chain
+     * @param string $contract
+     * @param array  $chain
+     *
+     * @throws \Throwable
      *
      * @return array|null
-     * @throws \Throwable
      */
-    public static function makeChain($chain)
+    public static function makeChain(string $contract, $chain)
     {
         self::$cacheEnabled = config('cache.enabled') ?? false;
 
         $chain = (array)$chain;
 
         return $chain
-            ? self::handlerFactory($chain)
+            ? self::handlerFactory($contract, $chain)
             : [];
     }
 
     /**
-     * @param array $chain
+     * @param string $contract
+     * @param array  $chain
+     *
+     * @throws \Throwable
      *
      * @return null
      */
-    public static function handlerFactory(array $chain)
+    public static function handlerFactory(string $contract, array $chain)
     {
         // Set the cache data if it is not set yet
         if (self::$cacheEnabled === null) {
@@ -48,6 +54,15 @@ class Handler
         $instance = null;
 
         foreach ($chain as $class) {
+            $implementedInterfaces = class_implements($class);
+            throw_unless(
+                \count($implementedInterfaces) >= 2 &&
+                $implementedInterfaces[1] === $contract,
+                InterfaceNotImplementedException::class,
+                'Contract ' . $contract . ' is not implemented on ' . $class,
+                422
+            );
+
             if (!self::$cacheEnabled && get_parent_class($class) === AbstractCache::class) {
                 continue;
             }

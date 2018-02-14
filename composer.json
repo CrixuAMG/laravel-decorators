@@ -28,7 +28,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"CrixuAMG\\Decorators\\"
+				"CrixuAMG\\Decorators\\DecoratorServiceProvider"
 			],
 			"aliases": {
 				"Appmoto": "FreshApple\\Appmoto\\Facades"

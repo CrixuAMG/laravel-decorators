@@ -52,11 +52,12 @@ class Handler
     {
         $instance = null;
 
-        $reversedChain = array_reverse($chain);
-        foreach ($reversedChain as $class) {
+        foreach ($chain as $class) {
             // Todo::check cache
 
-            $instance = new $class($instance);
+            $instance = $instance
+                ? new $class($instance)
+                : new $class;
         }
 
         return $instance;

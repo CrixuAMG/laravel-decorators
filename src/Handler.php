@@ -2,6 +2,8 @@
 
 namespace CrixuAMG\Decorators;
 
+use CrixuAMG\Decorators\Caches\AbstractCache;
+
 /**
  * Class Handler
  *
@@ -10,32 +12,20 @@ namespace CrixuAMG\Decorators;
 class Handler
 {
     /**
-     * @var array|null
+     * @var bool
      */
-    private $handler;
-    private $cacheEnabled;
+    private static $cacheEnabled;
 
     /**
-     * Handler constructor.
-     *
-     * @param $chain
-     */
-    public function __construct($chain = [])
-    {
-        $this->cacheEnabled = config('cache.enabled') ?? false;
-
-        if ($chain) {
-            $this->handler = static::makeChain($chain);
-        }
-    }
-
-    /**
-     * @param $chain
+     * @param array $chain
      *
      * @return array|null
+     * @throws \Throwable
      */
     public static function makeChain($chain)
     {
+        self::$cacheEnabled = config('cache.enabled') ?? false;
+
         $chain = (array)$chain;
 
         return $chain
@@ -50,10 +40,17 @@ class Handler
      */
     public static function handlerFactory(array $chain)
     {
+        // Set the cache data if it is not set yet
+        if (self::$cacheEnabled === null) {
+            self::$cacheEnabled = config('cache.enabled') ?? false;
+        }
+
         $instance = null;
 
         foreach ($chain as $class) {
-            // Todo::check cache
+            if (!self::$cacheEnabled && get_parent_class($class) === AbstractCache::class) {
+                continue;
+            }
 
             $instance = $instance
                 ? new $class($instance)

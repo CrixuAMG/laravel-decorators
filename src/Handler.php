@@ -56,8 +56,7 @@ class Handler
         foreach ($chain as $class) {
             $implementedInterfaces = class_implements($class);
             throw_unless(
-                \count($implementedInterfaces) >= 2 &&
-                $implementedInterfaces[1] === $contract,
+                isset($implementedInterfaces[$contract]),
                 InterfaceNotImplementedException::class,
                 'Contract ' . $contract . ' is not implemented on ' . $class,
                 422

@@ -22,7 +22,7 @@
 	"prefer-stable": true,
 	"autoload": {
 		"files": [
-			"helpers.php"
+			"src/helpers.php"
 		],
 		"psr-4": {
 			"CrixuAMG\\Decorators\\": "src"

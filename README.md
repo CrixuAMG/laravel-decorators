@@ -1,5 +1,7 @@
 # laravel-decorators
 
+[![Build Status](https://travis-ci.org/CrixuAMG/laravel-decorators.svg?branch=master)](https://travis-ci.org/CrixuAMG/laravel-decorators)
+
 [About](#about)<br>
 [Installation](#installation)<br>
 [Usage](#about)<br>

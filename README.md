@@ -1,10 +1,10 @@
 # laravel-decorators
 
-[About](#about)
-[Installation](#installation)
-[Usage](#about)
-[Customization](#customization)
-[Commands](#commands)
+[About](#about)<br>
+[Installation](#installation)<br>
+[Usage](#about)<br>
+[Customization](#customization)<br>
+[Commands](#commands)<br>
 
 ## About
 This package is designed to allow developers (inluding myself of course!) to start developing complex applications more easily. By using this design pattern I saved more than a couple of hours on projects, both personal and professional.

@@ -1,5 +1,19 @@
 # laravel-decorators
 
+[About](#about)
+[Installation](#installation)
+[Usage](#about)
+[Customization](#customization)
+[Commands](#commands)
+
+## About
+This package is designed to allow developers (inluding myself of course!) to start developing complex applications more easily. By using this design pattern I saved more than a couple of hours on projects, both personal and professional.
+
+But what is the decorator pattern?
+Wikipedia: "In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class"
+
+[Wikipedia link]: https://en.wikipedia.org/wiki/Decorator_pattern
+
 ## Installation
 Put the following in your composer.json file: 
 ```json

@@ -20,7 +20,7 @@ class DecoratorServiceProvider extends ServiceProvider
     }
 
     /**
-     *
+     * @throws \Throwable
      */
     public function register()
     {

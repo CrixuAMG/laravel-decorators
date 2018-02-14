@@ -1,33 +1,38 @@
 {
-    "name": "crixuamg/laravel-decorators",
-    "description": "",
-    "license": "MIT",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Christian Kaal",
-            "email": "christiankaal@gmail.com"
-        }
-    ],
-    "require": {
-        "php" : ">=7.1"
-    },
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "CrixuAMG\\Decorators\\": "src"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CrixuAMG\\Decorators\\"
-            ],
-            "aliases": {
-                "Appmoto": "FreshApple\\Appmoto\\Facades"
-            }
-        }
-    },
-    "prefer-stable": true
+	"name": "crixuamg/laravel-decorators",
+	"description": "",
+	"license": "MIT",
+	"type": "library",
+	"keywords": [
+		"laravel",
+		"decorator",
+		"pattern"
+	],
+	"authors": [
+		{
+			"name": "Christian Kaal",
+			"email": "christiankaal@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=7.1",
+		"laravel/framework": "^5.5"
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"autoload": {
+		"psr-4": {
+			"CrixuAMG\\Decorators\\": "src"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"CrixuAMG\\Decorators\\"
+			],
+			"aliases": {
+				"Appmoto": "FreshApple\\Appmoto\\Facades"
+			}
+		}
+	}
 }

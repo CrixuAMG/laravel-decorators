@@ -18,16 +18,16 @@ Example:
 
     public function register() 
     {
+        // Create an instance of the Handler class
+        $decorator = app(Handler::class);
+
         /**
          * Model repository
          */
-        $this->app->singleton(ModelContract::class, function () {
-            return Handler::handlerFactory(ModelContract::class, [
-                ModelRepository::class,
-                ModelCache::class,
-                // Put any decorators below here
-            ]);
-        });
+        $decorator->decorate(ModelContract::class, [
+            ModelRepository::class,
+            ModelCache::class,
+        ]);
     }
 ```
 

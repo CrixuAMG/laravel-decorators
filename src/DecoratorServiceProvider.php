@@ -28,7 +28,7 @@ class DecoratorServiceProvider extends ServiceProvider
         $this->app->singleton(
             Handler::class,
             function () {
-                return new Handler();
+                return new Handler($this->app);
             }
         );
     }

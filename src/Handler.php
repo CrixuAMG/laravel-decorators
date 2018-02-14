@@ -13,15 +13,18 @@ class Handler
      * @var array|null
      */
     private $handler;
+    private $cacheEnabled;
 
     /**
      * Handler constructor.
      *
      * @param $chain
      */
-    public function __construct($chain)
+    public function __construct($chain = [])
     {
-        if (!empty($chain)) {
+        $this->cacheEnabled = config('cache.enabled') ?? false;
+
+        if ($chain) {
             $this->handler = static::makeChain($chain);
         }
     }
@@ -51,6 +54,8 @@ class Handler
 
         $reversedChain = array_reverse($chain);
         foreach ($reversedChain as $class) {
+            // Todo::check cache
+
             $instance = new $class($instance);
         }
 

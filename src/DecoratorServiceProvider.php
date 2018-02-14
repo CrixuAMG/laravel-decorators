@@ -24,8 +24,12 @@ class DecoratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('decorator', function ($app) {
-            return new Decorator;
-        });
+        // Create our instance
+        $this->app->singleton(
+            Handler::class,
+            function () {
+                return new Handler();
+            }
+        );
     }
 }

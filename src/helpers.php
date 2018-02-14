@@ -41,3 +41,42 @@ if (!function_exists('throw_unless')) {
         return $condition;
     }
 }
+
+if (!function_exists('flushCache')) {
+    /**
+     * @param array $tags
+     *
+     * @return mixed
+     *
+     * @throws Exception
+     */
+    function flushCache(array $tags = [])
+    {
+        return !$tags
+            ? cache()->flush()
+            : cache()->tags($tags)->flush();
+    }
+}
+
+if (!function_exists('cacheEnabled')) {
+    /**
+     * @return bool
+     */
+    function cacheEnabled()
+    {
+        return config('dealmaker.cache_enabled');
+    }
+}
+
+if (!function_exists('cacheKey')) {
+    /**
+     * @param       $format
+     * @param array $parameters
+     *
+     * @return string
+     */
+    function cacheKey(string $format, array $parameters)
+    {
+        return md5(vsprintf($format, $parameters));
+    }
+}

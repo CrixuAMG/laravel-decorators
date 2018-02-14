@@ -1,19 +1,30 @@
 <?php
 
-namespace CrixuAMG/Decorators;
+namespace CrixuAMG\Decorators;
 
 use Illuminate\Support\ServiceProvider;
 
-class DecoratorServiceProvide extends ServiceProvider
+/**
+ * Class DecoratorServiceProvider
+ *
+ * @package CrixuAMG
+ */
+class DecoratorServiceProvider extends ServiceProvider
 {
+    /**
+     *
+     */
     public function boot()
     {
         //
     }
 
+    /**
+     *
+     */
     public function register()
     {
-        $this-app->bind('decorator', function($app) {
+        $this->app->bind('decorator', function ($app) {
             return new Decorator;
         });
     }

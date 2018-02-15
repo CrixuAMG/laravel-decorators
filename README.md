@@ -55,7 +55,6 @@ When this is set to false, any decorators implementing the `CrixuAMG\Decorators\
 To make development even faster and easier, some commands have been created to improve ease of use.
 
 ```bash
-    php artisan make:trait      ModelTrait
     php artisan make:cache      ModelCache
     php artisan make:repository ModelRepository
     php artisan make:contract   ModelContract

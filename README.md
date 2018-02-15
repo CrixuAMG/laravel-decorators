@@ -1,6 +1,7 @@
 # laravel-decorators
 
 [![Build Status](https://travis-ci.org/CrixuAMG/laravel-decorators.svg?branch=master)](https://travis-ci.org/CrixuAMG/laravel-decorators)
+[![Maintainability](https://api.codeclimate.com/v1/badges/67f36779438bb4cb82be/maintainability)](https://codeclimate.com/github/CrixuAMG/laravel-decorators/maintainability)
 
 [About](#about)<br>
 [Installation](#installation)<br>

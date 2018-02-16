@@ -33,7 +33,6 @@ class DecoratorServiceProvider extends ServiceProvider
                 CacheMakeCommand::class,
                 ContractMakeCommand::class,
                 RepositoryMakeCommand::class,
-                TraitMakeCommand::class,
             ]);
         }
     }

@@ -5,7 +5,6 @@ namespace CrixuAMG\Decorators;
 use Dealmaker\Console\Commands\CacheMakeCommand;
 use Dealmaker\Console\Commands\ContractMakeCommand;
 use Dealmaker\Console\Commands\RepositoryMakeCommand;
-use Dealmaker\Console\Commands\TraitMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**

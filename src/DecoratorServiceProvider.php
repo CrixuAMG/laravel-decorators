@@ -2,9 +2,9 @@
 
 namespace CrixuAMG\Decorators;
 
-use Dealmaker\Console\Commands\CacheMakeCommand;
-use Dealmaker\Console\Commands\ContractMakeCommand;
-use Dealmaker\Console\Commands\RepositoryMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**

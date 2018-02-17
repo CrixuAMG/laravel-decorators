@@ -1,6 +1,6 @@
 <?php
 
-namespace Dealmaker\Console\Commands;
+namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;

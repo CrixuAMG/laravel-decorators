@@ -37,8 +37,20 @@ class Handler extends ServiceProvider
             ? $this->handlerFactory((array)$chain)
             : [];
 
-        $this->app->singleton($contract, function () use ($decoratedChain) {
-            return Handler::handlerFactory($decoratedChain);
+        $instance = Handler::handlerFactory($decoratedChain);
+
+        $this->registerDecoratedInstance($instance);
+    }
+
+    /**
+     * Registers a decorated instance of a class
+     * 
+     * @param $instance
+     */
+    private function registerDecoratedInstance($instance)
+    {
+        $this->app->singleton($this->contract, function () use ($instance) {
+            return Handler::handlerFactory($instance);
         });
     }
 

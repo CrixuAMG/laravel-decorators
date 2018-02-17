@@ -19,19 +19,20 @@ class DecoratorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Register the commands
         $this->registerCommands();
     }
 
     /**
-     *
+     * Register console commands
      */
     private function registerCommands()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CacheMakeCommand::class,
-                ContractMakeCommand::class,
-                RepositoryMakeCommand::class,
+                CacheMakeCommand::class,        // make:cache
+                ContractMakeCommand::class,     // make:contract
+                RepositoryMakeCommand::class,   // make:repository
             ]);
         }
     }

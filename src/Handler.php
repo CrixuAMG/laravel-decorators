@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators;
 
-use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
 use Illuminate\Support\ServiceProvider;
 
@@ -85,7 +84,7 @@ class Handler extends ServiceProvider
 
         foreach ((array)$chain as $parentClass => $class) {
             // Check if cache is enabled and the class implements the cache class 
-            if (!$this->cacheEnabled && get_parent_class($class) === AbstractCache::class) {
+            if (!$this->cacheEnabled && implementsCache($class)) {
                 continue;
             }
 

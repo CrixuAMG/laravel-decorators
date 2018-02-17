@@ -1,5 +1,7 @@
 <?php
 
+use CrixuAMG\Decorators\Caches\AbstractCache;
+
 if (!function_exists('throw_if')) {
     /**
      * Throw the given exception if the given condition is true.
@@ -78,5 +80,18 @@ if (!function_exists('cacheKey')) {
     function cacheKey(string $format, array $parameters)
     {
         return md5(vsprintf($format, $parameters));
+    }
+}
+
+if (!function_exists('implementsCache')) {
+    /**
+     * Returns true when the class implements the cache class
+     * 
+     * @param $class
+     * 
+     * @return bool
+     */
+    function implementsCache($class) {
+        return get_parent_class($class) === AbstractCache::class;
     }
 }

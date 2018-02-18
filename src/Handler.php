@@ -16,6 +16,10 @@ class Handler
      * @var bool
      */
     private static $cacheEnabled;
+    /**
+     * @var array
+     */
+    private $cacheExceptions;
 
     /**
      * @param string $contract
@@ -62,7 +66,7 @@ class Handler
                 422
             );
 
-            if (!self::$cacheEnabled && get_parent_class($class) === AbstractCache::class) {
+            if ($this->checkCache($class)) {
                 continue;
             }
 
@@ -72,5 +76,29 @@ class Handler
         }
 
         return $instance;
+    }
+
+    /**
+     * @param array|string $class
+     */
+    public function enableCacheInEnvironments($environments)
+    {
+        $this->cacheExceptions = is_array($environments) 
+            ? $environments
+            : [$environments];
+    }
+
+    /**
+     * @param $class
+     * 
+     * @return bool
+     */
+    public function checkCache($class)
+    {
+        return (
+            !self::$cacheEnabled && 
+            isset($this->cacheExceptions) &&
+            get_parent_class($class) === AbstractCache::class
+        );
     }
 }

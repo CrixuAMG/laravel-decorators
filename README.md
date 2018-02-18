@@ -39,17 +39,17 @@ Example:
         $decorator = app(Handler::class);
 
         /**
-         * Model repository
+         * User repository
          */
-        $decorator->decorate(ModelContract::class, [
-            ModelRepository::class,
-            ModelCache::class,
+        $decorator->decorate(UserContract::class, [
+            UserRepository::class,
+            UserCache::class,
         ]);
     }
 ```
 
 ## Customization
-You can set an `enabled` flag within the `config/cache.php` file.
+You can set an `enabled` flag within the `config/decorators.php` file.
 When this is set to false, any decorators implementing the `CrixuAMG\Decorators\Caches\AbstractCache` class will be ignored.
  
 ## Commands

@@ -66,7 +66,7 @@ if (!function_exists('cacheEnabled')) {
      */
     function cacheEnabled()
     {
-        return config('dealmaker.cache_enabled');
+        return config('decorators.cache_enabled');
     }
 }
 

@@ -21,6 +21,19 @@ class DecoratorServiceProvider extends ServiceProvider
     {
         // Register the commands
         $this->registerCommands();
+
+        // Allow the user to get the config file
+        $this->registerConfiguration();
+    }
+
+    /**
+     * Register the config file
+     */
+    private function registerConfiguration()
+    {
+        $this->publishes([
+            __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
+        ]);
     }
 
     /**

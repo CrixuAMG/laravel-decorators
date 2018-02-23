@@ -38,13 +38,10 @@ Example:
 
     public function register() 
     {
-        // Create an instance of the Handler class
-        $decorator = app(Handler::class);
-
         /**
          * User repository
          */
-        $decorator->decorate(UserContract::class, [
+        decorator()->decorate(UserContract::class, [
             UserRepository::class,
             UserCache::class,
         ]);

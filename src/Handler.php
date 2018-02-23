@@ -17,10 +17,6 @@ class Handler extends ServiceProvider
 	 */
 	private $cacheEnabled;
 	/**
-	 * @var string
-	 */
-	private $contract;
-	/**
 	 * @var array
 	 */
 	private $cacheExceptions;
@@ -34,36 +30,37 @@ class Handler extends ServiceProvider
 	public function decorate(string $contract, $chain)
 	{
 		$this->cacheEnabled = config('decorators.cache_enabled') ?? false;
-		$this->contract = $contract;
 
-		$this->registerDecoratedInstance((array)$chain);
+		$this->registerDecoratedInstance($contract, (array)$chain);
 	}
 
 	/**
-	 * @param array $chain
+	 * @param string $contract
+	 * @param array  $chain
 	 *
 	 * @throws \Throwable
 	 *
 	 * @return mixed
 	 */
-	public function handlerFactory($chain)
+	public function handlerFactory(string $contract, $chain)
 	{
 		// Set the cache data if it is not set yet
 		if ($this->cacheEnabled === null) {
 			$this->cacheEnabled = config('decorators.cache_enabled') ?? false;
 		}
 
-		return $this->processChain($chain);
+		return $this->processChain($contract, $chain);
 	}
 
 	/**
-	 * @param $chain
+	 * @param string $contract
+	 * @param        $chain
 	 *
 	 * @throws \Throwable
 	 *
 	 * @return mixed
 	 */
-	private function processChain($chain)
+	private function processChain(string $contract, $chain)
 	{
 		// Create a variable that will hold the instance
 		$instance = null;
@@ -78,7 +75,7 @@ class Handler extends ServiceProvider
 			 * Make sure the class implements the provided contract
 			 * Throws an exception if the class does not implement the contract
 			 */
-			$this->assertClassImplementsContract($class);
+			$this->assertClassImplementsContract($contract, $class);
 
 			// Decorate the instance with the class
 			$instance = $this->getDecoratedInstance($class, $instance);
@@ -101,18 +98,19 @@ class Handler extends ServiceProvider
 	}
 
 	/**
-	 * @param $class
+	 * @param string $contract
+	 * @param        $class
 	 *
 	 * @throws \Throwable
 	 */
-	private function assertClassImplementsContract($class)
+	private function assertClassImplementsContract(string $contract, $class)
 	{
 		$implementedInterfaces = class_implements($class);
 
 		throw_unless(
-			isset($implementedInterfaces[$this->contract]),
+			isset($implementedInterfaces[$contract]),
 			InterfaceNotImplementedException::class,
-			'Contract ' . $this->contract . ' is not implemented on ' . $class,
+			'Contract ' . $contract . ' is not implemented on ' . $class,
 			422
 		);
 	}
@@ -133,12 +131,13 @@ class Handler extends ServiceProvider
 	/**
 	 * Registers a decorated instance of a class
 	 *
-	 * @param $instance
+	 * @param string $contract
+	 * @param        $instance
 	 */
-	private function registerDecoratedInstance($instance)
+	private function registerDecoratedInstance(string $contract, $instance)
 	{
-		$this->app->singleton($this->contract, function () use ($instance) {
-			return Handler::handlerFactory($instance);
+		$this->app->singleton($contract, function () use ($contract, $instance) {
+			return Handler::handlerFactory($contract, $instance);
 		});
 	}
 

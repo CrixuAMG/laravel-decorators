@@ -2,75 +2,153 @@
 
 namespace CrixuAMG\Decorators;
 
-use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class Handler
  *
  * @package CrixuAMG\Decorators
  */
-class Handler
+class Handler extends ServiceProvider
 {
-    /**
-     * @var bool
-     */
-    private static $cacheEnabled;
+	/**
+	 * @var bool
+	 */
+	private $cacheEnabled;
+	/**
+	 * @var string
+	 */
+	private $contract;
+	/**
+	 * @var array
+	 */
+	private $cacheExceptions;
 
-    /**
-     * @param string $contract
-     * @param array  $chain
-     *
-     * @throws \Throwable
-     *
-     * @return array|null
-     */
-    public static function makeChain(string $contract, $chain)
-    {
-        self::$cacheEnabled = config('cache.enabled') ?? false;
+	/**
+	 * @param string $contract
+	 * @param array  $chain
+	 *
+	 * @throws \Throwable
+	 */
+	public function decorate(string $contract, $chain)
+	{
+		$this->cacheEnabled = config('decorators.cache_enabled') ?? false;
+		$this->contract = $contract;
 
-        $chain = (array)$chain;
+		$this->registerDecoratedInstance((array)$chain);
+	}
 
-        return $chain
-            ? self::handlerFactory($contract, $chain)
-            : [];
-    }
+	/**
+	 * @param array $chain
+	 *
+	 * @throws \Throwable
+	 *
+	 * @return mixed
+	 */
+	public function handlerFactory($chain)
+	{
+		// Set the cache data if it is not set yet
+		if ($this->cacheEnabled === null) {
+			$this->cacheEnabled = config('decorators.cache_enabled') ?? false;
+		}
 
-    /**
-     * @param string $contract
-     * @param array  $chain
-     *
-     * @throws \Throwable
-     *
-     * @return null
-     */
-    public static function handlerFactory(string $contract, array $chain)
-    {
-        // Set the cache data if it is not set yet
-        if (self::$cacheEnabled === null) {
-            self::$cacheEnabled = config('cache.enabled') ?? false;
-        }
+		return $this->processChain($chain);
+	}
 
-        $instance = null;
+	/**
+	 * @param $chain
+	 *
+	 * @throws \Throwable
+	 *
+	 * @return mixed
+	 */
+	private function processChain($chain)
+	{
+		// Create a variable that will hold the instance
+		$instance = null;
 
-        foreach ($chain as $class) {
-            $implementedInterfaces = class_implements($class);
-            throw_unless(
-                isset($implementedInterfaces[$contract]),
-                InterfaceNotImplementedException::class,
-                'Contract ' . $contract . ' is not implemented on ' . $class,
-                422
-            );
+		foreach ((array)$chain as $parentClass => $class) {
+			// Check if cache is enabled and the class implements the cache class
+			if ($this->checkCache($class)) {
+				continue;
+			}
 
-            if (!self::$cacheEnabled && get_parent_class($class) === AbstractCache::class) {
-                continue;
-            }
+			/**
+			 * Make sure the class implements the provided contract
+			 * Throws an exception if the class does not implement the contract
+			 */
+			$this->assertClassImplementsContract($class);
 
-            $instance = $instance
-                ? new $class($instance)
-                : new $class;
-        }
+			// Decorate the instance with the class
+			$instance = $this->getDecoratedInstance($class, $instance);
+		}
 
-        return $instance;
-    }
+		// Return the instance
+		return $instance;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function checkCache($class)
+	{
+		return (
+			!$this->cacheEnabled &&
+			!isset($this->cacheExceptions) &&
+			implementsCache($class)
+		);
+	}
+
+	/**
+	 * @param $class
+	 *
+	 * @throws \Throwable
+	 */
+	private function assertClassImplementsContract($class)
+	{
+		$implementedInterfaces = class_implements($class);
+
+		throw_unless(
+			isset($implementedInterfaces[$this->contract]),
+			InterfaceNotImplementedException::class,
+			'Contract ' . $this->contract . ' is not implemented on ' . $class,
+			422
+		);
+	}
+
+	/**
+	 * @param string $class
+	 * @param        $instance
+	 *
+	 * @return mixed
+	 */
+	private function getDecoratedInstance($class, $instance)
+	{
+		return $instance
+			? new $class($instance)
+			: new $class;
+	}
+
+	/**
+	 * Registers a decorated instance of a class
+	 *
+	 * @param $instance
+	 */
+	private function registerDecoratedInstance($instance)
+	{
+		$this->app->singleton($this->contract, function () use ($instance) {
+			return Handler::handlerFactory($instance);
+		});
+	}
+
+	/**
+	 * @param $environments
+	 */
+	public function enableCacheInEnvironments($environments)
+	{
+		$this->cacheExceptions = is_array($environments)
+			? $environments
+			: [$environments];
+	}
 }

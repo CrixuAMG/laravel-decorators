@@ -1,0 +1,48 @@
+<?php
+
+namespace DummyNamespace;
+
+use RootNamespace\Repositories\AbstractRepository;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Class DummyClass
+ *
+ * @package DummyNamespace
+ */
+class DummyClass extends AbstractCache
+{
+    /**
+     * DummyClass constructor.
+     *
+     * @param AbstractRepository $next
+     */
+    public function __construct(AbstractRepository $next)
+    {
+        // Set the cache tags
+        // TODO: Fill this in!
+        $this->cacheTags = [];
+
+        parent::__construct($next);
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return mixed
+     */
+    public function index($index = 1)
+    {
+        return $this->next->index($index);
+    }
+
+    /**
+     * @param Model $model
+     *
+     * @return mixed
+     */
+    public function show(Model $model)
+    {
+        return $this->next->show($model);
+    }
+}

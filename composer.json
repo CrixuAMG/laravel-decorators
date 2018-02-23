@@ -34,7 +34,7 @@
 				"CrixuAMG\\Decorators\\DecoratorServiceProvider"
 			],
 			"aliases": {
-				"Appmoto": "FreshApple\\Appmoto\\Facades"
+				"Decorator": "CrixuAMG\\Decorators\\Facades"
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 <?php
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
+use CrixuAMG\Decorators\Handler;
 
 if (!function_exists('throw_if')) {
     /**
@@ -86,12 +87,23 @@ if (!function_exists('cacheKey')) {
 if (!function_exists('implementsCache')) {
     /**
      * Returns true when the class implements the cache class
-     * 
+     *
      * @param $class
-     * 
+     *
      * @return bool
      */
-    function implementsCache($class) {
+    function implementsCache($class)
+    {
         return get_parent_class($class) === AbstractCache::class;
+    }
+}
+
+if (!function_exists('decorator')) {
+    /**
+     * @return \Illuminate\Foundation\Application|mixed
+     */
+    function decorator()
+    {
+        return app(Handler::class);
     }
 }

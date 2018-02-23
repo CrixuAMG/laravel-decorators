@@ -1,26 +1,26 @@
 {
-	"name": "crixuamg/laravel-decorators",
-	"description": "",
-	"license": "MIT",
-	"type": "library",
-	"keywords": [
+	"name":              "crixuamg/laravel-decorators",
+	"description":       "",
+	"license":           "MIT",
+	"type":              "library",
+	"keywords":          [
 		"laravel",
 		"decorator",
 		"pattern"
 	],
-	"authors": [
+	"authors":           [
 		{
-			"name": "Christian Kaal",
+			"name":  "Christian Kaal",
 			"email": "christiankaal@gmail.com"
 		}
 	],
-	"require": {
-		"php": ">=7.1",
+	"require":           {
+		"php":               ">=7.1",
 		"laravel/framework": "^5.5"
 	},
-	"minimum-stability": "dev",
-	"prefer-stable": true,
-	"autoload": {
+	"minimum-stability": "stable",
+	"prefer-stable":     true,
+	"autoload":          {
 		"files": [
 			"src/helpers.php"
 		],
@@ -28,12 +28,12 @@
 			"CrixuAMG\\Decorators\\": "src"
 		}
 	},
-	"extra": {
+	"extra":             {
 		"laravel": {
 			"providers": [
 				"CrixuAMG\\Decorators\\DecoratorServiceProvider"
 			],
-			"aliases": {
+			"aliases":   {
 				"Decorator": "CrixuAMG\\Decorators\\Facades"
 			}
 		}

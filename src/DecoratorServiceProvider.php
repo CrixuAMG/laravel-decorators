@@ -2,6 +2,9 @@
 
 namespace CrixuAMG\Decorators;
 
+use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -16,7 +19,35 @@ class DecoratorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Register the commands
+        $this->registerCommands();
+
+        // Allow the user to get the config file
+        $this->registerConfiguration();
+    }
+
+    /**
+     * Register the config file
+     */
+    private function registerConfiguration()
+    {
+        $this->publishes([
+            __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
+        ]);
+    }
+
+    /**
+     * Register console commands
+     */
+    private function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CacheMakeCommand::class,        // make:cache
+                ContractMakeCommand::class,     // make:contract
+                RepositoryMakeCommand::class,   // make:repository
+            ]);
+        }
     }
 
     /**
@@ -28,7 +59,7 @@ class DecoratorServiceProvider extends ServiceProvider
         $this->app->singleton(
             Handler::class,
             function () {
-                return new Handler();
+                return new Handler($this->app);
             }
         );
     }

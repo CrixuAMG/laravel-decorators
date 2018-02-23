@@ -1,0 +1,13 @@
+<?php
+
+namespace DummyNamespace;
+
+/**
+ * Interface DummyClass
+ *
+ * @package DummyNamespace
+ */
+interface DummyClass extends RepositoryContract
+{
+    //
+}

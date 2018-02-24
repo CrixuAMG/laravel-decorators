@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Facade;
 
 class Decorator extends Facade
 {
-    /**
-     * @return mixed
-     */
-    protected static function getFacadeAccessor()
-    {
-        return Handler::class;
-    }
+	/**
+	 * @return mixed
+	 */
+	protected static function getFacadeAccessor()
+	{
+		return Handler::class;
+	}
 }

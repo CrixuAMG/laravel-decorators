@@ -35,6 +35,19 @@ class Handler extends ServiceProvider
 	}
 
 	/**
+	 * Registers a decorated instance of a class
+	 *
+	 * @param string $contract
+	 * @param        $instance
+	 */
+	private function registerDecoratedInstance(string $contract, $instance)
+	{
+		$this->app->singleton($contract, function () use ($contract, $instance) {
+			return Handler::handlerFactory($contract, $instance);
+		});
+	}
+
+	/**
 	 * @param string $contract
 	 * @param array  $chain
 	 *
@@ -88,7 +101,7 @@ class Handler extends ServiceProvider
 	/**
 	 * @return bool
 	 */
-	public function checkCache($class)
+	private function checkCache($class)
 	{
 		return (
 			!$this->cacheEnabled &&
@@ -126,19 +139,6 @@ class Handler extends ServiceProvider
 		return $instance
 			? new $class($instance)
 			: new $class;
-	}
-
-	/**
-	 * Registers a decorated instance of a class
-	 *
-	 * @param string $contract
-	 * @param        $instance
-	 */
-	private function registerDecoratedInstance(string $contract, $instance)
-	{
-		$this->app->singleton($contract, function () use ($contract, $instance) {
-			return Handler::handlerFactory($contract, $instance);
-		});
 	}
 
 	/**

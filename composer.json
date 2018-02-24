@@ -37,5 +37,8 @@
 				"Decorator": "CrixuAMG\\Decorators\\Facades"
 			}
 		}
+	},
+	"require-dev": {
+		"orchestra/testbench": "~3.0"
 	}
 }

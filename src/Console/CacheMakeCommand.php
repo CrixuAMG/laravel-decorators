@@ -13,7 +13,7 @@ class CacheMakeCommand extends GeneratorCommand
 	 *
 	 * @var string
 	 */
-	protected $name = 'make:cache';
+	protected $name = 'decorator:cache';
 	/**
 	 * The console command description.
 	 *

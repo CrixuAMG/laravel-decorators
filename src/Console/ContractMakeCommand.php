@@ -13,7 +13,7 @@ class ContractMakeCommand extends GeneratorCommand
 	 *
 	 * @var string
 	 */
-	protected $name = 'make:contract';
+	protected $name = 'decorator:contract';
 	/**
 	 * The console command description.
 	 *

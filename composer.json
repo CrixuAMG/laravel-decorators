@@ -15,8 +15,7 @@
 		}
 	],
 	"require":           {
-		"php":               ">=7.1",
-		"laravel/framework": "^5.5"
+		"php":               ">=7.1"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable":     true,
@@ -37,8 +36,5 @@
 				"Decorator": "CrixuAMG\\Decorators\\Facades"
 			}
 		}
-	},
-	"require-dev": {
-		"orchestra/testbench": "~3.0"
 	}
 }

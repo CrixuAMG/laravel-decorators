@@ -61,13 +61,8 @@ abstract class AbstractRepository implements RepositoryContract
 		// Update the model
 		$model->update($data);
 
-		if (method_exists(\get_class($model), 'getValidRelations')) {
-			// Load relationships
-			$model->load(\get_class($model)::getValidRelations());
-		}
-
-		// Return the new model
-		return $model;
+		// Return the updated model
+		return $this->show($model);
 	}
 
 	/**

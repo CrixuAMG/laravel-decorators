@@ -15,7 +15,7 @@ abstract class AbstractDecorator implements RepositoryContract
     protected $next;
 
     /**
-     * AdvertisementCache constructor.
+     * AbstractDecorator constructor.
      *
      * @param AbstractRepository $next
      *

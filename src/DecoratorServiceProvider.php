@@ -5,6 +5,8 @@ namespace CrixuAMG\Decorators;
 use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -36,6 +38,8 @@ class DecoratorServiceProvider extends ServiceProvider
 				CacheMakeCommand::class,        // make:cache
 				ContractMakeCommand::class,     // make:contract
 				RepositoryMakeCommand::class,   // make:repository
+				DecoratorMakeCommand::class,    // make:decorator
+				DecoratorsMakeCommand::class,   // decorators:make
 			]);
 		}
 	}

@@ -7,7 +7,7 @@ namespace DummyNamespace;
  *
  * @package DummyNamespace
  */
-interface DummyClass extends RepositoryContract // Todo: Implement a contract
+interface DummyClass extends DecoratorContract // Todo: Implement a contract
 {
     //
 }

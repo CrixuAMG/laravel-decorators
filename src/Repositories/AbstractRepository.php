@@ -2,7 +2,7 @@
 
 namespace CrixuAMG\Decorators\Repositories;
 
-use CrixuAMG\Decorators\Contracts\RepositoryContract;
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package CrixuAMG\Decorators\Repositories
  */
-abstract class AbstractRepository implements RepositoryContract
+abstract class AbstractRepository implements DecoratorContract
 {
 	/**
 	 * Returns the index

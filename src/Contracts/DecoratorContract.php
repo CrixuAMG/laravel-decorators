@@ -5,11 +5,11 @@ namespace CrixuAMG\Decorators\Contracts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Interface RepositoryContract
+ * Interface DecoratorContract
  *
  * @package CrixuAMG\Decorators\Contracts
  */
-interface RepositoryContract
+interface DecoratorContract
 {
 	/**
 	 * @param $page

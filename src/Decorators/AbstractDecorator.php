@@ -4,10 +4,10 @@ namespace CrixuAMG\Decorators\Decorators;
 
 use Illuminate\Database\Eloquent\Model;
 use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Contracts\RepositoryContract;
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 
-abstract class AbstractDecorator implements RepositoryContract
+abstract class AbstractDecorator implements DecoratorContract
 {
     /**
      * @var AbstractCache|AbstractRepository

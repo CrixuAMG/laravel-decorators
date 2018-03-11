@@ -2,13 +2,13 @@
 
 namespace Crixuamg\Decorators\Caches;
 
-use Crixuamg\Decorators\Contracts\RepositoryContract;
+use Crixuamg\Decorators\Contracts\DecoratorContract;
 use Crixuamg\Decorators\Repositories\AbstractRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use UnexpectedValueException;
 
-abstract class AbstractCache implements RepositoryContract
+abstract class AbstractCache implements DecoratorContract
 {
     /**
      * @var AbstractRepository

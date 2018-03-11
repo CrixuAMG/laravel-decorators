@@ -1,40 +1,41 @@
 {
-	"name":              "crixuamg/laravel-decorators",
-	"description":       "",
-	"license":           "MIT",
-	"type":              "library",
-	"keywords":          [
-		"laravel",
-		"decorator",
-		"pattern"
-	],
-	"authors":           [
-		{
-			"name":  "Christian Kaal",
-			"email": "christiankaal@gmail.com"
-		}
-	],
-	"require":           {
-		"php":               ">=7.1"
-	},
-	"minimum-stability": "stable",
-	"prefer-stable":     true,
-	"autoload":          {
-		"files": [
-			"src/helpers.php"
-		],
-		"psr-4": {
-			"CrixuAMG\\Decorators\\": "src"
-		}
-	},
-	"extra":             {
-		"laravel": {
-			"providers": [
-				"CrixuAMG\\Decorators\\DecoratorServiceProvider"
-			],
-			"aliases":   {
-				"Decorator": "CrixuAMG\\Decorators\\Facades"
-			}
-		}
-	}
+    "name":              "crixuamg/laravel-decorators",
+    "description":       "",
+    "license":           "MIT",
+    "type":              "library",
+    "keywords":          [
+        "laravel",
+        "decorator",
+        "pattern"
+    ],
+    "authors":           [
+        {
+            "name":  "Christian Kaal",
+            "email": "christiankaal@gmail.com"
+        }
+    ],
+    "require":           {
+        "php":               ">=7.0",
+        "laravel/framework": "5.*"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable":     true,
+    "autoload":          {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "CrixuAMG\\Decorators\\": "src"
+        }
+    },
+    "extra":             {
+        "laravel": {
+            "providers": [
+                "CrixuAMG\\Decorators\\DecoratorServiceProvider"
+            ],
+            "aliases":   {
+                "Decorator": "CrixuAMG\\Decorators\\Facades"
+            }
+        }
+    }
 }

@@ -4,6 +4,8 @@ namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -21,6 +23,20 @@ class Decorator
      * @var array
      */
     private $cacheExceptions;
+    /**
+     * @var Application
+     */
+    private $app;
+
+    /**
+     * Decorator constructor.
+     *
+     * @param Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
 
     /**
      * @param string $contract
@@ -32,7 +48,7 @@ class Decorator
     {
         $this->cacheEnabled = config('decorators.cache_enabled') ?? false;
 
-        $this->registerDecoratedInstance($contract, (array)$chain);
+        return $this->registerDecoratedInstance($contract, (array)$chain);
     }
 
     /**
@@ -43,9 +59,7 @@ class Decorator
      */
     private function registerDecoratedInstance(string $contract, $instance)
     {
-        $container = new Container();
-
-        $container->singleton($contract, function () use ($contract, $instance) {
+        return $this->app->singleton($contract, function () use ($contract, $instance) {
             return Decorator::handlerFactory($contract, $instance);
         });
     }

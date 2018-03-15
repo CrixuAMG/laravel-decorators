@@ -4,7 +4,7 @@ namespace CrixuAMG\Decorators\Caches;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use CrixuAMG\Decorators\Contracts\RepositoryContract;
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
@@ -14,7 +14,7 @@ use UnexpectedValueException;
  *
  * @package CrixuAMG\Decorators\Caches
  */
-abstract class AbstractCache implements RepositoryContract
+abstract class AbstractCache implements DecoratorContract
 {
     /**
      * @var AbstractRepository

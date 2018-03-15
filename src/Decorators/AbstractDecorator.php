@@ -5,7 +5,7 @@ namespace CrixuAMG\Decorators\Decorators;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\UnauthorizedException;
 use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Contracts\RepositoryContract;
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
 
@@ -13,7 +13,7 @@ use UnexpectedValueException;
  * Class AbstractDecorator
  * @package CrixuAMG\Decorators\Decorators
  */
-abstract class AbstractDecorator implements RepositoryContract
+abstract class AbstractDecorator implements DecoratorContract
 {
     /**
      * @var AbstractCache|AbstractRepository

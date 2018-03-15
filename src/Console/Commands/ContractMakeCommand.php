@@ -6,31 +6,26 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * Class DecoratorMakeCommand
- *
- * @package CrixuAMG\Decorators\Console\Commands
- */
-class DecoratorMakeCommand extends GeneratorCommand
+class ContractMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'make:decorator';
+    protected $name = 'make:contract';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new decorator';
+    protected $description = 'Create a new contract';
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Decorator';
+    protected $type = 'Contract';
 
     /**
      * Get the stub file for the generator.
@@ -39,7 +34,7 @@ class DecoratorMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/decorator.stub';
+        return __DIR__ . '/stubs/contract.stub';
     }
 
     /**
@@ -51,7 +46,7 @@ class DecoratorMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Decorators';
+        return $rootNamespace . '\Contracts';
     }
 
     /**

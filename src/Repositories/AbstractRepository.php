@@ -5,7 +5,6 @@ namespace CrixuAMG\Decorators\Repositories;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use CrixuAMG\Decorators\Contracts\DecoratorContract;
 
 abstract class AbstractRepository implements DecoratorContract
 {

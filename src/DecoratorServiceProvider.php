@@ -16,55 +16,55 @@ use Illuminate\Support\ServiceProvider;
  */
 class DecoratorServiceProvider extends ServiceProvider
 {
-	/**
-	 *
-	 */
-	public function boot()
-	{
-		// Register the commands
-		$this->registerCommands();
+    /**
+     *
+     */
+    public function boot()
+    {
+        // Register the commands
+        $this->registerCommands();
 
-		// Allow the user to get the config file
-		$this->registerConfiguration();
-	}
+        // Allow the user to get the config file
+        $this->registerConfiguration();
+    }
 
-	/**
-	 * Register console commands
-	 */
-	private function registerCommands()
-	{
-		if ($this->app->runningInConsole()) {
-			$this->commands([
-				CacheMakeCommand::class,        // make:cache
-				ContractMakeCommand::class,     // make:contract
-				RepositoryMakeCommand::class,   // make:repository
-				DecoratorMakeCommand::class,    // make:decorator
-				DecoratorsMakeCommand::class,   // decorators:make
-			]);
-		}
-	}
+    /**
+     * Register console commands
+     */
+    private function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CacheMakeCommand::class,        // make:cache
+                ContractMakeCommand::class,     // make:contract
+                RepositoryMakeCommand::class,   // make:repository
+                DecoratorMakeCommand::class,    // make:decorator
+                DecoratorsMakeCommand::class,   // decorators:make
+            ]);
+        }
+    }
 
-	/**
-	 * Register the config file
-	 */
-	private function registerConfiguration()
-	{
-		$this->publishes([
-			__DIR__ . '/config/decorators.php' => config_path('decorators.php'),
-		]);
-	}
+    /**
+     * Register the config file
+     */
+    private function registerConfiguration()
+    {
+        $this->publishes([
+            __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
+        ]);
+    }
 
-	/**
-	 * @throws \Throwable
-	 */
-	public function register()
-	{
-		// Create our instance
-		$this->app->singleton(
-			Handler::class,
-			function () {
-				return new Handler($this->app);
-			}
-		);
-	}
+    /**
+     * @throws \Throwable
+     */
+    public function register()
+    {
+        // Create our instance
+        $this->app->singleton(
+            Decorator::class,
+            function () {
+                return new Decorator();
+            }
+        );
+    }
 }

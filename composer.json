@@ -32,10 +32,7 @@
         "laravel": {
             "providers": [
                 "CrixuAMG\\Decorators\\DecoratorServiceProvider"
-            ],
-            "aliases":   {
-                "Decorator": "CrixuAMG\\Decorators\\Facades"
-            }
+            ]
         }
     }
 }

@@ -2,56 +2,58 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Illuminate\Console\GeneratorCommand;
+use Artisan;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-/**
- * Class DecoratorMakeCommand
- *
- * @package CrixuAMG\Decorators\Console\Commands
- */
-class DecoratorMakeCommand extends GeneratorCommand
+class DecoratorsMakeCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'make:decorator';
+    protected $name = 'decorators:make';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new decorator';
-    /**
-     * The type of class being generated.
-     *
-     * @var string
-     */
-    protected $type = 'Decorator';
+    protected $description = 'Create a Contract, Cache and Repository for the given name';
 
     /**
-     * Get the stub file for the generator.
+     * Create a new command instance.
      *
-     * @return string
+     * @return void
      */
-    protected function getStub()
+    public function __construct()
     {
-        return __DIR__ . '/stubs/decorator.stub';
+        parent::__construct();
     }
 
     /**
-     * Get the default namespace for the class.
+     * Execute the console command.
      *
-     * @param  string $rootNamespace
-     *
-     * @return string
+     * @return mixed
      */
-    protected function getDefaultNamespace($rootNamespace)
+    public function handle()
     {
-        return $rootNamespace . '\Decorators';
+        $commandsToExecute = [
+            'make:contract',
+            'make:cache',
+            'make:repository',
+        ];
+
+        $className = $this->getNameInput();
+
+        foreach ($commandsToExecute as $commandToExecute) {
+            $this->info('php artisan ' . $commandToExecute . ' ' . $className);
+
+            Artisan::call($commandToExecute, [
+                'name' => $className,
+            ]);
+        }
     }
 
     /**
@@ -59,31 +61,7 @@ class DecoratorMakeCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
-    }
-
-    /**
-     * Replace the class name for the given stub.
-     *
-     * @param  string $stub
-     * @param  string $name
-     *
-     * @return string
-     */
-    protected function replaceClass($stub, $name)
-    {
-        $stub = parent::replaceClass($stub, $name);
-
-        return str_replace(['RootNamespace\\', 'dummy:command'], [
-            $this->rootNamespace(), $this->option('command'),
-        ], $stub);
+        return trim($this->argument('name'));
     }
 
     /**

@@ -3,11 +3,17 @@
 namespace CrixuAMG\Decorators\Decorators;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\UnauthorizedException;
 use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Contracts\RepositoryContract;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use UnexpectedValueException;
 
-abstract class AbstractDecorator implements DecoratorContract
+/**
+ * Class AbstractDecorator
+ * @package CrixuAMG\Decorators\Decorators
+ */
+abstract class AbstractDecorator implements RepositoryContract
 {
     /**
      * @var AbstractCache|AbstractRepository
@@ -15,13 +21,26 @@ abstract class AbstractDecorator implements DecoratorContract
     protected $next;
 
     /**
-     * AbstractDecorator constructor.
+     * AdvertisementCache constructor.
      *
      * @param AbstractRepository $next
      *
      * @throws \Throwable
      */
     public function __construct($next)
+    {
+        // Validate the next class
+        $this->validateNextClass($next);
+
+        // Set the next class so methods can be called on it
+        $this->next = $next;
+    }
+
+    /**
+     * @param $next
+     * @throws \Throwable
+     */
+    protected function validateNextClass($next): void
     {
         $allowedNextClasses = [
             AbstractDecorator::class,
@@ -35,8 +54,6 @@ abstract class AbstractDecorator implements DecoratorContract
             \UnexpectedValueException::class,
             500
         );
-
-        $this->next = $next;
     }
 
     /**
@@ -46,7 +63,37 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function index($page)
     {
-        return $this->next->index($page);
+        return $this->forward(__FUNCTION__, $page);
+    }
+
+    /**
+     * @param string $method
+     * @param array ...$args
+     *
+     * @throws \UnexpectedValueException
+     *
+     * @return mixed
+     */
+    protected function forward(string $method, ...$args)
+    {
+        // Verify the method exists on the next iteration and that it is callable
+        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
+            // Hand off the task to the next decorator
+            return $this->next->$method(...$args);
+        }
+
+        // Method does not exist or is not callable
+        $this->throwMethodNotCallable($method);
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function throwMethodNotCallable(string $method): void
+    {
+        throw new UnexpectedValueException('Method ' . $method . ' does not exist or is not callable.');
     }
 
     /**
@@ -56,7 +103,7 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function show(Model $model)
     {
-        return $this->next->show($model);
+        return $this->forward(__FUNCTION__, $model);
     }
 
     /**
@@ -66,7 +113,7 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function store(array $data)
     {
-        return $this->next->store($data);
+        return $this->forward(__FUNCTION__, $data);
     }
 
     /**
@@ -77,7 +124,7 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function update(Model $model, array $data)
     {
-        return $this->next->update($model, $data);
+        return $this->forward(__FUNCTION__, $model, $data);
     }
 
     /**
@@ -87,6 +134,31 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function delete(Model $model)
     {
-        return $this->next->delete($model);
+        return $this->forward(__FUNCTION__, $model);
+    }
+
+    /**
+     * @param bool $statement
+     * @param string $exceptionMessage
+     * @param string $method
+     * @param array ...$args
+     */
+    protected function forwardIfAllowed(bool $statement, string $exceptionMessage, string $method, ...$args)
+    {
+        // Continue if the user is allowed
+        if ($statement) {
+            $this->forward($method, ...$args);
+        }
+
+        // The user is not allowed to continue
+        $this->denyRequest($exceptionMessage);
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function denyRequest(string $message = 'You are not allowed to perform this action.')
+    {
+        throw new UnauthorizedException($message);
     }
 }

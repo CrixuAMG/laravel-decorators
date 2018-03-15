@@ -20,8 +20,7 @@ class DummyClass extends AbstractCache // Todo: Implement a contract
     public function __construct(AbstractRepository $next)
     {
         // Set the cache tags
-        // TODO: Fill this in!
-        $this->cacheTags = [];
+        $this->setCacheTags(/** TODO: Fill this in! */);
 
         parent::__construct($next);
     }
@@ -33,7 +32,7 @@ class DummyClass extends AbstractCache // Todo: Implement a contract
      */
     public function index($index = 1)
     {
-        // Todo: fill this
+        return $this->forwardCached(__FUNCTION__, $index);
     }
 
     /**
@@ -43,6 +42,6 @@ class DummyClass extends AbstractCache // Todo: Implement a contract
      */
     public function show(Model $model)
     {
-        // Todo: fill this
+        return $this->forwardCached(__FUNCTION__, $model);
     }
 }

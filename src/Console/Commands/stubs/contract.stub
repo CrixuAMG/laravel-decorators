@@ -3,11 +3,11 @@
 namespace DummyNamespace;
 
 /**
- * Interface DummyClass
+ * Class DummyClass
  *
  * @package DummyNamespace
  */
-interface DummyClass extends DecoratorContract // Todo: Implement a contract
+class DummyClass extends AbstractDecorator // Todo: Implement a contract
 {
     //
 }

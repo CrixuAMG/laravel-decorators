@@ -1,0 +1,15 @@
+<?php
+
+namespace DummyNamespace;
+
+use CrixuAMG\Decorators\Repositories\AbstractRepository;
+
+/**
+ * Class DummyClass
+ *
+ * @package DummyNamespace
+ */
+class DummyClass extends AbstractRepository // Todo: Implement a contract
+{
+    //
+}

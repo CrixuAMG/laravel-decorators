@@ -50,6 +50,21 @@ class RepositoryMakeCommand extends GeneratorCommand
     }
 
     /**
+     * @return string
+     */
+    protected function getNameInput()
+    {
+        $name = trim($this->argument('name'));
+
+        // Check if the string is set, and if not, set it
+        if (stripos($name, $this->type) === false) {
+            $name .= $this->type;
+        }
+
+        return $name;
+    }
+
+    /**
      * Replace the class name for the given stub.
      *
      * @param  string $stub
@@ -61,7 +76,9 @@ class RepositoryMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace('dummy:command', $this->option('command'), $stub);
+        return str_replace(['RootNamespace\\', 'dummy:command'], [
+            $this->rootNamespace(), $this->option('command'),
+        ], $stub);
     }
 
     /**
@@ -84,7 +101,10 @@ class RepositoryMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.', 'command:name'],
+            [
+                'command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.',
+                'command:name',
+            ],
         ];
     }
 }

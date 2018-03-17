@@ -1,0 +1,15 @@
+<?php
+
+namespace DummyNamespace;
+
+use CrixuAMG\Decorators\Decorators\AbstractDecorator;
+
+/**
+ * Class DummyClass
+ *
+ * @package DummyNamespace
+ */
+class DummyClass extends AbstractDecorator // Todo: Implement a contract
+{
+    //
+}

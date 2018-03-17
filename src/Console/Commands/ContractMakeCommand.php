@@ -6,26 +6,26 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CacheMakeCommand extends GeneratorCommand
+class ContractMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'make:cache';
+    protected $name = 'make:contract';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new cache';
+    protected $description = 'Create a new contract';
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Caches';
+    protected $type = 'Contract';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +34,7 @@ class CacheMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/cache.stub';
+        return __DIR__ . '/stubs/contract.stub';
     }
 
     /**
@@ -46,7 +46,22 @@ class CacheMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Caches';
+        return $rootNamespace . '\Contracts';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNameInput()
+    {
+        $name = trim($this->argument('name'));
+
+        // Check if the string is set, and if not, set it
+        if (stripos($name, $this->type) === false) {
+            $name .= $this->type;
+        }
+
+        return $name;
     }
 
     /**
@@ -60,9 +75,10 @@ class CacheMakeCommand extends GeneratorCommand
     protected function replaceClass($stub, $name)
     {
         $stub = parent::replaceClass($stub, $name);
-        $stub = str_replace('RootNamespace\\', $this->rootNamespace(), $stub);
 
-        return str_replace('dummy:command', $this->option('command'), $stub);
+        return str_replace(['RootNamespace\\', 'dummy:command'], [
+            $this->rootNamespace(), $this->option('command'),
+        ], $stub);
     }
 
     /**
@@ -85,7 +101,10 @@ class CacheMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.', 'command:name'],
+            [
+                'command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.',
+                'command:name',
+            ],
         ];
     }
 }

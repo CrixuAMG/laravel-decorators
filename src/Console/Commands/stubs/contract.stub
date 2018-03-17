@@ -2,12 +2,14 @@
 
 namespace DummyNamespace;
 
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
+
 /**
  * Interface DummyClass
  *
  * @package DummyNamespace
  */
-interface DummyClass extends RepositoryContract
+interface DummyClass extends DecoratorContract
 {
     //
 }

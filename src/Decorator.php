@@ -40,7 +40,7 @@ class Decorator
 
     /**
      * @param string $contract
-     * @param array $chain
+     * @param array  $chain
      *
      * @throws \Throwable
      */
@@ -66,7 +66,7 @@ class Decorator
 
     /**
      * @param string $contract
-     * @param array $chain
+     * @param array  $chain
      *
      * @throws \Throwable
      *

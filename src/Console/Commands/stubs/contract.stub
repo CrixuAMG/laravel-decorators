@@ -2,12 +2,14 @@
 
 namespace DummyNamespace;
 
+use CrixuAMG\Decorators\Contracts\DecoratorContract;
+
 /**
- * Class DummyClass
+ * Interface DummyClass
  *
  * @package DummyNamespace
  */
-class DummyClass extends AbstractDecorator // Todo: Implement a contract
+interface DummyClass extends DecoratorContract
 {
     //
 }

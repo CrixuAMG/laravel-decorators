@@ -21,9 +21,9 @@ abstract class AbstractDecorator implements DecoratorContract
     protected $next;
 
     /**
-     * AdvertisementCache constructor.
+     * AbstractDecorator constructor.
      *
-     * @param AbstractRepository $next
+     * @param $next
      *
      * @throws \Throwable
      */

@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use RootNamespace\Repositories\AbstractRepository;
+use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Illuminate\Database\Eloquent\Model;
 
 /**

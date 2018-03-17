@@ -42,9 +42,33 @@ abstract class AbstractCache implements DecoratorContract
      *
      * @param AbstractRepository $next
      */
-    public function __construct(AbstractRepository $next)
+    public function __construct($next)
     {
+        // Validate the next class
+        $this->validateNextClass($next);
+
+        // Set the next class so methods can be called on it
         $this->next = $next;
+    }
+
+    /**
+     * @param $next
+     * @throws \Throwable
+     */
+    protected function validateNextClass($next): void
+    {
+        $allowedNextClasses = [
+            AbstractDecorator::class,
+            AbstractCache::class,
+            AbstractRepository::class,
+        ];
+
+        throw_unless(
+            \in_array(get_parent_class($next), $allowedNextClasses, true),
+            'Class does not implement any allowed parent classes.',
+            \UnexpectedValueException::class,
+            500
+        );
     }
 
     /**

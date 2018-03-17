@@ -1,7 +1,8 @@
-
 <?php
 
 namespace DummyNamespace;
+
+use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 
 /**
  * Class DummyClass

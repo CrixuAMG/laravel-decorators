@@ -2,15 +2,16 @@
 
 namespace CrixuAMG\Decorators\Decorators;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\UnauthorizedException;
 use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\UnauthorizedException;
 use UnexpectedValueException;
 
 /**
  * Class AbstractDecorator
+ *
  * @package CrixuAMG\Decorators\Decorators
  */
 abstract class AbstractDecorator implements DecoratorContract
@@ -38,6 +39,7 @@ abstract class AbstractDecorator implements DecoratorContract
 
     /**
      * @param $next
+     *
      * @throws \Throwable
      */
     protected function validateNextClass($next): void
@@ -68,7 +70,7 @@ abstract class AbstractDecorator implements DecoratorContract
 
     /**
      * @param string $method
-     * @param array ...$args
+     * @param array  ...$args
      *
      * @throws \UnexpectedValueException
      *
@@ -138,12 +140,13 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
-     * @param bool $statement
-     * @param string $exceptionMessage
      * @param string $method
-     * @param array ...$args
+     * @param bool   $statement
+     * @param array  ...$args
+     *
+     * @return mixed
      */
-    protected function forwardIfAllowed(bool $statement, string $method, ...$args)
+    protected function forwardIfAllowed(string $method, bool $statement, ...$args)
     {
         // Continue if the user is allowed
         if ($statement) {

@@ -2,11 +2,11 @@
 
 namespace CrixuAMG\Decorators\Caches;
 
-use Exception;
-use Illuminate\Database\Eloquent\Model;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use UnexpectedValueException;
 
 /**
@@ -53,6 +53,7 @@ abstract class AbstractCache implements DecoratorContract
 
     /**
      * @param $next
+     *
      * @throws \Throwable
      */
     protected function validateNextClass($next): void
@@ -152,7 +153,7 @@ abstract class AbstractCache implements DecoratorContract
 
     /**
      * @param string $method
-     * @param array ...$args
+     * @param array  ...$args
      *
      * @throws \UnexpectedValueException
      *
@@ -211,7 +212,7 @@ abstract class AbstractCache implements DecoratorContract
 
     /**
      * @param string $method
-     * @param array ...$args
+     * @param array  ...$args
      *
      * @throws Exception
      * @throws \Throwable

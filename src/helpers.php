@@ -1,65 +1,7 @@
 <?php
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Handler;
-
-if (!function_exists('throw_if')) {
-    /**
-     * Throw the given exception if the given condition is true.
-     *
-     * @param  mixed             $condition
-     * @param  \Throwable|string $exception
-     * @param  array             ...$parameters
-     *
-     * @return mixed
-     * @throws \Throwable
-     */
-    function throw_if($condition, $exception, ...$parameters)
-    {
-        if ($condition) {
-            throw is_string($exception) ? new $exception(...$parameters) : $exception;
-        }
-
-        return $condition;
-    }
-}
-
-if (!function_exists('throw_unless')) {
-    /**
-     * Throw the given exception unless the given condition is true.
-     *
-     * @param  mixed             $condition
-     * @param  \Throwable|string $exception
-     * @param  array             ...$parameters
-     *
-     * @return mixed
-     * @throws \Throwable
-     */
-    function throw_unless($condition, $exception, ...$parameters)
-    {
-        if (!$condition) {
-            throw is_string($exception) ? new $exception(...$parameters) : $exception;
-        }
-
-        return $condition;
-    }
-}
-
-if (!function_exists('flushCache')) {
-    /**
-     * @param array $tags
-     *
-     * @return mixed
-     *
-     * @throws Exception
-     */
-    function flushCache(array $tags = [])
-    {
-        return !$tags
-            ? cache()->flush()
-            : cache()->tags($tags)->flush();
-    }
-}
+use CrixuAMG\Decorators\Decorator;
 
 if (!function_exists('cacheEnabled')) {
     /**
@@ -67,7 +9,7 @@ if (!function_exists('cacheEnabled')) {
      */
     function cacheEnabled()
     {
-        return config('decorators.cache_enabled');
+        return !!config('decorators.cache_enabled');
     }
 }
 
@@ -100,10 +42,10 @@ if (!function_exists('implementsCache')) {
 
 if (!function_exists('decorator')) {
     /**
-     * @return \Illuminate\Foundation\Application|mixed
+     * @return Decorator
      */
     function decorator()
     {
-        return app(Handler::class);
+        return new Decorator();
     }
 }

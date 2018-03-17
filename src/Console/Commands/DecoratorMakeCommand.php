@@ -6,26 +6,31 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ContractMakeCommand extends GeneratorCommand
+/**
+ * Class DecoratorMakeCommand
+ *
+ * @package CrixuAMG\Decorators\Console\Commands
+ */
+class DecoratorMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'make:contract';
+    protected $name = 'make:decorator';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new contract';
+    protected $description = 'Create a new decorator';
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Contract';
+    protected $type = 'Decorator';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +39,7 @@ class ContractMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/contract.stub';
+        return __DIR__ . '/stubs/decorator.stub';
     }
 
     /**
@@ -46,7 +51,22 @@ class ContractMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Contracts';
+        return $rootNamespace . '\Decorators';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNameInput()
+    {
+        $name = trim($this->argument('name'));
+
+        // Check if the string is set, and if not, set it
+        if (stripos($name, $this->type) === false) {
+            $name .= $this->type;
+        }
+
+        return $name;
     }
 
     /**
@@ -61,7 +81,9 @@ class ContractMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace('dummy:command', $this->option('command'), $stub);
+        return str_replace(['RootNamespace\\', 'dummy:command'], [
+            $this->rootNamespace(), $this->option('command'),
+        ], $stub);
     }
 
     /**
@@ -84,7 +106,10 @@ class ContractMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.', 'command:name'],
+            [
+                'command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.',
+                'command:name',
+            ],
         ];
     }
 }

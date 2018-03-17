@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use RootNamespace\Repositories\AbstractRepository;
+use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package DummyNamespace
  */
-class DummyClass extends AbstractCache
+class DummyClass extends AbstractCache // Todo: Implement a contract
 {
     /**
      * DummyClass constructor.
@@ -20,8 +20,7 @@ class DummyClass extends AbstractCache
     public function __construct(AbstractRepository $next)
     {
         // Set the cache tags
-        // TODO: Fill this in!
-        $this->cacheTags = [];
+        $this->setCacheTags(/** TODO: Fill this in! */);
 
         parent::__construct($next);
     }
@@ -33,7 +32,7 @@ class DummyClass extends AbstractCache
      */
     public function index($index = 1)
     {
-        return $this->next->index($index);
+        return $this->forwardCached(__FUNCTION__, $index);
     }
 
     /**
@@ -43,6 +42,6 @@ class DummyClass extends AbstractCache
      */
     public function show(Model $model)
     {
-        return $this->next->show($model);
+        return $this->forwardCached(__FUNCTION__, $model);
     }
 }

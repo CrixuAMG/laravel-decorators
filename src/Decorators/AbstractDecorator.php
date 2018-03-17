@@ -143,15 +143,15 @@ abstract class AbstractDecorator implements DecoratorContract
      * @param string $method
      * @param array ...$args
      */
-    protected function forwardIfAllowed(bool $statement, string $exceptionMessage, string $method, ...$args)
+    protected function forwardIfAllowed(bool $statement, string $method, ...$args)
     {
         // Continue if the user is allowed
         if ($statement) {
-            $this->forward($method, ...$args);
+            return $this->forward($method, ...$args);
         }
 
         // The user is not allowed to continue
-        $this->denyRequest($exceptionMessage);
+        $this->denyRequest();
     }
 
     /**

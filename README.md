@@ -24,7 +24,7 @@ Wikipedia: "In object-oriented programming, the decorator pattern is a design pa
 Put the following in your composer.json file: 
 ```json
     "require": {
-        "crixuamg/laravel-decorators": "dev-develop",
+        "crixuamg/laravel-decorators": "^0.3.0",
         // ...
     }
 ```

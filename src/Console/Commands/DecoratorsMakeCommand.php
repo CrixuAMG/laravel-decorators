@@ -85,7 +85,10 @@ class DecoratorsMakeCommand extends Command
     {
         return [
             [
-                'command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.',
+                'command',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The terminal command that should be assigned.',
                 'command:name',
             ],
         ];

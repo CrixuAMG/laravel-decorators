@@ -82,7 +82,8 @@ class DecoratorMakeCommand extends GeneratorCommand
         $stub = parent::replaceClass($stub, $name);
 
         return str_replace(['RootNamespace\\', 'dummy:command'], [
-            $this->rootNamespace(), $this->option('command'),
+            $this->rootNamespace(),
+            $this->option('command'),
         ], $stub);
     }
 
@@ -107,7 +108,10 @@ class DecoratorMakeCommand extends GeneratorCommand
     {
         return [
             [
-                'command', null, InputOption::VALUE_OPTIONAL, 'The terminal command that should be assigned.',
+                'command',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The terminal command that should be assigned.',
                 'command:name',
             ],
         ];

@@ -4,9 +4,9 @@ namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
-use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**

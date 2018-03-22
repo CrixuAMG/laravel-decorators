@@ -34,14 +34,13 @@ Run `php artisan make:provider RepositoryServiceProvider`.
 Then, within the newly created provider register any set of class that you want to use the decorator pattern with.
 Example:
 ```php
-    use CrixuAMG\Decorators\Handler;
+    use CrixuAMG\Decorators\Decorator;
 
     public function register() 
     {
-        /**
-         * User repository
-         */
-        decorator()->decorate(UserContract::class, [
+        $decorator = new Decorator($this->app);
+        
+        $decorator->decorate(UserContract::class, [
             UserRepository::class,
             UserCache::class,
         ]);
@@ -60,3 +59,9 @@ To make development even faster and easier, some commands have been created to i
     php artisan decorator:repository ModelRepository
     php artisan decorator:contract   ModelContract
 ```
+
+Or, create all three in a single command:
+```bash
+    php artisan decorators:make User
+```
+The classes with automatically get their correct name based on the name provided.

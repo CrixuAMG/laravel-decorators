@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Exception;
@@ -41,6 +42,8 @@ abstract class AbstractCache implements DecoratorContract
      * AbstractCache constructor.
      *
      * @param AbstractRepository $next
+     *
+     * @throws \Throwable
      */
     public function __construct($next)
     {
@@ -52,39 +55,24 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param $next
-     *
-     * @throws \Throwable
-     */
-    protected function validateNextClass($next): void
-    {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            'Class does not implement any allowed parent classes.',
-            \UnexpectedValueException::class,
-            500
-        );
-    }
-
-    /**
      * @param int $index
      *
      * @return mixed
      */
-    abstract public function index($index = 1);
+    public function index($index = 1)
+    {
+        return $this->forwardCached(__FUNCTION__, $index);
+    }
 
     /**
      * @param Model $model
      *
      * @return mixed
      */
-    abstract public function show(Model $model);
+    public function show(Model $model)
+    {
+        return $this->forwardCached(__FUNCTION__, $model);
+    }
 
     /**
      * @param array $data
@@ -98,6 +86,35 @@ abstract class AbstractCache implements DecoratorContract
 
         // Redirect to our repository
         return $this->forward(__FUNCTION__, $data);
+    }
+
+    /**
+     * @param Model $model
+     * @param array $data
+     *
+     * @return mixed
+     */
+    public function update(Model $model, array $data)
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model, $data);
+    }
+
+    /**
+     * @param Model $model
+     *
+     * @return mixed
+     */
+    public function delete(Model $model)
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model);
     }
 
     /**
@@ -124,19 +141,11 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return array
-     */
-    public function getCacheTags(): array
-    {
-        return $this->cacheTags;
-    }
-
-    /**
      * @param string[] ...$cacheTags
      *
      * @return AbstractCache
      */
-    public function setCacheTags(...$cacheTags): AbstractCache
+    protected function setCacheTags(...$cacheTags): AbstractCache
     {
         // Set the firstTag variable that we can use to perform checks on
         $firstTag = reset($cacheTags);
@@ -169,45 +178,6 @@ abstract class AbstractCache implements DecoratorContract
 
         // Method does not exist or is not callable
         $this->throwMethodNotCallable($method);
-    }
-
-    /**
-     * @param string $method
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function throwMethodNotCallable(string $method): void
-    {
-        throw new UnexpectedValueException('Method ' . $method . ' does not exist or is not callable.');
-    }
-
-    /**
-     * @param Model $model
-     * @param array $data
-     *
-     * @return mixed
-     */
-    public function update(Model $model, array $data)
-    {
-        // Flush the cache
-        $this->flushCache();
-
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model, $data);
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @return mixed
-     */
-    public function delete(Model $model)
-    {
-        // Flush the cache
-        $this->flushCache();
-
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model);
     }
 
     /**
@@ -260,19 +230,11 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    public function getCacheTime()
-    {
-        return $this->cacheTime;
-    }
-
-    /**
      * @param int $cacheTime
      *
      * @return AbstractCache
      */
-    public function setCacheTime(int $cacheTime): AbstractCache
+    protected function setCacheTime(int $cacheTime): AbstractCache
     {
         $this->cacheTime = $cacheTime;
 
@@ -319,19 +281,11 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    public function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-
-    /**
      * @param mixed $cacheKey
      *
      * @return AbstractCache
      */
-    public function setCacheKey(string $cacheKey): AbstractCache
+    protected function setCacheKey(string $cacheKey): AbstractCache
     {
         $this->cacheKey = $cacheKey;
 
@@ -339,22 +293,77 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return array
-     */
-    public function getCacheParameters(): array
-    {
-        return (array)$this->cacheParameters;
-    }
-
-    /**
      * @param array $cacheParameters
      *
      * @return AbstractCache
      */
-    public function setCacheParameters(array $cacheParameters): AbstractCache
+    protected function setCacheParameters(array $cacheParameters): AbstractCache
     {
         $this->cacheParameters = $cacheParameters;
 
         return $this;
+    }
+
+    /**
+     * @param $next
+     *
+     * @throws \Throwable
+     */
+    private function validateNextClass($next): void
+    {
+        $allowedNextClasses = [
+            AbstractDecorator::class,
+            AbstractCache::class,
+            AbstractRepository::class,
+        ];
+
+        throw_unless(
+            \in_array(get_parent_class($next), $allowedNextClasses, true),
+            'Class ' . \get_class($next) . ' does not implement any allowed parent classes.',
+            \UnexpectedValueException::class,
+            500
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheTags(): array
+    {
+        return $this->cacheTags;
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function throwMethodNotCallable(string $method): void
+    {
+        throw new UnexpectedValueException('Method ' . $method . ' does not exist or is not callable.');
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheTime()
+    {
+        return $this->cacheTime;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheParameters(): array
+    {
+        return (array)$this->cacheParameters;
     }
 }

@@ -42,7 +42,7 @@ abstract class AbstractDecorator implements DecoratorContract
      *
      * @throws \Throwable
      */
-    protected function validateNextClass($next): void
+    private function validateNextClass($next): void
     {
         $allowedNextClasses = [
             AbstractDecorator::class,
@@ -52,7 +52,7 @@ abstract class AbstractDecorator implements DecoratorContract
 
         throw_unless(
             \in_array(get_parent_class($next), $allowedNextClasses, true),
-            'Class does not implement any allowed parent classes.',
+            'Class ' . \get_class($next) . ' does not implement any allowed parent classes.',
             \UnexpectedValueException::class,
             500
         );

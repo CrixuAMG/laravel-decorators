@@ -40,18 +40,18 @@ class DecoratorsMakeCommand extends Command
     public function handle()
     {
         $commandsToExecute = [
-            'make:contract',
-            'make:cache',
-            'make:repository',
+            'make:contract'   => 'Contract',
+            'make:cache'      => 'Cache',
+            'make:repository' => 'Repository',
         ];
 
         $className = $this->getNameInput();
 
-        foreach ($commandsToExecute as $commandToExecute) {
-            $this->info('php artisan ' . $commandToExecute . ' ' . $className);
+        foreach ($commandsToExecute as $commandToExecute => $extension) {
+            $this->info('php artisan ' . $commandToExecute . ' ' . $className . $extension);
 
             Artisan::call($commandToExecute, [
-                'name' => $className,
+                'name' => $className . $extension,
             ]);
         }
     }

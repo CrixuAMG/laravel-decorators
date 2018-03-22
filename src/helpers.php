@@ -40,12 +40,3 @@ if (!function_exists('implementsCache')) {
     }
 }
 
-if (!function_exists('decorator')) {
-    /**
-     * @return Decorator
-     */
-    function decorator()
-    {
-        return new Decorator();
-    }
-}

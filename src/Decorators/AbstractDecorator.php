@@ -158,10 +158,16 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
+     * @param string $exception
      * @param string $message
+     * @param int    $code
      */
-    protected function denyRequest(string $message = 'You are not allowed to perform this action.')
+    protected function denyRequest(
+        $exception = UnauthorizedException::class,
+        string $message = 'You are not allowed to perform this action.',
+        int $code = 403
+    )
     {
-        throw new UnauthorizedException($message);
+        throw new $exception($message, $code);
     }
 }

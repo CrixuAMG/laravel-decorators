@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Modules;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Events\Dispatchable;
 
 /**
  * Trait EventModule
@@ -13,6 +14,7 @@ trait EventModule
 {
     private $autoUpdateModel;
     private $updateAbleField;
+    private $target;
 
     /**
      * @param       $class
@@ -31,12 +33,21 @@ trait EventModule
             422
         );
 
-        // TODO check it uses Dispatchable (class_uses)
+        throw_unless(
+            isset(class_uses($class)[Dispatchable::class]),
+            \UnexpectedValueException::class,
+            'The specified class does not implement Dispatchable',
+            422
+        );
 
-        if ($this->getUpdateAbleField() && $this->getAutoUpdateModel()) {
-            $this->getAutoUpdateModel()->update([
+        $updatableField = $this->getUpdateAbleField();
+        $updatableModel = $this->getAutoUpdateModel();
+
+        // Update the field if both variables are filled
+        if ($updatableField && $updatableModel) {
+            $updatableModel->update([
                 // Todo, allow the type to be set
-                $this->getUpdateAbleField() => true,
+                $updatableField => true,
             ]);
         }
 
@@ -83,6 +94,26 @@ trait EventModule
     public function setAutoUpdateModel(Model $autoUpdateModel)
     {
         $this->autoUpdateModel = $autoUpdateModel;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    /**
+     * The target to send the notification to
+     *
+     * @param mixed $target
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
 
         return $this;
     }

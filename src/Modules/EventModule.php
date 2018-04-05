@@ -32,7 +32,7 @@ class EventModule
      *
      * @throws \Throwable
      */
-    protected function fireEvent($class, ...$args)
+    public function fireEvent($class, ...$args)
     {
         $class = \get_class($class);
 
@@ -83,7 +83,7 @@ class EventModule
      * @return bool|EventModule
      * @throws \Throwable
      */
-    protected function fireEventIf($class, bool $statement, ...$args)
+    public function fireEventIf($class, bool $statement, ...$args)
     {
         if ($statement) {
             return $this->fireEvent($class, ...$args);
@@ -100,7 +100,7 @@ class EventModule
      * @return bool|EventModule
      * @throws \Throwable
      */
-    protected function fireEventUnless($class, bool $statement, ...$args)
+    public function fireEventUnless($class, bool $statement, ...$args)
     {
         if (!$statement) {
             return $this->fireEvent($class, ...$args);
@@ -122,7 +122,7 @@ class EventModule
      *
      * @return EventModule
      */
-    protected function setUpdateAbleField(string $updateAbleField)
+    public function setUpdateAbleField(string $updateAbleField)
     {
         $this->updateAbleField = $updateAbleField;
 
@@ -142,7 +142,7 @@ class EventModule
      *
      * @return EventModule
      */
-    protected function setAutoUpdateModel(Model $autoUpdateModel)
+    public function setAutoUpdateModel(Model $autoUpdateModel)
     {
         $this->autoUpdateModel = $autoUpdateModel;
 
@@ -162,7 +162,7 @@ class EventModule
      *
      * @param mixed $target
      */
-    protected function setTarget($target)
+    public function setTarget($target)
     {
         $this->target = $target;
 

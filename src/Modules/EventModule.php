@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators\Modules;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Notifications\Notification;
 
 /**
  * Class EventModule
@@ -12,8 +13,17 @@ use Illuminate\Foundation\Events\Dispatchable;
  */
 class EventModule
 {
+    /**
+     * @var
+     */
     private $autoUpdateModel;
+    /**
+     * @var
+     */
     private $updateAbleField;
+    /**
+     * @var
+     */
     private $target;
 
     /**
@@ -22,7 +32,7 @@ class EventModule
      *
      * @throws \Throwable
      */
-    public function fireEvent($class, ...$args)
+    protected function fireEvent($class, ...$args)
     {
         $class = \get_class($class);
 
@@ -42,26 +52,67 @@ class EventModule
 
         $updatableField = $this->getUpdateAbleField();
         $updatableModel = $this->getAutoUpdateModel();
+        $target = $this->getTarget();
 
         // Update the field if both variables are filled
         if ($updatableField && $updatableModel) {
-            $updatableModel->update([
-                // Todo, allow the type to be set
-                $updatableField => true,
-            ]);
+            if (!$updatableModel->{$updatableField}) {
+                $updatableModel->update([
+                    // Todo, allow the type to be set
+                    $updatableField => true,
+                ]);
+
+                if ($target) {
+                    $target->notify(new $class, ...$args);
+                } else {
+                    Notification::notify(new $class(...$args));
+                }
+            }
+        } else {
+            Notification::notify(new $class(...$args));
         }
-
-        // Todo: check whether it should be fired or not
-
-        $class::dispatch(...$args);
 
         return $this;
     }
 
     /**
+     * @param       $class
+     * @param bool  $statement
+     * @param mixed ...$args
+     *
+     * @return bool|EventModule
+     * @throws \Throwable
+     */
+    protected function fireEventIf($class, bool $statement, ...$args)
+    {
+        if ($statement) {
+            return $this->fireEvent($class, ...$args);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param       $class
+     * @param bool  $statement
+     * @param mixed ...$args
+     *
+     * @return bool|EventModule
+     * @throws \Throwable
+     */
+    protected function fireEventUnless($class, bool $statement, ...$args)
+    {
+        if (!$statement) {
+            return $this->fireEvent($class, ...$args);
+        }
+
+        return false;
+    }
+
+    /**
      * @return bool
      */
-    public function getUpdateAbleField()
+    private function getUpdateAbleField()
     {
         return $this->updateAbleField;
     }
@@ -71,7 +122,7 @@ class EventModule
      *
      * @return EventModule
      */
-    public function setUpdateAbleField(string $updateAbleField)
+    protected function setUpdateAbleField(string $updateAbleField)
     {
         $this->updateAbleField = $updateAbleField;
 
@@ -81,7 +132,7 @@ class EventModule
     /**
      * @return mixed
      */
-    public function getAutoUpdateModel()
+    private function getAutoUpdateModel()
     {
         return $this->autoUpdateModel;
     }
@@ -91,7 +142,7 @@ class EventModule
      *
      * @return EventModule
      */
-    public function setAutoUpdateModel(Model $autoUpdateModel)
+    protected function setAutoUpdateModel(Model $autoUpdateModel)
     {
         $this->autoUpdateModel = $autoUpdateModel;
 
@@ -101,7 +152,7 @@ class EventModule
     /**
      * @return mixed
      */
-    public function getTarget()
+    private function getTarget()
     {
         return $this->target;
     }
@@ -111,7 +162,7 @@ class EventModule
      *
      * @param mixed $target
      */
-    public function setTarget($target)
+    protected function setTarget($target)
     {
         $this->target = $target;
 

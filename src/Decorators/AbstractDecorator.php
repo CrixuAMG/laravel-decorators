@@ -24,14 +24,6 @@ abstract class AbstractDecorator implements DecoratorContract
     protected $next;
 
     /**
-     * @var array
-     */
-    private $baseModules = [
-        SecurityModule::class => 'security',
-        EventModule::class    => 'event',
-    ];
-
-    /**
      * AbstractDecorator constructor.
      *
      * @param $next
@@ -43,7 +35,10 @@ abstract class AbstractDecorator implements DecoratorContract
         // Validate the next class
         $this->validateNextClass($next);
 
-        $this->registerModules($this->baseModules);
+        $modulesToRegister = (array)config('decorators.modules');
+        if ($modulesToRegister) {
+            $this->registerModules($modulesToRegister);
+        }
 
         // Set the next class so methods can be called on it
         $this->next = $next;

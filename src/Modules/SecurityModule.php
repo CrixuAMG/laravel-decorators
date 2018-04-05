@@ -2,7 +2,12 @@
 
 namespace CrixuAMG\Decorators\Modules;
 
-trait SecurityModule
+/**
+ * Class SecurityModule
+ *
+ * @package CrixuAMG\Decorators\Modules
+ */
+class SecurityModule
 {
 
 }

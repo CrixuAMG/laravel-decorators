@@ -18,11 +18,18 @@ use UnexpectedValueException;
  */
 abstract class AbstractDecorator implements DecoratorContract
 {
-    use SecurityModule, EventModule;
     /**
      * @var AbstractCache|AbstractRepository
      */
     protected $next;
+
+    /**
+     * @var array
+     */
+    private $baseModules = [
+        SecurityModule::class => 'security',
+        EventModule::class    => 'event',
+    ];
 
     /**
      * AbstractDecorator constructor.
@@ -36,8 +43,29 @@ abstract class AbstractDecorator implements DecoratorContract
         // Validate the next class
         $this->validateNextClass($next);
 
+        $this->registerModules($this->baseModules);
+
         // Set the next class so methods can be called on it
         $this->next = $next;
+    }
+
+    /**
+     * @param array $modules
+     */
+    public function registerModules(array $modules)
+    {
+        foreach ($modules as $module => $nameSpace) {
+            $this->registerModule($module, $nameSpace);
+        }
+    }
+
+    /**
+     * @param        $module
+     * @param string $namespace
+     */
+    public function registerModule($module, string $namespace)
+    {
+        $this->{$namespace} = new $module;
     }
 
     /**

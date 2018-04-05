@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 
 /**
- * Trait EventModule
+ * Class EventModule
  *
  * @package CrixuAMG\Decorators\Traits
  */
-trait EventModule
+class EventModule
 {
     private $autoUpdateModel;
     private $updateAbleField;

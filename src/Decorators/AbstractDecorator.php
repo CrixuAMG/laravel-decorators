@@ -4,8 +4,6 @@ namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Modules\EventModule;
-use CrixuAMG\Decorators\Modules\SecurityModule;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\UnauthorizedException;
@@ -60,6 +58,13 @@ abstract class AbstractDecorator implements DecoratorContract
      */
     public function registerModule($module, string $namespace)
     {
+        throw_if(
+            method_exists($this, $namespace),
+            'Namespace ' . $namespace . ' exists as a method and cannot be used as an alias.',
+            \UnexpectedValueException::class,
+            422
+        );
+
         $this->{$namespace} = new $module;
     }
 

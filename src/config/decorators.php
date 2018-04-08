@@ -20,8 +20,7 @@ return [
      * Define modules here as a Classname => Namespace combination
      * Within any class implementing the AbstractDecorator, the $this->(Namespace) value will be set
      */
-    'modules' => [
-        SecurityModule::class => 'security',
-        EventModule::class    => 'event',
+    'modules'       => [
+        EventModule::class => 'event',
     ],
 ];

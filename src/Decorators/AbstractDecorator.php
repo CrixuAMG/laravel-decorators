@@ -33,9 +33,9 @@ abstract class AbstractDecorator implements DecoratorContract
         // Validate the next class
         $this->validateNextClass($next);
 
-        $modulesToRegister = (array)config('decorators.modules');
-        if ($modulesToRegister) {
-            $this->registerModules($modulesToRegister);
+        // Check if modules should get loaded in
+        if (config('decorators.modules_enabled')) {
+            $this->registerConfigModules();
         }
 
         // Set the next class so methods can be called on it
@@ -43,12 +43,23 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
+     * Register any module registered in the config file 
+     */
+    public function registerConfigModules()
+    {
+        $modulesToRegister = (array)config('decorators.modules');
+        if ($modulesToRegister) {
+            $this->registerModules($modulesToRegister);
+        }
+    }
+
+    /**
      * @param array $modules
      */
     public function registerModules(array $modules)
     {
-        foreach ($modules as $module => $nameSpace) {
-            $this->registerModule($module, $nameSpace);
+        foreach ($modules as $module => $namespace) {
+            $this->registerModule($module, $namespace);
         }
     }
 
@@ -61,6 +72,13 @@ abstract class AbstractDecorator implements DecoratorContract
         throw_if(
             method_exists($this, $namespace),
             'Namespace ' . $namespace . ' exists as a method and cannot be used as an alias.',
+            \UnexpectedValueException::class,
+            422
+        );
+
+        throw_if(
+            isset($this->{$namespace}),
+            'Namespace ' . $namespace . ' already exists within the AbstractDecorator class and cannot be used as an alias.',
             \UnexpectedValueException::class,
             422
         );

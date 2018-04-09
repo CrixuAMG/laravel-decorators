@@ -209,7 +209,7 @@ abstract class AbstractCache implements DecoratorContract
         }
 
         // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, $args);
+        $cacheKey = $this->generateCacheKey($method, ...$args);
 
         // Verify the method exists on the next iteration and that it is callable
         if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
@@ -243,13 +243,13 @@ abstract class AbstractCache implements DecoratorContract
 
     /**
      * @param string $method
-     * @param        $args
+     * @param array  ...$args
      *
      * @throws \Throwable
      *
      * @return mixed|string
      */
-    protected function generateCacheKey(string $method, $args)
+    protected function generateCacheKey(string $method, ...$args)
     {
         // Check if there is a cache key set
         $cacheKey = $this->getCacheKey();

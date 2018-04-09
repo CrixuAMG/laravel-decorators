@@ -34,7 +34,7 @@ abstract class AbstractDecorator implements DecoratorContract
         $this->validateNextClass($next);
 
         // Check if modules should get loaded in
-        if (config('decorators.modules_enabled')) {
+        if ((bool)config('decorators.modules_enabled')) {
             $this->registerConfigModules();
         }
 

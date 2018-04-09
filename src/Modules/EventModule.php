@@ -34,7 +34,9 @@ class EventModule
      */
     public function fireEvent($class, ...$args)
     {
-        $class = \get_class($class);
+        if (!\is_string($class)) {
+            $class = \get_class($class);
+        }
 
         throw_unless(
             $class,

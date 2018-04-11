@@ -1,6 +1,6 @@
 <?php
 
-namespace CrixuAMG\Decorators\Console\Commands;
+namespace CrixuANG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -75,6 +75,13 @@ class CacheMakeCommand extends GeneratorCommand
     protected function replaceClass($stub, $name)
     {
         $stub = parent::replaceClass($stub, $name);
+
+        $name = $this->getNameInput();
+
+        // Fill the cache tags
+        $name = "'" . strtolower(str_plural(explode($this->type, $name)[0])) . "'";
+
+        $stub = str_replace('DummyCacheTags', $name, $stub);
 
         return str_replace(['RootNamespace\\', 'dummy:command'], [
             $this->rootNamespace(),

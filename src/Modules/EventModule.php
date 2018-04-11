@@ -1,15 +1,17 @@
 <?php
 
-namespace CrixuAMG\Decorators\Modules;
+namespace CrixuANG\Decorators\Modules;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Notifications\Notification;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
+use InvalidArgumentException;
 
 /**
  * Class EventModule
  *
- * @package CrixuAMG\Decorators\Traits
+ * @package CrixuANG\Decorators\Traits
  */
 class EventModule
 {
@@ -20,7 +22,7 @@ class EventModule
     /**
      * @var
      */
-    private $updateAbleField;
+    private $updatableField;
     /**
      * @var
      */
@@ -31,8 +33,10 @@ class EventModule
      * @param mixed ...$args
      *
      * @throws \Throwable
+     *
+     * @return EventModule
      */
-    public function fireEvent($class, ...$args)
+    public function fireEvent($class, ...$args): EventModule
     {
         if (!\is_string($class)) {
             $class = \get_class($class);
@@ -46,15 +50,15 @@ class EventModule
         );
 
         throw_unless(
-            isset(class_uses($class)[Dispatchable::class]),
+            isset(class_uses($class)[Queueable::class]),
             \UnexpectedValueException::class,
-            'The specified class does not implement Dispatchable',
+            'The specified class does not implement Queueable',
             422
         );
 
         $updatableField = $this->getUpdateAbleField();
         $updatableModel = $this->getAutoUpdateModel();
-        $target = $this->getTarget();
+        $target         = $this->getTarget();
 
         // Update the field if both variables are filled
         if ($updatableField && $updatableModel) {
@@ -63,15 +67,18 @@ class EventModule
                     // Todo, allow the type to be set
                     $updatableField => true,
                 ]);
-
                 if ($target) {
-                    $target->notify(new $class, ...$args);
+                    $target->notify(new $class(...$args));
                 } else {
                     Notification::notify(new $class(...$args));
                 }
             }
         } else {
-            Notification::notify(new $class(...$args));
+            if ($target) {
+                Notification::send($target, new $class(...$args));
+            } else {
+                Notification::notify(new $class(...$args));
+            }
         }
 
         return $this;
@@ -112,23 +119,63 @@ class EventModule
     }
 
     /**
+     * @param string $updatableField
+     *
+     * @return EventModule
+     */
+    public function setUpdatableField(string $updatableField): EventModule
+    {
+        $this->updatableField = $updatableField;
+
+        return $this;
+    }
+
+    /**
+     * @param Model $autoUpdateModel
+     *
+     * @return EventModule
+     */
+    public function setAutoUpdateModel(Model $autoUpdateModel): EventModule
+    {
+        $this->autoUpdateModel = $autoUpdateModel;
+
+        return $this;
+    }
+
+    /**
+     * The target to send the notification to
+     *
+     * @param mixed $target
+     *
+     * @return EventModule
+     */
+    public function setTarget($target): EventModule
+    {
+        if ($target instanceof Collection) {
+            $target->each(function ($targetModel) {
+                if ($targetModel instanceof Model) {
+                    $this->validateNotifiableTarget($targetModel);
+                } else {
+                    $this->invalidTarget();
+                }
+            });
+        } elseif ($target instanceof Model) {
+            $this->validateNotifiableTarget($target);
+        } else {
+            $this->invalidTarget();
+        }
+
+        $this->target = $target;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     private function getUpdateAbleField()
     {
-        return $this->updateAbleField;
-    }
-
-    /**
-     * @param string $updateAbleField
-     *
-     * @return EventModule
-     */
-    public function setUpdateAbleField(string $updateAbleField)
-    {
-        $this->updateAbleField = $updateAbleField;
-
-        return $this;
+        return $this->updatableField;
     }
 
     /**
@@ -140,18 +187,6 @@ class EventModule
     }
 
     /**
-     * @param Model $autoUpdateModel
-     *
-     * @return EventModule
-     */
-    public function setAutoUpdateModel(Model $autoUpdateModel)
-    {
-        $this->autoUpdateModel = $autoUpdateModel;
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
     private function getTarget()
@@ -160,14 +195,20 @@ class EventModule
     }
 
     /**
-     * The target to send the notification to
-     *
-     * @param mixed $target
+     * @param Model $target
      */
-    public function setTarget($target)
+    private function validateNotifiableTarget(Model $target)
     {
-        $this->target = $target;
+        if (!isset(class_uses($target)['Illuminate\Notifications\Notifiable'])) {
+            $this->invalidTarget();
+        }
+    }
 
-        return $this;
+    /**
+     * @throws \InvalidArgumentException
+     */
+    private function invalidTarget()
+    {
+        throw new InvalidArgumentException('The set target is not valid.');
     }
 }

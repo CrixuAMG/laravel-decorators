@@ -1,6 +1,6 @@
 <?php
 
-namespace CrixuANG\Decorators\Modules;
+namespace CrixuAMG\Decorators\Modules;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +11,7 @@ use InvalidArgumentException;
 /**
  * Class EventModule
  *
- * @package CrixuANG\Decorators\Traits
+ * @package CrixuAMG\Decorators\Traits
  */
 class EventModule
 {

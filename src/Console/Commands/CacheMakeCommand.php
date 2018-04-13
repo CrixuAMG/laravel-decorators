@@ -1,6 +1,6 @@
 <?php
 
-namespace CrixuANG\Decorators\Console\Commands;
+namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;

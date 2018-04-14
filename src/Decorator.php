@@ -94,7 +94,7 @@ class Decorator
 
         foreach ((array)$chain as $parentClass => $class) {
             // Check if cache is enabled and the class implements the cache class
-            if (implementsCache($class) && !$this->shouldWrapCache($class)) {
+            if (implementsCache($class) && !$this->shouldWrapCache()) {
                 continue;
             }
 
@@ -113,11 +113,9 @@ class Decorator
     }
 
     /**
-     * @param $class
-     *
      * @return bool
      */
-    private function shouldWrapCache($class)
+    private function shouldWrapCache()
     {
         return (
             !$this->cacheEnabled &&

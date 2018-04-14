@@ -28,6 +28,10 @@ abstract class AbstractRepository implements DecoratorContract
      * @var
      */
     private $whens;
+    /**
+     * @var int
+     */
+    private $paginationLimit;
 
     /**
      * @param string $name
@@ -45,7 +49,11 @@ abstract class AbstractRepository implements DecoratorContract
             $name = str_replace('set_where_', '', $name);
             // If the name is still valid, continue
             if ($name) {
-                return $this->setWheres([$name => reset($arguments)]);
+                return $this->addWhere(
+                    function ($query) use ($name, $arguments) {
+                        return $query->where($name, reset($arguments));
+                    }
+                );
             }
         }
 
@@ -54,11 +62,55 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @return mixed
+     * @param string $column
+     * @param string $string
+     *
+     * @return AbstractRepository
      */
-    private function getWhens()
+    public function setWhereLike(string $column, string $string)
     {
-        return (array)$this->whens;
+        return $this->addWhere(
+            function ($query) use ($column, $string) {
+                return $query->where($column, 'LIKE', $string);
+            }
+        );
+    }
+
+    /**
+     * @param string $column
+     * @param        $firstValue
+     * @param        $secondValue
+     *
+     * @return AbstractRepository
+     */
+    public function setWhereBetween(string $column, $firstValue, $secondValue)
+    {
+        return $this->addWhere(
+            function ($query) use ($column, $firstValue, $secondValue) {
+                return $query->whereBetween($column, [
+                    $firstValue,
+                    $secondValue,
+                ]);
+            }
+        );
+    }
+
+    /**
+     * @param string $column
+     * @param mixed  ...$arguments
+     *
+     * @return AbstractRepository
+     * @throws \Throwable
+     */
+    public function setWhereIn(string $column, ...$arguments)
+    {
+        $this->validateArgumentCount(\count($arguments), 2, true);
+
+        return $this->addWhere(
+            function ($query) use ($column, $arguments) {
+                return $query->whereIn($column, $arguments);
+            }
+        );
     }
 
     /**
@@ -77,16 +129,15 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @var int
+     * @param array|\Closure $where
+     *
+     * @return $this
      */
-    private $paginationLimit;
-
-    /**
-     * @return mixed
-     */
-    private function getPaginationLimit()
+    public function addWhere($where)
     {
-        return (int)$this->paginationLimit;
+        $this->wheres[] = $where;
+
+        return $this;
     }
 
     /**
@@ -102,14 +153,6 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    private function getWheres()
-    {
-        return (array)$this->wheres;
-    }
-
-    /**
      * @param mixed $wheres
      *
      * @return AbstractRepository
@@ -119,14 +162,6 @@ abstract class AbstractRepository implements DecoratorContract
         $this->wheres = $wheres;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getScopes()
-    {
-        return (array)$this->scopes;
     }
 
     /**
@@ -250,11 +285,15 @@ abstract class AbstractRepository implements DecoratorContract
      */
     public function show(Model $model, ...$relations)
     {
+        // Get the class
+        $class = \get_class($model);
+
         if (!empty($relations)) {
+            // Load only specified relations
             $model->load(...$relations);
-        } elseif (method_exists(\get_class($model), 'getDefaultRelations')) {
+        } elseif (method_exists($class, 'getDefaultRelations')) {
             // If the method getDefaultRelations exists, call it to load in relations before returning the model
-            $model->load((array)\get_class($model)::getDefaultRelations());
+            $model->load((array)$class::getDefaultRelations());
         }
 
         // Return the model
@@ -278,6 +317,38 @@ abstract class AbstractRepository implements DecoratorContract
         }
 
         return $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getWhens()
+    {
+        return (array)$this->whens;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getPaginationLimit()
+    {
+        return (int)$this->paginationLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getWheres()
+    {
+        return (array)$this->wheres;
+    }
+
+    /**
+     * @return array
+     */
+    private function getScopes()
+    {
+        return (array)$this->scopes;
     }
 
     /**
@@ -324,10 +395,39 @@ abstract class AbstractRepository implements DecoratorContract
         $wheres = $this->getWheres();
         if ($wheres) {
             foreach ($wheres as $column => $value) {
-                $query->where($column, $value);
+                if ($value instanceof \Closure) {
+                    $query->where($value);
+                } else {
+                    $query->where($column, $value);
+                }
             }
         }
 
         return $query;
+    }
+
+    /**
+     * @param int  $argumentsCount
+     * @param int  $expectedArgumentCount
+     * @param bool $acceptMoreArguments
+     *
+     * @throws \Throwable
+     */
+    private function validateArgumentCount(
+        int $argumentsCount,
+        int $expectedArgumentCount,
+        bool $acceptMoreArguments = false
+    ): void
+    {
+        $statement = $acceptMoreArguments
+            ? $argumentsCount >= 2
+            : $argumentsCount === 2;
+
+        throw_unless(
+            $statement,
+            \InvalidArgumentException::class,
+            sprintf('%d arguments were supplied and exactly %s were expected', $argumentsCount, $expectedArgumentCount),
+            422
+        );
     }
 }

@@ -25,6 +25,58 @@ abstract class AbstractRepository implements DecoratorContract
      */
     private $wheres;
     /**
+     * @var
+     */
+    private $whens;
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     *
+     * @return bool|AbstractRepository
+     */
+    public function __call(string $name, array $arguments)
+    {
+        // Check if the user is trying to call a dynamic where method (such as setWhereName)
+        if (strpos($name, 'setWhere') !== false) {
+            // Convert setWhereName to set_where_name
+            $name = snake_case($name);
+            // Remove set_where_
+            $name = str_replace('set_where_', '', $name);
+            // If the name is still valid, continue
+            if ($name) {
+                return $this->setWheres([$name => reset($arguments)]);
+            }
+        }
+
+        // No match could be found or something went wrong
+        return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getWhens()
+    {
+        return (array)$this->whens;
+    }
+
+    /**
+     * @param          $statement
+     * @param \Closure $callback
+     *
+     * @return $this
+     */
+    public function addWhen($statement, \Closure $callback)
+    {
+        if ((bool)$statement) {
+            $this->whens[] = $callback;
+        }
+
+        return $this;
+    }
+
+    /**
      * @var int
      */
     private $paginationLimit;
@@ -39,6 +91,8 @@ abstract class AbstractRepository implements DecoratorContract
 
     /**
      * @param mixed $paginationLimit
+     *
+     * @return AbstractRepository
      */
     public function setPaginationLimit(int $paginationLimit)
     {
@@ -57,6 +111,8 @@ abstract class AbstractRepository implements DecoratorContract
 
     /**
      * @param mixed $wheres
+     *
+     * @return AbstractRepository
      */
     public function setWheres(array $wheres)
     {
@@ -75,6 +131,8 @@ abstract class AbstractRepository implements DecoratorContract
 
     /**
      * @param mixed $scopes
+     *
+     * @return AbstractRepository
      */
     public function setScopes(...$scopes)
     {
@@ -103,6 +161,9 @@ abstract class AbstractRepository implements DecoratorContract
 
         // If the where is not empty, use it to filter results
         $query = $this->registerWheres($query);
+
+        // If whens are defined, add them to the query
+        $query = $this->registerWhens($query);
 
         // If scopes are defined, add them to the query
         $query = $this->registerScopes($query);
@@ -224,6 +285,23 @@ abstract class AbstractRepository implements DecoratorContract
      *
      * @return mixed
      */
+    private function registerWhens($query)
+    {
+        $whens = $this->getWhens();
+        if ($whens) {
+            foreach ($whens as $callback) {
+                $query->when(true, $callback);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
     private function registerScopes($query)
     {
         $scopes = $this->getScopes();
@@ -245,7 +323,9 @@ abstract class AbstractRepository implements DecoratorContract
     {
         $wheres = $this->getWheres();
         if ($wheres) {
-            $query->where($wheres);
+            foreach ($wheres as $column => $value) {
+                $query->where($column, $value);
+            }
         }
 
         return $query;

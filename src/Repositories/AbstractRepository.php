@@ -28,6 +28,10 @@ abstract class AbstractRepository implements DecoratorContract
      * @var
      */
     private $whens;
+    /**
+     * @var int
+     */
+    private $paginationLimit;
 
     /**
      * @param string $name
@@ -110,14 +114,6 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    private function getWhens()
-    {
-        return (array)$this->whens;
-    }
-
-    /**
      * @param          $statement
      * @param \Closure $callback
      *
@@ -133,8 +129,7 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @param          $statement
-     * @param \Closure $callback
+     * @param array|\Closure $where
      *
      * @return $this
      */
@@ -143,19 +138,6 @@ abstract class AbstractRepository implements DecoratorContract
         $this->wheres[] = $where;
 
         return $this;
-    }
-
-    /**
-     * @var int
-     */
-    private $paginationLimit;
-
-    /**
-     * @return mixed
-     */
-    private function getPaginationLimit()
-    {
-        return (int)$this->paginationLimit;
     }
 
     /**
@@ -171,14 +153,6 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    private function getWheres()
-    {
-        return (array)$this->wheres;
-    }
-
-    /**
      * @param mixed $wheres
      *
      * @return AbstractRepository
@@ -188,14 +162,6 @@ abstract class AbstractRepository implements DecoratorContract
         $this->wheres = $wheres;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    private function getScopes()
-    {
-        return (array)$this->scopes;
     }
 
     /**
@@ -354,6 +320,38 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
+     * @return mixed
+     */
+    private function getWhens()
+    {
+        return (array)$this->whens;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getPaginationLimit()
+    {
+        return (int)$this->paginationLimit;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getWheres()
+    {
+        return (array)$this->wheres;
+    }
+
+    /**
+     * @return array
+     */
+    private function getScopes()
+    {
+        return (array)$this->scopes;
+    }
+
+    /**
      * @param $query
      *
      * @return mixed
@@ -415,7 +413,11 @@ abstract class AbstractRepository implements DecoratorContract
      *
      * @throws \Throwable
      */
-    private function validateArgumentCount(int $argumentsCount, int $expectedArgumentCount, bool $acceptMoreArguments = false): void
+    private function validateArgumentCount(
+        int $argumentsCount,
+        int $expectedArgumentCount,
+        bool $acceptMoreArguments = false
+    ): void
     {
         $statement = $acceptMoreArguments
             ? $argumentsCount >= 2

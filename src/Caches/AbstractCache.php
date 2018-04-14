@@ -16,7 +16,6 @@ use UnexpectedValueException;
  */
 abstract class AbstractCache implements DecoratorContract
 {
-
     /**
      * @var AbstractRepository
      */
@@ -49,29 +48,41 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param int $index
-     *
      * @throws Exception
      * @throws \Throwable
      *
      * @return mixed
      */
-    public function index($index = 1)
+    public function index()
     {
-        return $this->forwardCached(__FUNCTION__, $index);
+        return $this->forwardCached(__FUNCTION__);
+    }
+
+    /**
+     * @param Model    $model
+     * @param bool     $paginate
+     * @param int|null $itemsPerPage
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    {
+        return $this->forwardCached(__FUNCTION__, $model, $paginate, $itemsPerPage);
     }
 
     /**
      * @param Model $model
+     * @param mixed ...$relations
      *
      * @throws Exception
      * @throws \Throwable
      *
      * @return mixed
      */
-    public function show(Model $model)
+    public function show(Model $model, ...$relations)
     {
-        return $this->forwardCached(__FUNCTION__, $model);
+        return $this->forwardCached(__FUNCTION__, $model, ...$relations);
     }
 
     /**
@@ -89,6 +100,23 @@ abstract class AbstractCache implements DecoratorContract
 
         // Redirect to our repository
         return $this->forward(__FUNCTION__, $data);
+    }
+
+    /**
+     * @param Model  $model
+     * @param array  $data
+     * @param string $createMethod
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model, $data, $createMethod);
     }
 
     /**

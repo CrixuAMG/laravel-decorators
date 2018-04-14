@@ -17,30 +17,95 @@ use UnexpectedValueException;
 abstract class AbstractRepository implements DecoratorContract
 {
     /**
+     * @var array
+     */
+    private $scopes;
+    /**
+     * @var array
+     */
+    private $wheres;
+    /**
+     * @var int
+     */
+    private $paginationLimit;
+
+    /**
+     * @return mixed
+     */
+    private function getPaginationLimit()
+    {
+        return (int)$this->paginationLimit;
+    }
+
+    /**
+     * @param mixed $paginationLimit
+     */
+    public function setPaginationLimit(int $paginationLimit)
+    {
+        $this->paginationLimit = $paginationLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getWheres()
+    {
+        return (array)$this->wheres;
+    }
+
+    /**
+     * @param mixed $wheres
+     */
+    public function setWheres(array $wheres)
+    {
+        $this->wheres = $wheres;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    private function getScopes()
+    {
+        return (array)$this->scopes;
+    }
+
+    /**
+     * @param mixed $scopes
+     */
+    public function setScopes(...$scopes)
+    {
+        $this->scopes = $scopes;
+
+        return $this;
+    }
+
+    /**
      * Returns the index
-     *
-     * @param $page
      *
      * @return mixed
      */
-    abstract public function index($page);
+    abstract public function index();
 
     /**
      * @param Model $model
-     * @param array $where
      * @param bool  $paginate
      * @param int   $itemsPerPage
      *
      * @return LengthAwarePaginator|Collection|static[]
      */
-    public function simpleIndex(Model $model, array $where = [], bool $paginate = false, int $itemsPerPage = 25)
+    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
     {
         $query = $model->query();
 
         // If the where is not empty, use it to filter results
-        if (!empty($where)) {
-            $query->where($where);
-        }
+        $query = $this->registerWheres($query);
+
+        // If scopes are defined, add them to the query
+        $query = $this->registerScopes($query);
 
         // If the method getDefaultRelations exists, call it to load in relations before returning the model
         if (method_exists(\get_class($model), 'getDefaultRelations')) {
@@ -48,11 +113,17 @@ abstract class AbstractRepository implements DecoratorContract
             $query->with((array)\get_class($model)::getDefaultRelations());
         }
 
+        if ($paginate && !$itemsPerPage) {
+            $itemsPerPage = $this->getPaginationLimit();
+            if (!$itemsPerPage) {
+                $itemsPerPage = config('decorators.pagination');
+            }
+        }
+
         // Return the data
         return $paginate && $itemsPerPage
             ? $query->paginate($itemsPerPage)
             : $query->get();
-
     }
 
     /**
@@ -112,7 +183,7 @@ abstract class AbstractRepository implements DecoratorContract
      * Return a single model
      *
      * @param Model $model
-     * @param array $relations
+     * @param mixed $relations
      *
      * @return mixed
      */
@@ -146,5 +217,37 @@ abstract class AbstractRepository implements DecoratorContract
         }
 
         return $result;
+    }
+
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    private function registerScopes($query)
+    {
+        $scopes = $this->getScopes();
+        if ($scopes) {
+            foreach ($scopes as $scope) {
+                $query->{$scope}();
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param $query
+     *
+     * @return mixed
+     */
+    private function registerWheres($query)
+    {
+        $wheres = $this->getWheres();
+        if ($wheres) {
+            $query->where($wheres);
+        }
+
+        return $query;
     }
 }

@@ -33,55 +33,8 @@ abstract class AbstractDecorator implements DecoratorContract
         // Validate the next class
         $this->validateNextClass($next);
 
-        // Check if modules should get loaded in
-        if ((bool)config('salesman.modules_enabled')) {
-            $this->registerConfigModules();
-        }
-
         // Set the next class so methods can be called on it
         $this->next = $next;
-    }
-
-    /**
-     * Register any module registered in the config file
-     *
-     * @throws \Throwable
-     */
-    public function registerConfigModules()
-    {
-        $modulesToRegister = (array)config('salesman.modules');
-        if (!empty($modulesToRegister)) {
-            $this->registerModules($modulesToRegister);
-        }
-    }
-
-    /**
-     * @param array $modules
-     *
-     * @throws \Throwable
-     */
-    public function registerModules(array $modules)
-    {
-        foreach ($modules as $module => $namespace) {
-            $this->registerModule($module, $namespace);
-        }
-    }
-
-    /**
-     * @param        $module
-     * @param string $namespace
-     *
-     * @throws \Throwable
-     */
-    public function registerModule($module, string $namespace)
-    {
-        // Validate the namespace before assigning it
-        $this->validateNamespace($namespace);
-
-        // The namespace is valid, assign the module
-        $this->{$namespace} = class_exists($module)
-            ? new $module
-            : $module;
     }
 
     /**
@@ -198,13 +151,17 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
+     * @param string $exception
      * @param string $message
-     *
-     * @throws \Illuminate\Validation\UnauthorizedException
+     * @param int    $code
      */
-    protected function denyRequest(string $message = 'You are not allowed to perform this action.')
+    protected function denyRequest(
+        $exception = UnauthorizedException::class,
+        string $message = 'You are not allowed to perform this action.',
+        int $code = 403
+    )
     {
-        throw new UnauthorizedException($message);
+        throw new $exception($message, $code);
     }
 
     /**

@@ -42,10 +42,10 @@ abstract class AbstractRepository implements DecoratorContract
             $query->where($where);
         }
 
-        // If the method getRelations exists, call it to load in relations before returning the model
-        if (method_exists(\get_class($model), 'getRelations')) {
+        // If the method getDefaultRelations exists, call it to load in relations before returning the model
+        if (method_exists(\get_class($model), 'getDefaultRelations')) {
             // Load relationships
-            $query->with((array)\get_class($model)::getRelations());
+            $query->with((array)\get_class($model)::getDefaultRelations());
         }
 
         // Return the data
@@ -120,9 +120,9 @@ abstract class AbstractRepository implements DecoratorContract
     {
         if (!empty($relations)) {
             $model->load(...$relations);
-        } elseif (method_exists(\get_class($model), 'getRelations')) {
-            // If the method getRelations exists, call it to load in relations before returning the model
-            $model->load((array)\get_class($model)::getRelations());
+        } elseif (method_exists(\get_class($model), 'getDefaultRelations')) {
+            // If the method getDefaultRelations exists, call it to load in relations before returning the model
+            $model->load((array)\get_class($model)::getDefaultRelations());
         }
 
         // Return the model

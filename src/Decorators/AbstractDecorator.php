@@ -85,14 +85,11 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
-     * @param $page
-     *
      * @return mixed
-     * @throws \UnexpectedValueException
      */
-    public function index($page)
+    public function index()
     {
-        return $this->forward(__FUNCTION__, $page);
+        return $this->forward(__FUNCTION__);
     }
 
     /**
@@ -136,7 +133,6 @@ abstract class AbstractDecorator implements DecoratorContract
      * @param array $data
      *
      * @return mixed
-     * @throws \UnexpectedValueException
      */
     public function store(array $data)
     {
@@ -148,7 +144,6 @@ abstract class AbstractDecorator implements DecoratorContract
      * @param array $data
      *
      * @return mixed
-     * @throws \UnexpectedValueException
      */
     public function update(Model $model, array $data)
     {
@@ -159,7 +154,6 @@ abstract class AbstractDecorator implements DecoratorContract
      * @param Model $model
      *
      * @return mixed
-     * @throws \UnexpectedValueException
      */
     public function delete(Model $model)
     {
@@ -169,8 +163,6 @@ abstract class AbstractDecorator implements DecoratorContract
     /**
      * @param string $method
      * @param array  ...$args
-     *
-     * @throws \UnexpectedValueException
      *
      * @return mixed
      */

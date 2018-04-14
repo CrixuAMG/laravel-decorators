@@ -21,7 +21,7 @@ class DummyClass extends AbstractCache // Todo: Implement a contract
     public function __construct(AbstractRepository $next)
     {
         // Set the cache tags
-        $this->setCacheTags(/** TODO: Fill this in! */);
+        $this->setCacheTags(DummyCacheTags);
 
         parent::__construct($next);
     }

@@ -3,7 +3,6 @@
 namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Exception;
@@ -42,50 +41,117 @@ abstract class AbstractCache implements DecoratorContract
      * AbstractCache constructor.
      *
      * @param AbstractRepository $next
-     *
-     * @throws \Throwable
      */
-    public function __construct($next)
+    public function __construct(AbstractRepository $next)
     {
-        // Validate the next class
-        $this->validateNextClass($next);
-
-        // Set the next class so methods can be called on it
         $this->next = $next;
     }
 
     /**
-     * @param $next
-     *
+     * @throws Exception
      * @throws \Throwable
+     *
+     * @return mixed
      */
-    private function validateNextClass($next): void
+    public function index()
     {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            'Class ' . \get_class($next) . ' does not implement any allowed parent classes.',
-            \UnexpectedValueException::class,
-            500
-        );
+        return $this->forwardCached(__FUNCTION__);
     }
 
     /**
-     * @param int $index
+     * @param Model    $model
+     * @param bool     $paginate
+     * @param int|null $itemsPerPage
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    {
+        return $this->forwardCached(__FUNCTION__, $model, $paginate, $itemsPerPage);
+    }
+
+    /**
+     * @param Model $model
+     * @param mixed ...$relations
      *
      * @throws Exception
      * @throws \Throwable
      *
      * @return mixed
      */
-    public function index($index = 1)
+    public function show(Model $model, ...$relations)
     {
-        return $this->forwardCached(__FUNCTION__, $index);
+        return $this->forwardCached(__FUNCTION__, $model, ...$relations);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    public function store(array $data)
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $data);
+    }
+
+    /**
+     * @param Model  $model
+     * @param array  $data
+     * @param string $createMethod
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model, $data, $createMethod);
+    }
+
+    /**
+     * @param Model $model
+     * @param array $data
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    public function update(Model $model, array $data)
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model, $data);
+    }
+
+    /**
+     * @param Model $model
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    public function delete(Model $model)
+    {
+        // Flush the cache
+        $this->flushCache();
+
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model);
     }
 
     /**
@@ -99,16 +165,19 @@ abstract class AbstractCache implements DecoratorContract
      */
     protected function forwardCached(string $method, ...$args)
     {
+        // Get the cache tags
+        $cacheTags = $this->getCacheTags();
+
         // Make sure we have the cache tags
         throw_unless(
-            $this->cacheTags,
+            $cacheTags,
             InvalidCacheDataException::class,
             'The cache tags cannot be empty.',
             422
         );
 
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache_minutes');
+        $cacheTime = $this->getCacheTime() ?? config('salesman.cache_minutes');
 
         if (!$cacheTime) {
             // No cache time, don't continue
@@ -117,13 +186,13 @@ abstract class AbstractCache implements DecoratorContract
         }
 
         // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, $args);
+        $cacheKey = $this->generateCacheKey($method, ...$args);
 
         // Verify the method exists on the next iteration and that it is callable
         if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
             // Fetch all items from the database
             // in this call, we cache the result.
-            return cache()->tags($this->cacheTags)->remember(
+            return cache()->tags($cacheTags)->remember(
                 $cacheKey,
                 $cacheTime,
                 function () use ($method, $args) {
@@ -138,14 +207,6 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return mixed
-     */
-    private function getCacheTime()
-    {
-        return $this->cacheTime;
-    }
-
-    /**
      * @param string $method
      * @param array  ...$args
      *
@@ -157,106 +218,12 @@ abstract class AbstractCache implements DecoratorContract
     {
         // Verify the method exists on the next iteration and that it is callable
         if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Hand off the task to the repository
+            // Forward the data
             return $this->next->$method(...$args);
         }
 
         // Method does not exist or is not callable
         $this->throwMethodNotCallable($method);
-    }
-
-    /**
-     * @param string $method
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function throwMethodNotCallable(string $method): void
-    {
-        throw new UnexpectedValueException('Method ' . $method . ' does not exist or is not callable.');
-    }
-
-    /**
-     * @param string $method
-     * @param        $args
-     *
-     * @throws \Throwable
-     *
-     * @return mixed|string
-     */
-    protected function generateCacheKey(string $method, $args)
-    {
-        // Check if there is a cache key set
-        $cacheKey = $this->getCacheKey();
-        if ($cacheKey) {
-            // There is a cache key set, don't go further
-            return $cacheKey;
-        }
-
-        // Build the basic template and parameter set
-        $cacheKeyTemplate   = '%s.%s.%s';
-        $cacheKeyParameters = [
-            implode('.', $this->cacheTags),
-            $method,
-            json_encode($args),
-        ];
-
-        // Get the custom parameters
-        $parameters = $this->getCacheParameters();
-        if ($parameters) {
-            // There are parameters, build upon the template and parameter set
-            foreach ($parameters as $key => $value) {
-                $cacheKeyTemplate     .= '.' . (is_numeric($value) ? '%u' : '%s');
-                $cacheKeyParameters[] = $value;
-            }
-        }
-
-        // Return the formatted cache key
-        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-
-    /**
-     * @return array
-     */
-    private function getCacheParameters(): array
-    {
-        return (array)$this->cacheParameters;
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @throws Exception
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    public function show(Model $model)
-    {
-        return $this->forwardCached(__FUNCTION__, $model);
-    }
-
-    /**
-     * @param array $data
-     *
-     * @throws Exception
-     *
-     * @return mixed
-     */
-    public function store(array $data)
-    {
-        // Flush the cache
-        $this->flushCache();
-
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $data);
     }
 
     /**
@@ -278,49 +245,16 @@ abstract class AbstractCache implements DecoratorContract
             return cache()->flush();
         }
 
-        // Flush the cache
+        // Flush the cache using the supplied arguments
         return cache()->tags(...$args)->flush();
     }
 
     /**
      * @return array
      */
-    private function getCacheTags(): array
+    protected function getCacheTags(): array
     {
         return $this->cacheTags;
-    }
-
-    /**
-     * @param Model $model
-     * @param array $data
-     *
-     * @throws Exception
-     *
-     * @return mixed
-     */
-    public function update(Model $model, array $data)
-    {
-        // Flush the cache
-        $this->flushCache();
-
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model, $data);
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @throws Exception
-     *
-     * @return mixed
-     */
-    public function delete(Model $model)
-    {
-        // Flush the cache
-        $this->flushCache();
-
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model);
     }
 
     /**
@@ -334,23 +268,11 @@ abstract class AbstractCache implements DecoratorContract
         $firstTag = reset($cacheTags);
 
         /** @var array $cacheTags */
-        $cacheTags = isset($firstTag) && \is_array($firstTag)
-            ? $cacheTags[0]
+        $cacheTags = $firstTag !== null && \is_array($firstTag) && \count($cacheTags) === 1
+            ? $firstTag
             : $cacheTags;
 
         $this->cacheTags = $cacheTags;
-
-        return $this;
-    }
-
-    /**
-     * @param int $cacheTime
-     *
-     * @return AbstractCache
-     */
-    protected function setCacheTime(int $cacheTime): AbstractCache
-    {
-        $this->cacheTime = $cacheTime;
 
         return $this;
     }
@@ -377,5 +299,90 @@ abstract class AbstractCache implements DecoratorContract
         $this->cacheParameters = $cacheParameters;
 
         return $this;
+    }
+
+    /**
+     * @param int $cacheTime
+     *
+     * @return AbstractCache
+     */
+    protected function setCacheTime(int $cacheTime): AbstractCache
+    {
+        $this->cacheTime = $cacheTime;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheTime()
+    {
+        return $this->cacheTime;
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function throwMethodNotCallable(string $method): void
+    {
+        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
+    }
+
+    /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws \Throwable
+     *
+     * @return mixed|string
+     */
+    private function generateCacheKey(string $method, ...$args)
+    {
+        // Check if there is a cache key set
+        $cacheKey = $this->getCacheKey();
+        if ($cacheKey) {
+            // There is a cache key set, don't go further
+            return $cacheKey;
+        }
+
+        // Build the basic template and parameter set
+        $cacheKeyTemplate = '%s.%s.%s';
+        $cacheKeyParameters = [
+            implode('.', $this->getCacheTags()),
+            $method,
+            json_encode($args),
+        ];
+
+        // Get the custom parameters
+        $parameters = $this->getCacheParameters();
+        if ($parameters) {
+            // There are parameters, build upon the template and parameter set
+            foreach ($parameters as $key => $value) {
+                $cacheKeyTemplate .= '.' . (is_numeric($value) ? '%u' : '%s');
+                $cacheKeyParameters[] = $value;
+            }
+        }
+
+        // Return the formatted cache key
+        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheParameters(): array
+    {
+        return (array)$this->cacheParameters;
     }
 }

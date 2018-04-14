@@ -76,6 +76,13 @@ class CacheMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
+        $name = $this->getNameInput();
+
+        // Fill the cache tags
+        $name = "'" . strtolower(str_plural(explode($this->type, $name)[0])) . "'";
+
+        $stub = str_replace('DummyCacheTags', $name, $stub);
+
         return str_replace(['RootNamespace\\', 'dummy:command'], [
             $this->rootNamespace(),
             $this->option('command'),

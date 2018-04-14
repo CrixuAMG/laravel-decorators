@@ -18,11 +18,11 @@ class EventModule
     /**
      * @var
      */
-    private $autoUpdateModel;
+    private $model;
     /**
      * @var
      */
-    private $updatableField;
+    private $field;
     /**
      * @var
      */
@@ -56,16 +56,16 @@ class EventModule
             422
         );
 
-        $updatableField = $this->getUpdateAbleField();
-        $updatableModel = $this->getAutoUpdateModel();
-        $target         = $this->getTarget();
+        $field = $this->getField();
+        $model = $this->getModel();
+        $target = $this->getTarget();
 
         // Update the field if both variables are filled
-        if ($updatableField && $updatableModel) {
-            if (!$updatableModel->{$updatableField}) {
-                $updatableModel->update([
+        if ($field && $model) {
+            if (!$model->{$field}) {
+                $model->update([
                     // Todo, allow the type to be set
-                    $updatableField => true,
+                    $field => true,
                 ]);
                 if ($target) {
                     $target->notify(new $class(...$args));
@@ -119,25 +119,25 @@ class EventModule
     }
 
     /**
-     * @param string $updatableField
+     * @param string $field
      *
      * @return EventModule
      */
-    public function setUpdatableField(string $updatableField): EventModule
+    public function setField(string $field): EventModule
     {
-        $this->updatableField = $updatableField;
+        $this->field = $field;
 
         return $this;
     }
 
     /**
-     * @param Model $autoUpdateModel
+     * @param Model $model
      *
      * @return EventModule
      */
-    public function setAutoUpdateModel(Model $autoUpdateModel): EventModule
+    public function setModel(Model $model): EventModule
     {
-        $this->autoUpdateModel = $autoUpdateModel;
+        $this->model = $model;
 
         return $this;
     }
@@ -173,17 +173,17 @@ class EventModule
     /**
      * @return bool
      */
-    private function getUpdateAbleField()
+    private function getField()
     {
-        return $this->updatableField;
+        return $this->field;
     }
 
     /**
      * @return mixed
      */
-    private function getAutoUpdateModel()
+    private function getModel()
     {
-        return $this->autoUpdateModel;
+        return $this->model;
     }
 
     /**

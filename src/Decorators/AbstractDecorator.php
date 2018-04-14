@@ -33,79 +33,100 @@ abstract class AbstractDecorator implements DecoratorContract
         // Validate the next class
         $this->validateNextClass($next);
 
+        // Check if modules should get loaded in
+        if ((bool)config('salesman.modules_enabled')) {
+            $this->registerConfigModules();
+        }
+
         // Set the next class so methods can be called on it
         $this->next = $next;
     }
 
     /**
-     * @param $next
+     * Register any module registered in the config file
      *
      * @throws \Throwable
      */
-    private function validateNextClass($next): void
+    public function registerConfigModules()
     {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            'Class ' . \get_class($next) . ' does not implement any allowed parent classes.',
-            \UnexpectedValueException::class,
-            500
-        );
-    }
-
-    /**
-     * @param $page
-     *
-     * @return mixed
-     */
-    public function index($page)
-    {
-        return $this->forward(__FUNCTION__, $page);
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws \UnexpectedValueException
-     *
-     * @return mixed
-     */
-    protected function forward(string $method, ...$args)
-    {
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Hand off the task to the next decorator
-            return $this->next->$method(...$args);
+        $modulesToRegister = (array)config('salesman.modules');
+        if (!empty($modulesToRegister)) {
+            $this->registerModules($modulesToRegister);
         }
-
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
     }
 
     /**
-     * @param string $method
+     * @param array $modules
      *
-     * @throws \UnexpectedValueException
+     * @throws \Throwable
      */
-    private function throwMethodNotCallable(string $method): void
+    public function registerModules(array $modules)
     {
-        throw new UnexpectedValueException('Method ' . $method . ' does not exist or is not callable.');
+        foreach ($modules as $module => $namespace) {
+            $this->registerModule($module, $namespace);
+        }
+    }
+
+    /**
+     * @param        $module
+     * @param string $namespace
+     *
+     * @throws \Throwable
+     */
+    public function registerModule($module, string $namespace)
+    {
+        // Validate the namespace before assigning it
+        $this->validateNamespace($namespace);
+
+        // The namespace is valid, assign the module
+        $this->{$namespace} = class_exists($module)
+            ? new $module
+            : $module;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function index()
+    {
+        return $this->forward(__FUNCTION__);
+    }
+
+    /**
+     * @param Model    $model
+     * @param bool     $paginate
+     * @param int|null $itemsPerPage
+     *
+     * @return mixed
+     */
+    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    {
+        return $this->forward(__FUNCTION__, $model, $paginate, $itemsPerPage);
+    }
+
+    /**
+     * @param Model  $model
+     * @param array  $data
+     * @param string $createMethod
+     *
+     * @return mixed
+     */
+    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    {
+        // Redirect to our repository
+        return $this->forward(__FUNCTION__, $model, $data, $createMethod);
     }
 
     /**
      * @param Model $model
      *
+     * @param array $relations
+     *
      * @return mixed
      */
-    public function show(Model $model)
+    public function show(Model $model, ...$relations)
     {
-        return $this->forward(__FUNCTION__, $model);
+        return $this->forward(__FUNCTION__, $model, ...$relations);
     }
 
     /**
@@ -141,10 +162,30 @@ abstract class AbstractDecorator implements DecoratorContract
 
     /**
      * @param string $method
+     * @param array  ...$args
+     *
+     * @return mixed
+     */
+    protected function forward(string $method, ...$args)
+    {
+        // Verify the method exists on the next iteration and that it is callable
+        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
+            // Hand off the task to the next decorator
+            return $this->next->$method(...$args);
+        }
+
+        // Method does not exist or is not callable
+        $this->throwMethodNotCallable($method);
+    }
+
+    /**
+     * @param string $method
      * @param bool   $statement
      * @param array  ...$args
      *
      * @return mixed
+     * @throws \UnexpectedValueException
+     * @throws \Illuminate\Validation\UnauthorizedException
      */
     protected function forwardIfAllowed(string $method, bool $statement, ...$args)
     {
@@ -152,22 +193,76 @@ abstract class AbstractDecorator implements DecoratorContract
         if ($statement) {
             return $this->forward($method, ...$args);
         }
-
         // The user is not allowed to continue
         $this->denyRequest();
     }
 
     /**
-     * @param string $exception
      * @param string $message
-     * @param int    $code
+     *
+     * @throws \Illuminate\Validation\UnauthorizedException
      */
-    protected function denyRequest(
-        $exception = UnauthorizedException::class,
-        string $message = 'You are not allowed to perform this action.',
-        int $code = 403
-    )
+    protected function denyRequest(string $message = 'You are not allowed to perform this action.')
     {
-        throw new $exception($message, $code);
+        throw new UnauthorizedException($message);
+    }
+
+    /**
+     * @param string $namespace
+     *
+     * @throws \Throwable
+     */
+    protected function validateNamespace(string $namespace): void
+    {
+        throw_if(
+            method_exists($this, $namespace),
+            sprintf(
+                'Namespace %s exists as a method and cannot be used as an alias.',
+                $namespace
+            ),
+            \UnexpectedValueException::class,
+            422
+        );
+
+        throw_if(
+            isset($this->{$namespace}),
+            sprintf(
+                'Namespace %s already exists within the AbstractDecorator class and cannot be used as an alias.',
+                $namespace
+            ),
+            \UnexpectedValueException::class,
+            422
+        );
+    }
+
+    /**
+     * @param $next
+     *
+     * @throws \Throwable
+     */
+    private function validateNextClass($next): void
+    {
+        $allowedNextClasses = [
+            AbstractDecorator::class,
+            AbstractCache::class,
+            AbstractRepository::class,
+        ];
+
+        throw_unless(
+            \in_array(get_parent_class($next), $allowedNextClasses, true),
+            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
+            \UnexpectedValueException::class,
+            500
+        );
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function throwMethodNotCallable(string $method): void
+    {
+        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
     }
 }

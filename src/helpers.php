@@ -1,7 +1,6 @@
 <?php
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Decorator;
 
 if (!function_exists('cacheEnabled')) {
     /**
@@ -9,7 +8,7 @@ if (!function_exists('cacheEnabled')) {
      */
     function cacheEnabled()
     {
-        return !!config('decorators.cache_enabled');
+        return (bool)config('decorators.cache_enabled');
     }
 }
 

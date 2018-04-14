@@ -3,10 +3,7 @@
 namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\ServiceProvider;
 
 /**
  * Class Decorator
@@ -44,11 +41,11 @@ class Decorator
      *
      * @throws \Throwable
      */
-    public function decorate(string $contract, $chain)
+    public function decorate(string $contract, $chain): void
     {
         $this->cacheEnabled = config('decorators.cache_enabled') ?? false;
 
-        return $this->registerDecoratedInstance($contract, (array)$chain);
+        $this->registerDecoratedInstance($contract, (array)$chain);
     }
 
     /**
@@ -57,9 +54,9 @@ class Decorator
      * @param string $contract
      * @param        $instance
      */
-    private function registerDecoratedInstance(string $contract, $instance)
+    private function registerDecoratedInstance(string $contract, $instance): void
     {
-        return $this->app->singleton($contract, function () use ($contract, $instance) {
+        $this->app->singleton($contract, function () use ($contract, $instance) {
             return Decorator::handlerFactory($contract, $instance);
         });
     }
@@ -76,7 +73,7 @@ class Decorator
     {
         // Set the cache data if it is not set yet
         if ($this->cacheEnabled === null) {
-            $this->cacheEnabled = config('decorators.cache_enabled') ?? false;
+            $this->cacheEnabled = (bool)config('decorators.cache_enabled') ?? false;
         }
 
         return $this->processChain($contract, $chain);
@@ -116,6 +113,8 @@ class Decorator
     }
 
     /**
+     * @param $class
+     *
      * @return bool
      */
     private function shouldWrapCache($class)

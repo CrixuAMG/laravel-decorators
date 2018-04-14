@@ -63,7 +63,7 @@ class DecoratorServiceProvider extends ServiceProvider
         $this->app->singleton(
             Decorator::class,
             function () {
-                return new Decorator();
+                return new Decorator($this->app);
             }
         );
     }

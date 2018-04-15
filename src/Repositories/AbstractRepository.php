@@ -67,7 +67,7 @@ abstract class AbstractRepository implements DecoratorContract
      *
      * @return AbstractRepository
      */
-    public function setWhereLike(string $column, string $string)
+    public function addWhereLike(string $column, string $string)
     {
         return $this->addWhere(
             function ($query) use ($column, $string) {
@@ -83,7 +83,7 @@ abstract class AbstractRepository implements DecoratorContract
      *
      * @return AbstractRepository
      */
-    public function setWhereBetween(string $column, $firstValue, $secondValue)
+    public function addWhereBetween(string $column, $firstValue, $secondValue)
     {
         return $this->addWhere(
             function ($query) use ($column, $firstValue, $secondValue) {
@@ -102,7 +102,7 @@ abstract class AbstractRepository implements DecoratorContract
      * @return AbstractRepository
      * @throws \Throwable
      */
-    public function setWhereIn(string $column, ...$arguments)
+    public function addWhereIn(string $column, ...$arguments)
     {
         $this->validateArgumentCount(\count($arguments), 2, true);
 

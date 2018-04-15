@@ -36,6 +36,30 @@ abstract class AbstractController
     private $unsuccesfullRequestCode = 500;
 
     /**
+     * @param mixed $data
+     */
+    private function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * @param int $succesfullRequestCode
+     */
+    public function setSuccesfullRequestCode(int $succesfullRequestCode)
+    {
+        $this->succesfullRequestCode = $succesfullRequestCode;
+    }
+
+    /**
+     * @param int $unsuccesfullRequestCode
+     */
+    public function setUnsuccesfullRequestCode(int $unsuccesfullRequestCode)
+    {
+        $this->unsuccesfullRequestCode = $unsuccesfullRequestCode;
+    }
+
+    /**
      * @return mixed
      */
     public function getRepository()
@@ -84,11 +108,12 @@ abstract class AbstractController
     public function __call($name, $arguments)
     {
         $name = ltrim($name, '_');
-        if (method_exists($this->repository, $name) && \is_callable([$this->repository, $name])) {
-            $this->data = $this->repository->{$name}(...$arguments);
+        if (
+            method_exists($this->repository, $name) &&
+            \is_callable([$this->repository, $name])
+        ) {
+            return $this->setData($this->repository->{$name}(...$arguments));
         }
-
-        return $this;
     }
 
     /**
@@ -98,32 +123,29 @@ abstract class AbstractController
      */
     public function resourceful($resourceClass = null)
     {
+        // Try to get the resource class if it is not filled
         if (!$resourceClass) {
             $calledClass = get_called_class();
-            $namespace = str_before($calledClass, 'Http');
-            $calledClass = str_after($calledClass, 'Controllers\\');
-            $calledClass = str_before($calledClass, 'Controller');
+            $resourceClass = $this->getResourceClass($calledClass);
+        }
 
-            $classToCheck = sprintf('%sHttp\Resources\%sResource', $namespace, $calledClass);
-
-            if (class_exists($classToCheck)) {
-                $resourceClass = $classToCheck;
+        // If the resource class variable is filled, use it when the data is either a collection or a model
+        if ($resourceClass) {
+            if ($this->data instanceof LengthAwarePaginator || $this->data instanceof Collection) {
+                return $resourceClass::collection($this->data);
+            } elseif ($this->data instanceof Model) {
+                return new $resourceClass($this->data);
             }
         }
 
-        if ($this->data instanceof LengthAwarePaginator || $this->data instanceof Collection) {
-            return $resourceClass::collection($this->data);
-        } elseif ($this->data instanceof Model) {
-            return new $resourceClass($this->data);
-        }
+        // Guess the response code
+        $responseCode = $this->guessStatusCode();
 
         return response()->json(
             [
                 'data' => $this->data,
             ],
-            !!$this->data
-                ? $this->succesfullRequestCode
-                : $this->unsuccesfullRequestCode
+            $responseCode
         );
     }
 
@@ -133,5 +155,36 @@ abstract class AbstractController
     public function unwrap()
     {
         return $this->data;
+    }
+
+    /**
+     * @return int
+     */
+    private function guessStatusCode(): int
+    {
+        return !!$this->data
+            ? $this->succesfullRequestCode
+            : $this->unsuccesfullRequestCode;
+    }
+
+    /**
+     * @param $calledClass
+     *
+     * @return string|null
+     */
+    private function getResourceClass($calledClass)
+    {
+        $resourceClass = null;
+        $namespace = str_before($calledClass, '\\Http');
+        $controllerName = str_after($calledClass, 'Controllers\\');
+        $controllerName = str_before($controllerName, 'Controller');
+
+        $resourceClassName = sprintf('%s\Http\Resources\%sResource', $namespace, $controllerName);
+
+        if (class_exists($resourceClassName)) {
+            $resourceClass = $resourceClassName;
+        }
+
+        return $resourceClass;
     }
 }

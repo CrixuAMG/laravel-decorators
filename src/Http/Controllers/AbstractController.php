@@ -112,7 +112,9 @@ abstract class AbstractController
             method_exists($this->repository, $name) &&
             \is_callable([$this->repository, $name])
         ) {
-            return $this->setData($this->repository->{$name}(...$arguments));
+            $this->setData($this->repository->{$name}(...$arguments));
+
+            return $this;
         }
     }
 
@@ -141,10 +143,12 @@ abstract class AbstractController
         // Guess the response code
         $responseCode = $this->guessStatusCode();
 
+        // Get the response data
+        $responseData = $this->getResponseData();
+
+        // Return the response as JSON
         return response()->json(
-            [
-                'data' => $this->data,
-            ],
+            $responseData,
             $responseCode
         );
     }
@@ -165,6 +169,20 @@ abstract class AbstractController
         return !!$this->data
             ? $this->succesfullRequestCode
             : $this->unsuccesfullRequestCode;
+    }
+
+    private function getResponseData(): array
+    {
+        return !!$this->data
+            ? [
+                'data' => $this->data,
+            ]
+            : [
+                'message' => 'An error occurred while performing the requested action.',
+                'errors'  => config('app.env') === 'production'
+                    ? []
+                    : debug_backtrace(),
+            ];
     }
 
     /**

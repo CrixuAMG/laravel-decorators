@@ -58,7 +58,6 @@ abstract class AbstractRepository implements DecoratorContract
         }
 
         // No match could be found or something went wrong
-        return false;
     }
 
     /**
@@ -203,10 +202,11 @@ abstract class AbstractRepository implements DecoratorContract
         // If scopes are defined, add them to the query
         $query = $this->registerScopes($query);
 
-        // If the method getDefaultRelations exists, call it to load in relations before returning the model
-        if (method_exists(\get_class($model), 'getDefaultRelations')) {
-            // Load relationships
-            $query->with((array)\get_class($model)::getDefaultRelations());
+        // Get the class
+        $class = \get_class($model);
+        if (method_exists($class, 'getDefaultRelations')) {
+            // If the method getDefaultRelations exists, call it to load in relations before returning the data
+            $query->with((array)$class::getDefaultRelations());
         }
 
         if ($paginate && !$itemsPerPage) {

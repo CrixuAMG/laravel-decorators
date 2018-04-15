@@ -83,6 +83,7 @@ abstract class AbstractController
      */
     public function __call($name, $arguments)
     {
+        $name = ltrim($name, '_');
         if (method_exists($this->repository, $name) && \is_callable([$this->repository, $name])) {
             $this->data = $this->repository->{$name}(...$arguments);
         }

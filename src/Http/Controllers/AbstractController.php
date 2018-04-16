@@ -29,11 +29,11 @@ abstract class AbstractController
     /**
      * @var int
      */
-    private $succesfullRequestCode = 200;
+    private $succesfulRequestCode = 200;
     /**
      * @var int
      */
-    private $unsuccesfullRequestCode = 500;
+    private $unsuccesfulRequestCode = 500;
 
     /**
      * @param mixed $data
@@ -44,19 +44,19 @@ abstract class AbstractController
     }
 
     /**
-     * @param int $succesfullRequestCode
+     * @param int $succesfulRequestCode
      */
-    public function setSuccesfullRequestCode(int $succesfullRequestCode)
+    public function setSuccesfulRequestCode(int $succesfulRequestCode = 200)
     {
-        $this->succesfullRequestCode = $succesfullRequestCode;
+        $this->succesfulRequestCode = $succesfulRequestCode;
     }
 
     /**
-     * @param int $unsuccesfullRequestCode
+     * @param int $unsuccesfulRequestCode
      */
-    public function setUnsuccesfullRequestCode(int $unsuccesfullRequestCode)
+    public function setUnsuccesfulRequestCode(int $unsuccesfulRequestCode = 500)
     {
-        $this->unsuccesfullRequestCode = $unsuccesfullRequestCode;
+        $this->unsuccesfulRequestCode = $unsuccesfulRequestCode;
     }
 
     /**
@@ -167,8 +167,8 @@ abstract class AbstractController
     private function guessStatusCode(): int
     {
         return !!$this->data
-            ? $this->succesfullRequestCode
-            : $this->unsuccesfullRequestCode;
+            ? $this->succesfulRequestCode
+            : $this->unsuccesfulRequestCode;
     }
 
     private function getResponseData(): array

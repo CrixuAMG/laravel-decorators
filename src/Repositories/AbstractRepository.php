@@ -17,6 +17,10 @@ use UnexpectedValueException;
 abstract class AbstractRepository implements DecoratorContract
 {
     /**
+     * @var Model
+     */
+    public $model;
+    /**
      * @var array
      */
     private $scopes;
@@ -183,15 +187,14 @@ abstract class AbstractRepository implements DecoratorContract
     abstract public function index();
 
     /**
-     * @param Model $model
-     * @param bool  $paginate
-     * @param int   $itemsPerPage
+     * @param bool $paginate
+     * @param int  $itemsPerPage
      *
      * @return LengthAwarePaginator|Collection|static[]
      */
-    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
     {
-        $query = $model->query();
+        $query = $this->model->query();
 
         // If the where is not empty, use it to filter results
         $query = $this->registerWheres($query);
@@ -203,7 +206,7 @@ abstract class AbstractRepository implements DecoratorContract
         $query = $this->registerScopes($query);
 
         // Get the class
-        $class = \get_class($model);
+        $class = \get_class($this->model);
         if (method_exists($class, 'getDefaultRelations')) {
             // If the method getDefaultRelations exists, call it to load in relations before returning the data
             $query->with((array)$class::getDefaultRelations());
@@ -232,17 +235,16 @@ abstract class AbstractRepository implements DecoratorContract
     abstract public function store(array $data);
 
     /**
-     * @param Model  $model
      * @param array  $data
      * @param string $createMethod
      *
      * @return Model
      * @throws \Throwable
      */
-    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    public function simpleStore(array $data, string $createMethod = 'create')
     {
         throw_unless(
-            is_callable($model, $createMethod),
+            is_callable($this->model, $createMethod),
             UnexpectedValueException::class,
             'The specified method is not callable.',
             422
@@ -251,7 +253,7 @@ abstract class AbstractRepository implements DecoratorContract
         return call_user_func_array(
             sprintf(
                 '%s::%s',
-                $model,
+                $this->model,
                 $createMethod
             ),
             $data

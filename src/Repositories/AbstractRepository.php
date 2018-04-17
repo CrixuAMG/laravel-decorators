@@ -19,7 +19,7 @@ abstract class AbstractRepository implements DecoratorContract
     /**
      * @var Model
      */
-    public $model;
+    private $model;
     /**
      * @var array
      */
@@ -175,6 +175,18 @@ abstract class AbstractRepository implements DecoratorContract
     public function setScopes(...$scopes)
     {
         $this->scopes = $scopes;
+
+        return $this;
+    }
+
+    /**
+     * @param Model $model
+     *
+     * @return AbstractRepository
+     */
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
 
         return $this;
     }

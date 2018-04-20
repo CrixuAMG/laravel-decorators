@@ -17,4 +17,19 @@ return [
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
     'pagination'    => (int)env('APP_PAGINATION', 25),
+
+    'route_matchables' => [
+        /**
+         * Below is an example of how decorators can automatically be matched using the route
+         */
+        // 'v1' => [
+        //     'users'   => [
+        //         '__contract'  => UserContract::class,
+        //         '__arguments' => [
+        //             UserRepository::class,
+        //             UserCache::class
+        //         ],
+        //     ],
+        // ]
+    ],
 ];

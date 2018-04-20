@@ -29,7 +29,7 @@ abstract class AbstractRepository implements DecoratorContract
      */
     private $wheres;
     /**
-     * @var
+     * @var array
      */
     private $whens;
     /**
@@ -261,6 +261,22 @@ abstract class AbstractRepository implements DecoratorContract
             'The specified method is not callable.',
             422
         );
+
+        if (\count($data) === 2 && $createMethod === 'updateOrCreate') {
+            $firstArray     = reset($data);
+            $secondArray    = next($data);
+            if (is_array($firstArray) && is_array($secondArray)) {
+                return call_user_func_array(
+                    sprintf(
+                        '%s::%s',
+                        $this->model,
+                        $createMethod
+                    ),
+                    $firstArray,
+                    $secondArray
+                );
+            }
+        } 
 
         return call_user_func_array(
             sprintf(

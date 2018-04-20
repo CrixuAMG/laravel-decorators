@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
+use CrixuAMG\Decorators\Traits\RouteDataProvider;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -12,6 +13,7 @@ use Illuminate\Contracts\Foundation\Application;
  */
 class Decorator
 {
+    use RouteDataProvider;
     /**
      * @var bool
      */
@@ -46,6 +48,16 @@ class Decorator
         $this->cacheEnabled = config('decorators.cache_enabled') ?? false;
 
         $this->registerDecoratedInstance($contract, (array)$chain);
+    }
+
+    /**
+     * @param bool $silent
+     *
+     * @throws \Throwable
+     */
+    public function autoRegister(bool $silent = false)
+    {
+        $this->run($silent);
     }
 
     /**

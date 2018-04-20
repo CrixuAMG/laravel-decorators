@@ -59,16 +59,15 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param Model    $model
      * @param bool     $paginate
      * @param int|null $itemsPerPage
      *
      * @return mixed
      * @throws \Throwable
      */
-    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
     {
-        return $this->forwardCached(__FUNCTION__, $model, $paginate, $itemsPerPage);
+        return $this->forwardCached(__FUNCTION__, $paginate, $itemsPerPage);
     }
 
     /**
@@ -103,20 +102,19 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param Model  $model
      * @param array  $data
      * @param string $createMethod
      *
      * @return mixed
      * @throws Exception
      */
-    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    public function simpleStore(array $data, string $createMethod = 'create')
     {
         // Flush the cache
         $this->flushCache();
 
         // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model, $data, $createMethod);
+        return $this->forward(__FUNCTION__, $data, $createMethod);
     }
 
     /**

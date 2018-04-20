@@ -17,13 +17,12 @@ interface DecoratorContract
     public function index();
 
     /**
-     * @param Model    $model
      * @param bool     $paginate
      * @param int|null $itemsPerPage
      *
      * @return mixed
      */
-    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null);
+    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null);
 
     /**
      * @param Model $model
@@ -41,13 +40,12 @@ interface DecoratorContract
     public function store(array $data);
 
     /**
-     * @param Model  $model
      * @param array  $data
      * @param string $createMethod
      *
      * @return mixed
      */
-    public function simpleStore(Model $model, array $data, string $createMethod = 'create');
+    public function simpleStore(array $data, string $createMethod = 'create');
 
     /**
      * @param Model $model

@@ -46,28 +46,26 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
-     * @param Model    $model
      * @param bool     $paginate
      * @param int|null $itemsPerPage
      *
      * @return mixed
      */
-    public function simpleIndex(Model $model, bool $paginate = false, int $itemsPerPage = null)
+    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
     {
-        return $this->forward(__FUNCTION__, $model, $paginate, $itemsPerPage);
+        return $this->forward(__FUNCTION__, $paginate, $itemsPerPage);
     }
 
     /**
-     * @param Model  $model
      * @param array  $data
      * @param string $createMethod
      *
      * @return mixed
      */
-    public function simpleStore(Model $model, array $data, string $createMethod = 'create')
+    public function simpleStore(array $data, string $createMethod = 'create')
     {
         // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model, $data, $createMethod);
+        return $this->forward(__FUNCTION__, $data, $createMethod);
     }
 
     /**

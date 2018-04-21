@@ -3,13 +3,14 @@
 namespace CrixuAMG\Decorators\Traits;
 
 use CrixuAMG\Decorators\Exceptions\MissingDataException;
+use Illuminate\Support\Facades\App;
 
 trait RouteDataProvider
 {
     /**
      * @return string
      */
-    public function getRouteSource(): string
+    private function getRouteSource(): string
     {
         // Get the path and remove any trailing slashes
         return rtrim(ltrim(request()->getPathInfo(), '/'), '/');
@@ -20,7 +21,7 @@ trait RouteDataProvider
      *
      * @return array
      */
-    public function parseRouteSource(string $source): array
+    private function parseRouteSource(string $source): array
     {
         // Get the parts of the uri
         return explode('/', $source);
@@ -32,7 +33,7 @@ trait RouteDataProvider
      *
      * @return array
      */
-    public function matchRouteData(string $string, array $possibleMatches): array
+    private function matchRouteData(string $string, array $possibleMatches): array
     {
         return $possibleMatches[$string] ?? [];
     }
@@ -45,24 +46,38 @@ trait RouteDataProvider
      */
     public function autoregisterRoute(bool $silent = false): bool
     {
+        if (App::runningInConsole()) {
+            // Prevent issues from occurring when clearing cache for example
+            return false;
+        }
+
         // Get the source
         $source = $this->getRouteSource();
-
-        // Parse the source
-        $sourceParts = $this->parseRouteSource($source);
 
         // Get the matchables to check against
         $matchAbles = $this->getRouteMatchables();
 
         $match = null;
+
+        // First try to get it this way
+        $match = data_get($matchAbles, str_replace('/', '.', $source));
+        $result = $this->checkMatch($match);
+        if ($result) {
+            $this->decorateMatch($match);
+
+            return true;
+        }
+
+        // Parse the source
+        $sourceParts = $this->parseRouteSource($source);
+
         // Go through the parts and try to find a match
         foreach ($sourceParts as $sourcePart) {
             $match = $this->matchRouteData($sourcePart, $matchAbles);
 
-            // Check if a match has been found
-            if (!empty($match['__contract']) && !empty($match['__arguments'])) {
-                // A match has been found, use it
-                $this->decorate($match['__contract'], ...$match['__arguments']);
+            $result = $this->checkMatch($match);
+            if ($result) {
+                $this->decorateMatch($match);
 
                 return true;
             } elseif (!empty($match)) {
@@ -82,8 +97,28 @@ trait RouteDataProvider
     /**
      * @return array
      */
-    public function getRouteMatchables(): array
+    private function getRouteMatchables(): array
     {
         return (array)config('decorators.route_matchables');
+    }
+
+    /**
+     * @param $match
+     *
+     * @return bool
+     */
+    private function checkMatch($match): bool
+    {
+        return !empty($match['__contract']) && !empty($match['__arguments']);
+    }
+
+    /**
+     * @param $match
+     *
+     * @return void
+     */
+    private function decorateMatch($match): void
+    {
+        $this->decorate($match['__contract'], ...$match['__arguments']);
     }
 }

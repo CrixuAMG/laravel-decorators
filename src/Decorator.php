@@ -51,16 +51,6 @@ class Decorator
     }
 
     /**
-     * @param bool $silent
-     *
-     * @throws \Throwable
-     */
-    public function autoRegister(bool $silent = false)
-    {
-        $this->run($silent);
-    }
-
-    /**
      * Registers a decorated instance of a class
      *
      * @param string $contract

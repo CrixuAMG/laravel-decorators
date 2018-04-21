@@ -9,7 +9,7 @@ trait RouteDataProvider
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getRouteSource(): string
     {
         // Get the path and remove any trailing slashes
         return rtrim(ltrim(request()->getPathInfo(), '/'), '/');
@@ -20,7 +20,7 @@ trait RouteDataProvider
      *
      * @return array
      */
-    public function parseSource(string $source): array
+    public function parseRouteSource(string $source): array
     {
         // Get the parts of the uri
         return explode('/', $source);
@@ -32,53 +32,57 @@ trait RouteDataProvider
      *
      * @return array
      */
-    public function matchData(string $string, array $possibleMatches): array
+    public function matchRouteData(string $string, array $possibleMatches): array
     {
-        $match = [];
-
-        // Go through the parts and try to find a match
-        if (isset($possibleMatches[$string])) {
-            $match = $possibleMatches[$string];
-        } elseif (isset($match[$string])) {
-            $match = $match[$string];
-        }
-
-        return $match;
+        return $possibleMatches[$string] ?? [];
     }
 
     /**
      * @param bool $silent
      *
+     * @return bool
      * @throws MissingDataException
      */
-    public function run(bool $silent = false)
+    public function autoregisterRoute(bool $silent = false): bool
     {
-        $source = $this->getSource();
+        // Get the source
+        $source = $this->getRouteSource();
 
-        $sourceParts = $this->parseSource($source);
+        // Parse the source
+        $sourceParts = $this->parseRouteSource($source);
 
-        $matchAbles = $this->getMatchables();
+        // Get the matchables to check against
+        $matchAbles = $this->getRouteMatchables();
 
         $match = null;
+        // Go through the parts and try to find a match
         foreach ($sourceParts as $sourcePart) {
-            $match = $this->matchData($sourcePart, $matchAbles);
-        }
+            $match = $this->matchRouteData($sourcePart, $matchAbles);
 
-        if (!empty($match['__contract']) && !empty($match['__arguments'])) {
-            // A match has been found, use it
-            $this->decorate($match['__contract'], ...$match['__arguments']);
+            // Check if a match has been found
+            if (!empty($match['__contract']) && !empty($match['__arguments'])) {
+                // A match has been found, use it
+                $this->decorate($match['__contract'], ...$match['__arguments']);
+
+                return true;
+            } elseif (!empty($match)) {
+                // A match has been found, but we need to go deeper into the data
+                $matchAbles = $match;
+            }
         }
 
         if (!$silent) {
             // No match could be found
             throw new MissingDataException('No match could be found for this URI.', 500);
         }
+
+        return false;
     }
 
     /**
      * @return array
      */
-    public function getMatchables(): array
+    public function getRouteMatchables(): array
     {
         return (array)config('decorators.route_matchables');
     }

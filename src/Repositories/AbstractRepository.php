@@ -60,7 +60,6 @@ abstract class AbstractRepository implements DecoratorContract
                 );
             }
         }
-
         // No match could be found or something went wrong
     }
 
@@ -263,8 +262,8 @@ abstract class AbstractRepository implements DecoratorContract
         );
 
         if (\count($data) === 2 && $createMethod === 'updateOrCreate') {
-            $firstArray     = reset($data);
-            $secondArray    = next($data);
+            $firstArray  = reset($data);
+            $secondArray = next($data);
             if (is_array($firstArray) && is_array($secondArray)) {
                 return call_user_func_array(
                     sprintf(
@@ -276,7 +275,7 @@ abstract class AbstractRepository implements DecoratorContract
                     $secondArray
                 );
             }
-        } 
+        }
 
         return call_user_func_array(
             sprintf(

@@ -29,6 +29,20 @@ class DecoratorServiceProvider extends ServiceProvider
     }
 
     /**
+     * @throws \Throwable
+     */
+    public function register()
+    {
+        // Create our instance
+        $this->app->singleton(
+            Decorator::class,
+            function () {
+                return new Decorator($this->app);
+            }
+        );
+    }
+
+    /**
      * Register console commands
      */
     private function registerCommands()
@@ -52,19 +66,5 @@ class DecoratorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
         ]);
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function register()
-    {
-        // Create our instance
-        $this->app->singleton(
-            Decorator::class,
-            function () {
-                return new Decorator($this->app);
-            }
-        );
     }
 }

@@ -3,7 +3,7 @@
 namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
-use CrixuAMG\Decorators\Traits\RouteDataProvider;
+use CrixuAMG\Decorators\Traits\RouteDecorator;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -13,7 +13,7 @@ use Illuminate\Contracts\Foundation\Application;
  */
 class Decorator
 {
-    use RouteDataProvider;
+    use RouteDecorator;
     /**
      * @var bool
      */
@@ -51,19 +51,6 @@ class Decorator
     }
 
     /**
-     * Registers a decorated instance of a class
-     *
-     * @param string $contract
-     * @param        $instance
-     */
-    private function registerDecoratedInstance(string $contract, $instance): void
-    {
-        $this->app->singleton($contract, function () use ($contract, $instance) {
-            return Decorator::handlerFactory($contract, $instance);
-        });
-    }
-
-    /**
      * @param string $contract
      * @param array  $chain
      *
@@ -79,6 +66,29 @@ class Decorator
         }
 
         return $this->processChain($contract, $chain);
+    }
+
+    /**
+     * @param $environments
+     */
+    public function enableCacheInEnvironments($environments)
+    {
+        $this->cacheExceptions = is_array($environments)
+            ? $environments
+            : [$environments];
+    }
+
+    /**
+     * Registers a decorated instance of a class
+     *
+     * @param string $contract
+     * @param        $instance
+     */
+    private function registerDecoratedInstance(string $contract, $instance): void
+    {
+        $this->app->singleton($contract, function () use ($contract, $instance) {
+            return Decorator::handlerFactory($contract, $instance);
+        });
     }
 
     /**
@@ -154,15 +164,5 @@ class Decorator
         return $instance
             ? new $class($instance)
             : new $class;
-    }
-
-    /**
-     * @param $environments
-     */
-    public function enableCacheInEnvironments($environments)
-    {
-        $this->cacheExceptions = is_array($environments)
-            ? $environments
-            : [$environments];
     }
 }

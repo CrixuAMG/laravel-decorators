@@ -2,12 +2,10 @@
 
 namespace CrixuAMG\Decorators\Decorators;
 
-use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use CrixuAMG\Decorators\Traits\Forwardable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\UnauthorizedException;
-use UnexpectedValueException;
 
 /**
  * Class AbstractDecorator
@@ -16,26 +14,7 @@ use UnexpectedValueException;
  */
 abstract class AbstractDecorator implements DecoratorContract
 {
-    /**
-     * @var AbstractCache|AbstractRepository
-     */
-    protected $next;
-
-    /**
-     * AbstractDecorator constructor.
-     *
-     * @param $next
-     *
-     * @throws \Throwable
-     */
-    public function __construct($next)
-    {
-        // Validate the next class
-        $this->validateNextClass($next);
-
-        // Set the next class so methods can be called on it
-        $this->next = $next;
-    }
+    use Forwardable;
 
     /**
      * @return mixed
@@ -113,24 +92,6 @@ abstract class AbstractDecorator implements DecoratorContract
 
     /**
      * @param string $method
-     * @param array  ...$args
-     *
-     * @return mixed
-     */
-    protected function forward(string $method, ...$args)
-    {
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Hand off the task to the next decorator
-            return $this->next->$method(...$args);
-        }
-
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
-    }
-
-    /**
-     * @param string $method
      * @param bool   $statement
      * @param array  ...$args
      *
@@ -188,36 +149,5 @@ abstract class AbstractDecorator implements DecoratorContract
             \UnexpectedValueException::class,
             422
         );
-    }
-
-    /**
-     * @param $next
-     *
-     * @throws \Throwable
-     */
-    private function validateNextClass($next): void
-    {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
-            \UnexpectedValueException::class,
-            500
-        );
-    }
-
-    /**
-     * @param string $method
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function throwMethodNotCallable(string $method): void
-    {
-        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
     }
 }

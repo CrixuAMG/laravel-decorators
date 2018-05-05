@@ -5,39 +5,8 @@ namespace CrixuAMG\Decorators\Traits;
 use CrixuAMG\Decorators\Exceptions\MissingDataException;
 use Illuminate\Support\Facades\App;
 
-trait RouteDataProvider
+trait RouteDecorator
 {
-    /**
-     * @return string
-     */
-    private function getRouteSource(): string
-    {
-        // Get the path and remove any trailing slashes
-        return rtrim(ltrim(request()->getPathInfo(), '/'), '/');
-    }
-
-    /**
-     * @param string $source
-     *
-     * @return array
-     */
-    private function parseRouteSource(string $source): array
-    {
-        // Get the parts of the uri
-        return explode('/', $source);
-    }
-
-    /**
-     * @param string $string
-     * @param array  $possibleMatches
-     *
-     * @return array
-     */
-    private function matchRouteData(string $string, array $possibleMatches): array
-    {
-        return $possibleMatches[$string] ?? [];
-    }
-
     /**
      * @param bool $silent
      *
@@ -57,10 +26,8 @@ trait RouteDataProvider
         // Get the matchables to check against
         $matchAbles = $this->getRouteMatchables();
 
-        $match = null;
-
         // First try to get it this way
-        $match = data_get($matchAbles, str_replace('/', '.', $source));
+        $match  = $this->getDirectMatch($matchAbles, $source);
         $result = $this->checkMatch($match);
         if ($result) {
             $this->decorateMatch($match);
@@ -95,6 +62,37 @@ trait RouteDataProvider
     }
 
     /**
+     * @return string
+     */
+    private function getRouteSource(): string
+    {
+        // Get the path and remove any trailing slashes
+        return rtrim(ltrim(request()->getPathInfo(), '/'), '/');
+    }
+
+    /**
+     * @param string $source
+     *
+     * @return array
+     */
+    private function parseRouteSource(string $source): array
+    {
+        // Get the parts of the uri
+        return explode('/', $source);
+    }
+
+    /**
+     * @param string $string
+     * @param array  $possibleMatches
+     *
+     * @return array
+     */
+    private function matchRouteData(string $string, array $possibleMatches): array
+    {
+        return $possibleMatches[$string] ?? [];
+    }
+
+    /**
      * @return array
      */
     private function getRouteMatchables(): array
@@ -109,7 +107,7 @@ trait RouteDataProvider
      */
     private function checkMatch($match): bool
     {
-        return !empty($match['__contract']) && !empty($match['__arguments']);
+        return \is_array($match) && !empty($match['__contract']) && !empty($match['__arguments']);
     }
 
     /**
@@ -120,5 +118,25 @@ trait RouteDataProvider
     private function decorateMatch($match): void
     {
         $this->decorate($match['__contract'], ...$match['__arguments']);
+    }
+
+    /**
+     * @param array  $matchAbles
+     * @param string $source
+     *
+     * @return mixed
+     */
+    private function getDirectMatch(array $matchAbles, string $source)
+    {
+        $sourceParts = explode('/', $source);
+
+        foreach ($sourceParts as $key => $sourcePart) {
+            // In this loop, cast any dynamic values to * to support dynamic route matching
+            if (is_numeric($sourcePart)) {
+                $sourceParts[$key] = '*';
+            }
+        }
+
+        return data_get($matchAbles, implode('.', $sourceParts));
     }
 }

@@ -4,10 +4,9 @@ namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
-use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use CrixuAMG\Decorators\Traits\Forwardable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use UnexpectedValueException;
 
 /**
  * Class AbstractCache
@@ -16,10 +15,7 @@ use UnexpectedValueException;
  */
 abstract class AbstractCache implements DecoratorContract
 {
-    /**
-     * @var AbstractRepository
-     */
-    protected $next;
+    use Forwardable;
     /**
      * @var array
      */
@@ -36,16 +32,6 @@ abstract class AbstractCache implements DecoratorContract
      * @var array
      */
     protected $cacheParameters;
-
-    /**
-     * AbstractCache constructor.
-     *
-     * @param AbstractRepository $next
-     */
-    public function __construct(AbstractRepository $next)
-    {
-        $this->next = $next;
-    }
 
     /**
      * @throws Exception
@@ -205,26 +191,6 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws \UnexpectedValueException
-     *
-     * @return mixed
-     */
-    protected function forward(string $method, ...$args)
-    {
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Forward the data
-            return $this->next->$method(...$args);
-        }
-
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
-    }
-
-    /**
      * @param array $args
      *
      * @throws Exception
@@ -321,16 +287,6 @@ abstract class AbstractCache implements DecoratorContract
 
     /**
      * @param string $method
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function throwMethodNotCallable(string $method): void
-    {
-        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
-    }
-
-    /**
-     * @param string $method
      * @param array  ...$args
      *
      * @throws \Throwable
@@ -347,8 +303,9 @@ abstract class AbstractCache implements DecoratorContract
         }
 
         // Build the basic template and parameter set
-        $cacheKeyTemplate = '%s.%s.%s';
+        $cacheKeyTemplate   = '%s.%s.%s.%s';
         $cacheKeyParameters = [
+            config('app.name'),
             implode('.', $this->getCacheTags()),
             $method,
             json_encode($args),
@@ -359,7 +316,12 @@ abstract class AbstractCache implements DecoratorContract
         if ($parameters) {
             // There are parameters, build upon the template and parameter set
             foreach ($parameters as $key => $value) {
-                $cacheKeyTemplate .= '.' . (is_numeric($value) ? '%u' : '%s');
+                if (\is_array($value)) {
+                    // If the value is an array, convert it to a JSON string
+                    $value = json_encode($value);
+                }
+
+                $cacheKeyTemplate     .= sprintf('.%s', $this->getCacheKeyType($value));
                 $cacheKeyParameters[] = $value;
             }
         }
@@ -382,5 +344,26 @@ abstract class AbstractCache implements DecoratorContract
     private function getCacheParameters(): array
     {
         return (array)$this->cacheParameters;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    private function getCacheKeyType($value): string
+    {
+        // Make sure to preserve float values
+        if (\is_float($value)) {
+            return '%f';
+        }
+
+        // Use it as an unsigned integer
+        if (is_numeric($value)) {
+            return '%u';
+        }
+
+        // Default fall back to string
+        return '%s';
     }
 }

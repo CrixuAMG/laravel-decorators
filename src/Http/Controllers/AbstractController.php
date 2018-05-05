@@ -36,14 +36,6 @@ abstract class AbstractController
     private $unsuccesfulRequestCode = 500;
 
     /**
-     * @param mixed $data
-     */
-    private function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
      * @param int $succesfulRequestCode
      */
     public function setSuccesfulRequestCode(int $succesfulRequestCode = 200)
@@ -127,7 +119,7 @@ abstract class AbstractController
     {
         // Try to get the resource class if it is not filled
         if (!$resourceClass) {
-            $calledClass = get_called_class();
+            $calledClass   = get_called_class();
             $resourceClass = $this->getResourceClass($calledClass);
         }
 
@@ -162,6 +154,14 @@ abstract class AbstractController
     }
 
     /**
+     * @param mixed $data
+     */
+    private function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    /**
      * @return int
      */
     private function guessStatusCode(): int
@@ -192,8 +192,8 @@ abstract class AbstractController
      */
     private function getResourceClass($calledClass)
     {
-        $resourceClass = null;
-        $namespace = str_before($calledClass, '\\Http');
+        $resourceClass  = null;
+        $namespace      = str_before($calledClass, '\\Http');
         $controllerName = str_after($calledClass, 'Controllers\\');
         $controllerName = str_before($controllerName, 'Controller');
 

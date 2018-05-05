@@ -23,6 +23,11 @@ trait RouteDecorator
         // Get the source
         $source = $this->getRouteSource();
 
+        if (stripos($source, 'oauth/') !== false) {
+            // TODO: make this more dynamic using the config
+            return true;
+        }
+
         // Get the matchables to check against
         $matchAbles = $this->getRouteMatchables();
 

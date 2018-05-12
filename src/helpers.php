@@ -38,4 +38,3 @@ if (!function_exists('implementsCache')) {
         return get_parent_class($class) === AbstractCache::class;
     }
 }
-

@@ -122,7 +122,7 @@ trait RouteDecorator
      */
     private function decorateMatch($match): void
     {
-        $this->decorate($match['__contract'], ...$match['__arguments']);
+        $this->decorate($match['__contract'], $match['__arguments']);
     }
 
     /**

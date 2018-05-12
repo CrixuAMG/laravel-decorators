@@ -446,8 +446,7 @@ abstract class AbstractRepository implements DecoratorContract
         int $argumentsCount,
         int $expectedArgumentCount,
         bool $acceptMoreArguments = false
-    ): void
-    {
+    ): void {
         $statement = $acceptMoreArguments
             ? $argumentsCount >= 2
             : $argumentsCount === 2;

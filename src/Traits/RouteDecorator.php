@@ -43,19 +43,25 @@ trait RouteDecorator
         // Parse the source
         $sourceParts = $this->parseRouteSource($source);
 
+        $foundCompleteMatch = null;
+
         // Go through the parts and try to find a match
         foreach ($sourceParts as $sourcePart) {
             $match = $this->matchRouteData($sourcePart, $matchAbles);
 
             $result = $this->checkMatch($match);
             if ($result) {
-                $this->decorateMatch($match);
-
-                return true;
+                $foundCompleteMatch = $match;
             } elseif (!empty($match)) {
                 // A match has been found, but we need to go deeper into the data
                 $matchAbles = $match;
             }
+        }
+
+        if ($foundCompleteMatch) {
+            $this->decorateMatch($foundCompleteMatch);
+
+            return true;
         }
 
         if (!$silent) {

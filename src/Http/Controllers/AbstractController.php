@@ -16,7 +16,7 @@ abstract class AbstractController extends Controller
     /**
      * @var
      */
-    protected $repository;
+    protected $next;
 
     /**
      * @var
@@ -24,13 +24,13 @@ abstract class AbstractController extends Controller
     protected $resource;
 
     /**
-     * @param mixed $repository
+     * @param mixed $next
      *
      * @return AbstractController
      */
-    public function setRepository($repository)
+    public function setNext($next)
     {
-        $this->repository = $repository;
+        $this->next = $next;
 
         return $this;
     }

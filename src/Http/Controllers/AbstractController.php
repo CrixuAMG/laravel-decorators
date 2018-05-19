@@ -3,6 +3,9 @@
 namespace CrixuAMG\Decorators\Http\Controllers;
 
 use CrixuAMG\Decorators\Traits\Forwardable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use ShareFeed\Http\Controllers\Controller;
 
 /**
@@ -16,7 +19,7 @@ abstract class AbstractController extends Controller
     /**
      * @var
      */
-    protected $repository;
+    protected $next;
 
     /**
      * @var
@@ -24,13 +27,13 @@ abstract class AbstractController extends Controller
     protected $resource;
 
     /**
-     * @param mixed $repository
+     * @param mixed $next
      *
      * @return AbstractController
      */
-    public function setRepository($repository)
+    public function setNext($next)
     {
-        $this->repository = $repository;
+        $this->next = $next;
 
         return $this;
     }
@@ -45,5 +48,26 @@ abstract class AbstractController extends Controller
         $this->resource = $resource;
 
         return $this;
+    }
+
+    /**
+     * @param string $method
+     * @param mixed  ...$args
+     *
+     * @return mixed
+     */
+    public function forwardResourceful(string $method, ...$args)
+    {
+        $result = $this->forward($method, ...$args);
+
+        if ($this->resource) {
+            if ($result instanceof LengthAwarePaginator || $result instanceof Collection) {
+                $result = $this->resource::collection($result);
+            } elseif ($result instanceof Model) {
+                $result = new $this->resource($result);
+            }
+        }
+
+        return $result;
     }
 }

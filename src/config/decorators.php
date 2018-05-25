@@ -13,6 +13,12 @@ return [
      */
     'cache_minutes' => 60,
 
+    'cache' => [
+        'request_parameters' => [
+            'page',
+        ],
+    ],
+
     /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */

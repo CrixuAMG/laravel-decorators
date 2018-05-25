@@ -96,11 +96,14 @@ abstract class AbstractCache implements DecoratorContract
      */
     public function simpleStore(array $data, string $createMethod = 'create')
     {
+        // Redirect to our repository
+        $result = $this->forward(__FUNCTION__, $data, $createMethod);
+
         // Flush the cache
         $this->flushCache();
 
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $data, $createMethod);
+        // Return the data
+        return $result;
     }
 
     /**
@@ -114,11 +117,14 @@ abstract class AbstractCache implements DecoratorContract
      */
     public function update(Model $model, array $data)
     {
+        // Redirect to our repository
+        $result = $this->forward(__FUNCTION__, $model, $data);
+
         // Flush the cache
         $this->flushCache();
 
-        // Redirect to our repository
-        return $this->forward(__FUNCTION__, $model, $data);
+        // Return the data
+        return $result;
     }
 
     /**
@@ -310,6 +316,12 @@ abstract class AbstractCache implements DecoratorContract
             $method,
             json_encode($args),
         ];
+
+        $configRequestParameters = (array)config('decorators.cache.request_parameters');
+        if (!empty($configRequestParameters)) {
+            $cacheKeyTemplate    .= '%s';
+            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+        }
 
         // Get the custom parameters
         $parameters = $this->getCacheParameters();

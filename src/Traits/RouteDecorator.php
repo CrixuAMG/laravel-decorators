@@ -23,8 +23,7 @@ trait RouteDecorator
         // Get the source
         $source = $this->getRouteSource();
 
-        if (stripos($source, 'oauth/') !== false) {
-            // TODO: make this more dynamic using the config
+        if (\in_array($source, (array)config('decorators.ignored_routes'), true)) {
             return true;
         }
 

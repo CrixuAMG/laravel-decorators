@@ -23,8 +23,7 @@ trait RouteDecorator
         // Get the source
         $source = $this->getRouteSource();
 
-        if (stripos($source, 'oauth/') !== false) {
-            // TODO: make this more dynamic using the config
+        if (\in_array($source, (array)config('decorators.ignored_routes'), true)) {
             return true;
         }
 
@@ -32,7 +31,7 @@ trait RouteDecorator
         $matchAbles = $this->getRouteMatchables();
 
         // First try to get it this way
-        $match  = $this->getDirectMatch($matchAbles, $source);
+        $match = $this->getDirectMatch($matchAbles, $source);
         $result = $this->checkMatch($match);
         if ($result) {
             $this->decorateMatch($match);
@@ -49,10 +48,11 @@ trait RouteDecorator
         foreach ($sourceParts as $sourcePart) {
             $match = $this->matchRouteData($sourcePart, $matchAbles);
 
-            $result = $this->checkMatch($match);
-            if ($result) {
+            if ($this->checkMatch($match)) {
                 $foundCompleteMatch = $match;
-            } elseif (!empty($match)) {
+            }
+
+            if (!empty($match)) {
                 // A match has been found, but we need to go deeper into the data
                 $matchAbles = $match;
             }

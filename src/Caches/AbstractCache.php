@@ -222,7 +222,7 @@ abstract class AbstractCache implements DecoratorContract
      */
     protected function getCacheTags(): array
     {
-        return $this->cacheTags;
+        return (array)$this->cacheTags;
     }
 
     /**

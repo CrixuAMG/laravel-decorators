@@ -20,6 +20,13 @@ return [
     ],
 
     /**
+     * Place any routes that should get ignored in the array below
+     */
+    'ignored_routes' => [
+        '/',
+    ],
+
+    /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
     'pagination'    => (int)env('APP_PAGINATION', 25),

@@ -36,7 +36,7 @@ trait BuildsQueries
             // Convert setWhereName to set_where_name
             $name = snake_case($name);
             // Remove set_where_
-            $name = str_replace('set_where_', '', $name);
+            $name = str_after('set_where_', $name);
             // If the name is still valid, continue
             if ($name) {
                 return $this->addWhere(

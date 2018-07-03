@@ -96,7 +96,7 @@ abstract class AbstractRepository implements DecoratorContract
         );
 
         if (\count($data) === 2 && $createMethod === 'updateOrCreate') {
-            $firstArray  = reset($data);
+            $firstArray = reset($data);
             $secondArray = next($data);
             if (is_array($firstArray) && is_array($secondArray)) {
                 return call_user_func_array(
@@ -177,8 +177,8 @@ abstract class AbstractRepository implements DecoratorContract
             $result = $model->delete();
         } catch (Exception $exception) {
             $result = false;
+        } finally {
+            return $result;
         }
-
-        return $result;
     }
 }

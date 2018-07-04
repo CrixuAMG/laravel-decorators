@@ -2,8 +2,14 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
+/**
+ * Trait BuildsQueries
+ * @package CrixuAMG\Decorators\Traits
+ */
 trait BuildsQueries
 {
     /**
@@ -22,6 +28,10 @@ trait BuildsQueries
      * @var int
      */
     private $paginationLimit;
+    /**
+     * @var
+     */
+    private $adaptedQuery;
 
     /**
      * @param string $name
@@ -261,6 +271,26 @@ trait BuildsQueries
         }
 
         return $query;
+    }
+
+    /**
+     * @param callable $callback
+     */
+    protected function adaptQuery(callable $callback)
+    {
+        $this->adaptedQuery = $callback;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
+     * @return mixed
+     */
+    private function getAdaptedQuery(\Illuminate\Database\Eloquent\Builder $builder)
+    {
+        return $this->adaptedQuery
+            ? ($this->adaptedQuery)($builder)
+            : $builder;
     }
 
     /**

@@ -50,6 +50,9 @@ abstract class AbstractRepository implements DecoratorContract
         // If scopes are defined, add them to the query
         $query = $this->registerScopes($query);
 
+        // If the query was adapted at some point, execute the callback
+        $query = $this->getAdaptedQuery($query);
+
         // Get the class
         $class = \get_class($this->model);
         if (method_exists($class, 'getDefaultRelations')) {

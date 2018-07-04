@@ -2,9 +2,8 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 
 /**
  * Trait BuildsQueries
@@ -275,18 +274,22 @@ trait BuildsQueries
 
     /**
      * @param callable $callback
+     *
+     * @return BuildsQueries
      */
     protected function adaptQuery(callable $callback)
     {
         $this->adaptedQuery = $callback;
+
+        return $this;
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      *
      * @return mixed
      */
-    private function getAdaptedQuery(\Illuminate\Database\Eloquent\Builder $builder)
+    private function getAdaptedQuery(Builder $builder)
     {
         return $this->adaptedQuery
             ? ($this->adaptedQuery)($builder)

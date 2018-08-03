@@ -3,7 +3,6 @@
 namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Traits\BuildsQueries;
 use CrixuAMG\Decorators\Traits\Transactionable;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -18,11 +17,23 @@ use UnexpectedValueException;
  */
 abstract class AbstractRepository implements DecoratorContract
 {
-    use BuildsQueries, Transactionable;
+    use Transactionable;
     /**
      * @var Model
      */
     private $model;
+
+    /**
+     * @param Model $model
+     *
+     * @return AbstractRepository
+     */
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
 
     /**
      * Returns the index
@@ -40,18 +51,6 @@ abstract class AbstractRepository implements DecoratorContract
     public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
     {
         $query = $this->model->query();
-
-        // If the where is not empty, use it to filter results
-        $query = $this->registerWheres($query);
-
-        // If whens are defined, add them to the query
-        $query = $this->registerWhens($query);
-
-        // If scopes are defined, add them to the query
-        $query = $this->registerScopes($query);
-
-        // If the query was adapted at some point, execute the callback
-        $query = $this->getAdaptedQuery($query);
 
         // Get the class
         $class = \get_class($this->model);
@@ -92,7 +91,11 @@ abstract class AbstractRepository implements DecoratorContract
     public function simpleStore(array $data, string $createMethod = 'create')
     {
         throw_unless(
-            is_callable($this->model, $createMethod),
+            method_exists($this->model, $createMethod) &&
+            \is_callable([
+                $this->model,
+                $createMethod,
+            ]),
             UnexpectedValueException::class,
             'The specified method is not callable.',
             422

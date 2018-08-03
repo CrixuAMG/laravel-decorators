@@ -13,7 +13,7 @@ return [
      */
     'cache_minutes' => 60,
 
-    'cache' => [
+    'cache'          => [
         'request_parameters' => [
             'page',
         ],
@@ -29,7 +29,7 @@ return [
     /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
-    'pagination'    => (int)env('APP_PAGINATION', 25),
+    'pagination'     => (int)env('APP_PAGINATION', 25),
 
     'route_matchables' => [
         /**

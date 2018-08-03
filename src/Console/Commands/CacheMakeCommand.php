@@ -50,21 +50,6 @@ class CacheMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
-    }
-
-    /**
      * Replace the class name for the given stub.
      *
      * @param  string $stub
@@ -83,10 +68,28 @@ class CacheMakeCommand extends GeneratorCommand
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
 
-        return str_replace(['RootNamespace\\', 'dummy:command'], [
+        return str_replace([
+            'RootNamespace\\',
+            'dummy:command',
+        ], [
             $this->rootNamespace(),
             $this->option('command'),
         ], $stub);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNameInput()
+    {
+        $name = trim($this->argument('name'));
+
+        // Check if the string is set, and if not, set it
+        if (stripos($name, $this->type) === false) {
+            $name .= $this->type;
+        }
+
+        return $name;
     }
 
     /**
@@ -97,7 +100,11 @@ class CacheMakeCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the command.'],
+            [
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the command.',
+            ],
         ];
     }
 

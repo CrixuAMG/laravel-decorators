@@ -82,33 +82,31 @@ trait RouteDecorator
     }
 
     /**
-     * @param string $source
-     *
-     * @return array
-     */
-    private function parseRouteSource(string $source): array
-    {
-        // Get the parts of the uri
-        return explode('/', $source);
-    }
-
-    /**
-     * @param string $string
-     * @param array  $possibleMatches
-     *
-     * @return array
-     */
-    private function matchRouteData(string $string, array $possibleMatches): array
-    {
-        return $possibleMatches[$string] ?? [];
-    }
-
-    /**
      * @return array
      */
     private function getRouteMatchables(): array
     {
         return (array)config('decorators.route_matchables');
+    }
+
+    /**
+     * @param array  $matchAbles
+     * @param string $source
+     *
+     * @return mixed
+     */
+    private function getDirectMatch(array $matchAbles, string $source)
+    {
+        $sourceParts = explode('/', $source);
+
+        foreach ($sourceParts as $key => $sourcePart) {
+            // In this loop, cast any dynamic values to * to support dynamic route matching
+            if (is_numeric($sourcePart)) {
+                $sourceParts[$key] = '*';
+            }
+        }
+
+        return data_get($matchAbles, implode('.', $sourceParts));
     }
 
     /**
@@ -132,22 +130,24 @@ trait RouteDecorator
     }
 
     /**
-     * @param array  $matchAbles
      * @param string $source
      *
-     * @return mixed
+     * @return array
      */
-    private function getDirectMatch(array $matchAbles, string $source)
+    private function parseRouteSource(string $source): array
     {
-        $sourceParts = explode('/', $source);
+        // Get the parts of the uri
+        return explode('/', $source);
+    }
 
-        foreach ($sourceParts as $key => $sourcePart) {
-            // In this loop, cast any dynamic values to * to support dynamic route matching
-            if (is_numeric($sourcePart)) {
-                $sourceParts[$key] = '*';
-            }
-        }
-
-        return data_get($matchAbles, implode('.', $sourceParts));
+    /**
+     * @param string $string
+     * @param array  $possibleMatches
+     *
+     * @return array
+     */
+    private function matchRouteData(string $string, array $possibleMatches): array
+    {
+        return $possibleMatches[$string] ?? [];
     }
 }

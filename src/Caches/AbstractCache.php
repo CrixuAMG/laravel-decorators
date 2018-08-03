@@ -45,6 +45,185 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    protected function forwardCached(string $method, ...$args)
+    {
+        // Get the cache tags
+        $cacheTags = $this->getCacheTags();
+
+        // Make sure we have the cache tags
+        throw_unless(
+            $cacheTags,
+            InvalidCacheDataException::class,
+            'The cache tags cannot be empty.',
+            422
+        );
+
+        // Get the amount of minutes the data should be cached
+        $cacheTime = $this->getCacheTime() ?? config('decorators.cache_minutes');
+
+        if (!$cacheTime) {
+            // No cache time, don't continue
+            // Forward the data and return the response
+            return $this->forward($method, ...$args);
+        }
+
+        // Create the cache key
+        $cacheKey = $this->generateCacheKey($method, ...$args);
+
+        // Verify the method exists on the next iteration and that it is callable
+        if (method_exists($this->next, $method) && \is_callable([
+                $this->next,
+                $method,
+            ])) {
+            // Fetch all items from the database
+            // in this call, we cache the result.
+            return cache()->tags($cacheTags)->remember(
+                $cacheKey,
+                $cacheTime,
+                function () use ($method, $args) {
+                    // Forward the data and cache in the response
+                    return $this->forward($method, ...$args);
+                }
+            );
+        }
+
+        // Method does not exist or is not callable
+        $this->throwMethodNotCallable($method);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCacheTags(): array
+    {
+        return (array)$this->cacheTags;
+    }
+
+    /**
+     * @param string[] ...$cacheTags
+     *
+     * @return AbstractCache
+     */
+    protected function setCacheTags(...$cacheTags): AbstractCache
+    {
+        // Set the firstTag variable that we can use to perform checks on
+        $firstTag = reset($cacheTags);
+
+        /** @var array $cacheTags */
+        $cacheTags = $firstTag !== null && \is_array($firstTag) && \count($cacheTags) === 1
+            ? $firstTag
+            : $cacheTags;
+
+        $this->cacheTags = $cacheTags;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheTime()
+    {
+        return $this->cacheTime;
+    }
+
+    /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws \Throwable
+     *
+     * @return mixed|string
+     */
+    private function generateCacheKey(string $method, ...$args)
+    {
+        // Check if there is a cache key set
+        $cacheKey = $this->getCacheKey();
+        if ($cacheKey) {
+            // There is a cache key set, don't go further
+            return $cacheKey;
+        }
+
+        // Build the basic template and parameter set
+        $cacheKeyTemplate = '%s.%s.%s.%s';
+        $cacheKeyParameters = [
+            config('app.name'),
+            implode('.', $this->getCacheTags()),
+            $method,
+            json_encode($args),
+        ];
+
+        $configRequestParameters = (array)config('decorators.cache.request_parameters');
+        if (!empty($configRequestParameters)) {
+            $cacheKeyTemplate .= '%s';
+            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+        }
+
+        // Get the custom parameters
+        $parameters = $this->getCacheParameters();
+        if ($parameters) {
+            // There are parameters, build upon the template and parameter set
+            foreach ($parameters as $key => $value) {
+                if (\is_array($value)) {
+                    // If the value is an array, convert it to a JSON string
+                    $value = json_encode($value);
+                }
+
+                $cacheKeyTemplate .= sprintf('.%s', $this->getCacheKeyType($value));
+                $cacheKeyParameters[] = $value;
+            }
+        }
+
+        // Return the formatted cache key
+        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheParameters(): array
+    {
+        return (array)$this->cacheParameters;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    private function getCacheKeyType($value): string
+    {
+        // Make sure to preserve float values
+        if (\is_float($value)) {
+            return '%f';
+        }
+
+        // Use it as an unsigned integer
+        if (is_numeric($value)) {
+            return '%u';
+        }
+
+        // Default fall back to string
+        return '%s';
+    }
+
+    /**
      * @param bool     $paginate
      * @param int|null $itemsPerPage
      *
@@ -81,99 +260,6 @@ abstract class AbstractCache implements DecoratorContract
     public function store(array $data)
     {
         return $this->flushAfterForward(__FUNCTION__, $data);
-    }
-
-    /**
-     * @param array  $data
-     * @param string $createMethod
-     *
-     * @return mixed
-     * @throws Exception
-     */
-    public function simpleStore(array $data, string $createMethod = 'create')
-    {
-        // Redirect to our repository
-        return $this->flushAfterForward(__FUNCTION__, $data, $createMethod);
-    }
-
-    /**
-     * @param Model $model
-     * @param array $data
-     *
-     * @throws Exception
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    public function update(Model $model, array $data)
-    {
-        // Redirect to our repository
-        return $this->flushAfterForward(__FUNCTION__, $model, $data);
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @throws Exception
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    public function delete(Model $model)
-    {
-        return $this->flushAfterForward(__FUNCTION__, $model);
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws Exception
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    protected function forwardCached(string $method, ...$args)
-    {
-        // Get the cache tags
-        $cacheTags = $this->getCacheTags();
-
-        // Make sure we have the cache tags
-        throw_unless(
-            $cacheTags,
-            InvalidCacheDataException::class,
-            'The cache tags cannot be empty.',
-            422
-        );
-
-        // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache_minutes');
-
-        if (!$cacheTime) {
-            // No cache time, don't continue
-            // Forward the data and return the response
-            return $this->forward($method, ...$args);
-        }
-
-        // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, ...$args);
-
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Fetch all items from the database
-            // in this call, we cache the result.
-            return cache()->tags($cacheTags)->remember(
-                $cacheKey,
-                $cacheTime,
-                function () use ($method, $args) {
-                    // Forward the data and cache in the response
-                    return $this->forward($method, ...$args);
-                }
-            );
-        }
-
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
     }
 
     /**
@@ -218,31 +304,44 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @return array
+     * @param array  $data
+     * @param string $createMethod
+     *
+     * @return mixed
+     * @throws Exception
      */
-    protected function getCacheTags(): array
+    public function simpleStore(array $data, string $createMethod = 'create')
     {
-        return (array)$this->cacheTags;
+        // Redirect to our repository
+        return $this->flushAfterForward(__FUNCTION__, $data, $createMethod);
     }
 
     /**
-     * @param string[] ...$cacheTags
+     * @param Model $model
+     * @param array $data
      *
-     * @return AbstractCache
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
      */
-    protected function setCacheTags(...$cacheTags): AbstractCache
+    public function update(Model $model, array $data)
     {
-        // Set the firstTag variable that we can use to perform checks on
-        $firstTag = reset($cacheTags);
+        // Redirect to our repository
+        return $this->flushAfterForward(__FUNCTION__, $model, $data);
+    }
 
-        /** @var array $cacheTags */
-        $cacheTags = $firstTag !== null && \is_array($firstTag) && \count($cacheTags) === 1
-            ? $firstTag
-            : $cacheTags;
-
-        $this->cacheTags = $cacheTags;
-
-        return $this;
+    /**
+     * @param Model $model
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    public function delete(Model $model)
+    {
+        return $this->flushAfterForward(__FUNCTION__, $model);
     }
 
     /**
@@ -279,101 +378,5 @@ abstract class AbstractCache implements DecoratorContract
         $this->cacheTime = $cacheTime;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getCacheTime()
-    {
-        return $this->cacheTime;
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws \Throwable
-     *
-     * @return mixed|string
-     */
-    private function generateCacheKey(string $method, ...$args)
-    {
-        // Check if there is a cache key set
-        $cacheKey = $this->getCacheKey();
-        if ($cacheKey) {
-            // There is a cache key set, don't go further
-            return $cacheKey;
-        }
-
-        // Build the basic template and parameter set
-        $cacheKeyTemplate   = '%s.%s.%s.%s';
-        $cacheKeyParameters = [
-            config('app.name'),
-            implode('.', $this->getCacheTags()),
-            $method,
-            json_encode($args),
-        ];
-
-        $configRequestParameters = (array)config('decorators.cache.request_parameters');
-        if (!empty($configRequestParameters)) {
-            $cacheKeyTemplate     .= '%s';
-            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
-        }
-
-        // Get the custom parameters
-        $parameters = $this->getCacheParameters();
-        if ($parameters) {
-            // There are parameters, build upon the template and parameter set
-            foreach ($parameters as $key => $value) {
-                if (\is_array($value)) {
-                    // If the value is an array, convert it to a JSON string
-                    $value = json_encode($value);
-                }
-
-                $cacheKeyTemplate     .= sprintf('.%s', $this->getCacheKeyType($value));
-                $cacheKeyParameters[] = $value;
-            }
-        }
-
-        // Return the formatted cache key
-        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-
-    /**
-     * @return array
-     */
-    private function getCacheParameters(): array
-    {
-        return (array)$this->cacheParameters;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return string
-     */
-    private function getCacheKeyType($value): string
-    {
-        // Make sure to preserve float values
-        if (\is_float($value)) {
-            return '%f';
-        }
-
-        // Use it as an unsigned integer
-        if (is_numeric($value)) {
-            return '%u';
-        }
-
-        // Default fall back to string
-        return '%s';
     }
 }

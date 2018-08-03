@@ -118,7 +118,8 @@ abstract class AbstractDecorator implements DecoratorContract
         $exception = UnauthorizedException::class,
         string $message = 'You are not allowed to perform this action.',
         int $code = 403
-    ) {
+    )
+    {
         throw new $exception($message, $code);
     }
 

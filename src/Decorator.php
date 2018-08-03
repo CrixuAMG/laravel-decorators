@@ -51,6 +51,19 @@ class Decorator
     }
 
     /**
+     * Registers a decorated instance of a class
+     *
+     * @param string $contract
+     * @param        $instance
+     */
+    private function registerDecoratedInstance(string $contract, $instance): void
+    {
+        $this->app->singleton($contract, function () use ($contract, $instance) {
+            return Decorator::handlerFactory($contract, $instance);
+        });
+    }
+
+    /**
      * @param string $contract
      * @param array  $chain
      *
@@ -69,29 +82,6 @@ class Decorator
     }
 
     /**
-     * @param $environments
-     */
-    public function enableCacheInEnvironments($environments)
-    {
-        $this->cacheExceptions = is_array($environments)
-            ? $environments
-            : [$environments];
-    }
-
-    /**
-     * Registers a decorated instance of a class
-     *
-     * @param string $contract
-     * @param        $instance
-     */
-    private function registerDecoratedInstance(string $contract, $instance): void
-    {
-        $this->app->singleton($contract, function () use ($contract, $instance) {
-            return Decorator::handlerFactory($contract, $instance);
-        });
-    }
-
-    /**
      * @param string $contract
      * @param        $chain
      *
@@ -104,7 +94,7 @@ class Decorator
         // Create a variable that will hold the instance
         $instance = null;
 
-        foreach ((array)$chain as $parentClass => $class) {
+        foreach ((array)$chain as $class) {
             // Check if cache is enabled and the class implements the cache class
             if (implementsCache($class) && !$this->shouldWrapCache()) {
                 continue;
@@ -130,8 +120,9 @@ class Decorator
     private function shouldWrapCache()
     {
         return (
-            !$this->cacheEnabled &&
-            !isset($this->cacheExceptions)
+            $this->cacheEnabled &&
+            !empty($this - cacheExceptions) &&
+            !isset($this->cacheExceptions[config('app.environment')])
         );
     }
 
@@ -164,5 +155,15 @@ class Decorator
         return $instance
             ? new $class($instance)
             : new $class;
+    }
+
+    /**
+     * @param $environments
+     */
+    public function enableCacheInEnvironments($environments)
+    {
+        $this->cacheExceptions = is_array($environments)
+            ? $environments
+            : [$environments];
     }
 }

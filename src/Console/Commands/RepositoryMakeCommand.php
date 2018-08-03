@@ -76,7 +76,10 @@ class RepositoryMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace(['RootNamespace\\', 'dummy:command'], [
+        return str_replace([
+            'RootNamespace\\',
+            'dummy:command',
+        ], [
             $this->rootNamespace(),
             $this->option('command'),
         ], $stub);
@@ -90,7 +93,11 @@ class RepositoryMakeCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the command.'],
+            [
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the command.',
+            ],
         ];
     }
 

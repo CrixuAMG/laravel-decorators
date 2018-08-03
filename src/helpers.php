@@ -8,7 +8,7 @@ if (!function_exists('cacheEnabled')) {
      */
     function cacheEnabled()
     {
-        return (bool)config('decorators.cache_enabled');
+        return (bool)config('decorators.cache.enabled');
     }
 }
 

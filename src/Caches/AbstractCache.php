@@ -67,7 +67,7 @@ abstract class AbstractCache implements DecoratorContract
         );
 
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache_minutes');
+        $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
 
         if (!$cacheTime) {
             // No cache time, don't continue

@@ -45,7 +45,7 @@ class Decorator
      */
     public function decorate(string $contract, $chain): void
     {
-        $this->cacheEnabled = config('decorators.cache_enabled') ?? false;
+        $this->cacheEnabled = config('decorators.cache.enabled') ?? false;
 
         $this->registerDecoratedInstance($contract, (array)$chain);
     }
@@ -75,7 +75,7 @@ class Decorator
     {
         // Set the cache data if it is not set yet
         if ($this->cacheEnabled === null) {
-            $this->cacheEnabled = (bool)config('decorators.cache_enabled') ?? false;
+            $this->cacheEnabled = (bool)config('decorators.cache.enabled') ?? false;
         }
 
         return $this->processChain($contract, $chain);

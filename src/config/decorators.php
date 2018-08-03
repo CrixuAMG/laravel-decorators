@@ -1,19 +1,20 @@
 <?php
 
 return [
-    /**
-     * When this is disabled, any classes implementing
-     * the CrixuAMG\Decorators\Caches\AbstractCache will be ignored
-     */
-    'enabled'       => true,
-
-    /**
-     * The amount of minutes a set of cached data is valid
-     * After that the cache will be refreshed with new data
-     */
-    'cache_minutes' => 60,
-
     'cache'          => [
+        /**
+         * When this is disabled, any classes implementing
+         * the CrixuAMG\Decorators\Caches\AbstractCache will be ignored
+         */
+        'enabled'       => env('APP_CACHE_ENABLED', true),
+        /**
+         * The amount of minutes a set of cached data is valid
+         * After that the cache will be refreshed with new data
+         */
+        'minutes' => 60,
+        /**
+         * The parameters that can be retrieved from the request for the cache key
+         */
         'request_parameters' => [
             'page',
         ],

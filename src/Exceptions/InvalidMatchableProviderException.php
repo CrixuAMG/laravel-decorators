@@ -20,9 +20,17 @@ class InvalidMatchableProviderException extends Exception
      * @param int            $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $message = "Provider for route matching is invalid.", int $code = 0, Throwable $previous = null)
+    public function __construct(string $message = null, int $code = 500, Throwable $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message ?? $this->getExceptionMessage(), $code, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    public function getExceptionMessage(): string
+    {
+        return 'Provider for route matching is invalid.';
     }
 
     /**

@@ -32,6 +32,14 @@ return [
      */
     'pagination'     => (int)env('APP_PAGINATION', 25),
 
+    /**
+     * The provider that will be used for matching decorators when using the autoregisterRoute method
+     *
+     * The following options are available: config (string) and a callback, that should return an array
+     * When config is used, it uses the array below this element
+     */
+    'route_matchable_provider' => 'config',
+
     'route_matchables' => [
         /**
          * Below is an example of how decorators can automatically be matched using the route

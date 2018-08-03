@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Exceptions\InvalidMatchableProviderException;
 use CrixuAMG\Decorators\Exceptions\MissingDataException;
 use Illuminate\Support\Facades\App;
 
@@ -83,10 +84,21 @@ trait RouteDecorator
 
     /**
      * @return array
+     * @throws InvalidMatchableProviderException
      */
     private function getRouteMatchables(): array
     {
-        return (array)config('decorators.route_matchables');
+        $matchableProvider = config('decorators.route_matchable_provider') ?? 'config';
+
+        if ($matchableProvider instanceof \Closure) {
+            $matchables = ($matchableProvider)();
+        } elseif ($matchableProvider === 'config') {
+            $matchables = (array)config('decorators.route_matchables');
+        } else {
+            throw new InvalidMatchableProviderException();
+        }
+
+        return $matchables;
     }
 
     /**

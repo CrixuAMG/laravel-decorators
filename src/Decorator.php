@@ -121,7 +121,7 @@ class Decorator
     {
         return (
             $this->cacheEnabled &&
-            !empty($this - cacheExceptions) &&
+            !empty($this->cacheExceptions) &&
             !isset($this->cacheExceptions[config('app.environment')])
         );
     }

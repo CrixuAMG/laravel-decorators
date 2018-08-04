@@ -84,21 +84,10 @@ trait RouteDecorator
 
     /**
      * @return array
-     * @throws InvalidMatchableProviderException
      */
     private function getRouteMatchables(): array
     {
-        $matchableProvider = config('decorators.route_matchable_provider') ?? 'config';
-
-        if ($matchableProvider instanceof \Closure) {
-            $matchables = ($matchableProvider)();
-        } elseif ($matchableProvider === 'config') {
-            $matchables = (array)config('decorators.route_matchables');
-        } else {
-            throw new InvalidMatchableProviderException();
-        }
-
-        return $matchables;
+        return (array)config('decorators.route_matchables');
     }
 
     /**

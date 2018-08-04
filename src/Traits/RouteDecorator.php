@@ -2,19 +2,19 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
-use CrixuAMG\Decorators\Exceptions\InvalidMatchableProviderException;
-use CrixuAMG\Decorators\Exceptions\MissingDataException;
+use CrixuAMG\Decorators\Exceptions\RouteDecoratorMatchMissingException;
 use Illuminate\Support\Facades\App;
 
 trait RouteDecorator
 {
     /**
-     * @param bool $silent
+     * @param bool          $silent
+     * @param callable|null $errorCallback
      *
      * @return bool
-     * @throws MissingDataException
+     * @throws RouteDecoratorMatchMissingException
      */
-    public function autoregisterRoute(bool $silent = false): bool
+    public function autoregisterRoute(bool $silent = false, callable $errorCallback = null): bool
     {
         if (App::runningInConsole()) {
             // Prevent issues from occurring when clearing cache for example
@@ -67,7 +67,14 @@ trait RouteDecorator
 
         if (!$silent) {
             // No match could be found
-            throw new MissingDataException('No match could be found for this URI.', 500);
+            if ($errorCallback) {
+                ($errorCallback)();
+            } else {
+                throw new RouteDecoratorMatchMissingException(
+                    'No decorator match could be found for this route.',
+                    500
+                );
+            }
         }
 
         return false;

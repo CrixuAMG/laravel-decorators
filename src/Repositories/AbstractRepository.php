@@ -8,7 +8,6 @@ use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use UnexpectedValueException;
 
 /**
  * Class AbstractRepository
@@ -90,41 +89,21 @@ abstract class AbstractRepository implements DecoratorContract
      */
     public function simpleStore(array $data, string $createMethod = 'create')
     {
-        throw_unless(
-            method_exists($this->model, $createMethod) &&
-            \is_callable([
-                $this->model,
-                $createMethod,
-            ]),
-            UnexpectedValueException::class,
-            'The specified method is not callable.',
-            422
+        $classAndMethod = sprintf(
+            '%s::%s',
+            get_class($this->model),
+            $createMethod
         );
 
-        if (\count($data) === 2 && $createMethod === 'updateOrCreate') {
+        if (\count($data) === 2 && ($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate')) {
             $firstArray = reset($data);
             $secondArray = next($data);
             if (is_array($firstArray) && is_array($secondArray)) {
-                return call_user_func_array(
-                    sprintf(
-                        '%s::%s',
-                        $this->model,
-                        $createMethod
-                    ),
-                    $firstArray,
-                    $secondArray
-                );
+                return $classAndMethod($firstArray, $secondArray);
             }
         }
 
-        return call_user_func_array(
-            sprintf(
-                '%s::%s',
-                $this->model,
-                $createMethod
-            ),
-            $data
-        );
+        return $classAndMethod($data);
     }
 
     /**

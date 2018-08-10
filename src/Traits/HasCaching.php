@@ -5,6 +5,10 @@ namespace CrixuAMG\Decorators\Traits;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use Exception;
 
+/**
+ * Trait HasCaching
+ * @package CrixuAMG\Decorators\Traits
+ */
 trait HasCaching
 {
     /**
@@ -35,6 +39,28 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
+        // Create the cache key
+        $cacheKey = $this->generateCacheKey($method, ...$args);
+
+        // Forward the data and cache the result.
+        return $this->cache(
+            $cacheKey,
+            $cacheTime,
+            function () use ($method, $args) {
+                // Forward the data and cache in the response
+                return $this->forward($method, ...$args);
+            }
+        );
+    }
+
+    /**
+     * @param          $cacheKey
+     * @param callable $callback
+     *
+     * @return mixed
+     */
+    protected function cache($cacheKey, callable $callback)
+    {
         // Get the cache tags
         $cacheTags = $this->getCacheTags();
 
@@ -42,40 +68,23 @@ trait HasCaching
         throw_unless(
             $cacheTags,
             InvalidCacheDataException::class,
-            'The cache tags cannot be empty.',
+            'The cache tags cannot be empty when using forwardCached.',
             422
         );
 
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
-        if (!$cacheTime) {
+        if (!$cacheTime || !((bool)config('decorators.cache.enabled'))) {
             // No cache time, don't continue
             // Forward the data and return the response
             return $this->forward($method, ...$args);
         }
 
-        // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, ...$args);
-
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([
-                $this->next,
-                $method,
-            ])) {
-            // Fetch all items from the database
-            // in this call, we cache the result.
-            return cache()->tags($cacheTags)->remember(
-                $cacheKey,
-                $cacheTime,
-                function () use ($method, $args) {
-                    // Forward the data and cache in the response
-                    return $this->forward($method, ...$args);
-                }
-            );
-        }
-
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
+        return cache()->tags($cacheTags)->remember(
+            $cacheKey,
+            $cacheTime,
+            ($callback)()
+        );
     }
 
     /**

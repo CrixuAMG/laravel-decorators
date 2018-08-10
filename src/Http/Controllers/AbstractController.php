@@ -2,10 +2,9 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
+use CrixuAMG\Decorators\Traits\HasCacheProfiles;
+use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use ShareFeed\Http\Controllers\Controller;
 
 /**
@@ -15,24 +14,7 @@ use ShareFeed\Http\Controllers\Controller;
  */
 abstract class AbstractController extends Controller
 {
-    use HasForwarding;
-
-    /**
-     * @var
-     */
-    protected $resource;
-
-    /**
-     * @param mixed $resource
-     *
-     * @return AbstractController
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
+    use HasForwarding, HasCaching, HasCacheProfiles;
 
     /**
      * @param string $method
@@ -42,16 +24,33 @@ abstract class AbstractController extends Controller
      */
     public function forwardResourceful(string $method, ...$args)
     {
+        // Forward the data
         $result = $this->forward($method, ...$args);
 
-        if ($this->resource) {
-            if ($result instanceof LengthAwarePaginator || $result instanceof Collection) {
-                $result = $this->resource::collection($result);
-            } elseif ($result instanceof Model) {
-                $result = new $this->resource($result);
-            }
-        }
+        return $this->resourceFul($result);
+    }
 
-        return $result;
+    /**
+     * @param string $method
+     * @param mixed  ...$args
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function forwardCachedResourceful(string $method, ...$args)
+    {
+        // Create the cache key
+        $cacheKey = $this->generateCacheKey($method, ...$args);
+
+        // Forward the data and cache the result.
+        return $this->cache(
+            $cacheKey,
+            function () use ($method, $args) {
+                // Forward the data and cache in the response
+                $result = $this->forward($method, ...$args);
+
+                return $this->resourceFul($result);
+            }
+        );
     }
 }

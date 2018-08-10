@@ -18,6 +18,12 @@ return [
         'request_parameters' => [
             'page',
         ],
+        /**
+         * Put any tags that should be used by default
+         */
+        'default_tags'       => [
+            //
+        ],
     ],
 
     /**

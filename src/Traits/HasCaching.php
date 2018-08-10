@@ -48,6 +48,11 @@ trait HasCaching
             return $this->forward($method, ...$args);
         }
 
+        // Generate a new cache key if none is set
+        if (!$this->getCacheKey()) {
+            $this->setCacheKey($this->generateCacheKey($method, ...$args));
+        }
+
         // Forward the data and cache the result.
         return $this->cache(
             function () use ($method, $args) {
@@ -65,10 +70,7 @@ trait HasCaching
     protected function cache(\Closure $callback)
     {
         // Get the cache tags
-        $cacheTags = array_merge(
-            $this->getCacheTags(),
-            (array)config('decorators.cache.default_tags')
-        );
+        $cacheTags = $this->getCacheTags();
 
         // Make sure we have the cache tags
         throw_unless(
@@ -97,7 +99,10 @@ trait HasCaching
      */
     protected function getCacheTags(): array
     {
-        return (array)$this->cacheTags;
+        return array_merge(
+            (array)$this->cacheTags,
+            (array)config('decorators.cache.default_tags')
+        );
     }
 
     /**

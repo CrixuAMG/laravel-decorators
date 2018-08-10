@@ -42,7 +42,11 @@ abstract class AbstractController extends Controller
     public function forwardCachedResourceful(string $method, ...$args)
     {
         // Create the cache key
-        $cacheKey = CacheKey::generate($method, ...$args);
+        $cacheKey = CacheKey::generate(
+            $method,
+            ...$args,
+            ...$this->getCacheTags()
+        );
 
         $this->setCacheKey($cacheKey);
 

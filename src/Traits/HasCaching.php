@@ -65,13 +65,16 @@ trait HasCaching
     protected function cache(callable $callback)
     {
         // Get the cache tags
-        $cacheTags = $this->getCacheTags();
+        $cacheTags = array_merge(
+            $this->getCacheTags(),
+            (array)config('decorators.cache.default_tags')
+        );
 
         // Make sure we have the cache tags
         throw_unless(
             $cacheTags,
             InvalidCacheDataException::class,
-            'The cache tags cannot be empty when using forwardCached.',
+            'The cache tags cannot be empty.',
             422
         );
 

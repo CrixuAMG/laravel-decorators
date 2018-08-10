@@ -2,7 +2,7 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
-use CrixuAMG\Decorators\Traits\Forwardable;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -15,7 +15,7 @@ use ShareFeed\Http\Controllers\Controller;
  */
 abstract class AbstractController extends Controller
 {
-    use Forwardable;
+    use HasForwarding;
     /**
      * @var
      */

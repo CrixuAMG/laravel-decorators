@@ -8,11 +8,11 @@ use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
 
 /**
- * Trait Forwardable
+ * Trait HasForwarding
  *
  * @package CrixuAMG\Decorators\Traits
  */
-trait Forwardable
+trait HasForwarding
 {
     /**
      * @var AbstractCache|AbstractRepository
@@ -20,7 +20,7 @@ trait Forwardable
     protected $next;
 
     /**
-     * Forwardable constructor.
+     * HasForwarding constructor.
      *
      * @param $next
      *

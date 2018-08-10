@@ -3,7 +3,7 @@
 namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Traits\Forwardable;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\UnauthorizedException;
 
@@ -14,7 +14,7 @@ use Illuminate\Validation\UnauthorizedException;
  */
 abstract class AbstractDecorator implements DecoratorContract
 {
-    use Forwardable;
+    use HasForwarding;
 
     /**
      * @return mixed

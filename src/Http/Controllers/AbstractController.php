@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
-use CrixuAMG\Decorators\Caches\CacheKey;
 use CrixuAMG\Decorators\Traits\HasCacheProfiles;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
@@ -29,6 +28,7 @@ abstract class AbstractController extends Controller
         // Forward the data
         $result = $this->forward($method, ...$args);
 
+        // Return the result resourcefully
         return $this->resourceful($result);
     }
 
@@ -41,14 +41,13 @@ abstract class AbstractController extends Controller
      */
     public function forwardCachedResourceful(string $method, ...$args)
     {
-        // Create the cache key
-        $cacheKey = CacheKey::generate(
-            $method,
-            ...$args,
-            ...$this->getCacheTags()
-        );
+        if (!$this->getCacheKey()) {
+            // Create the cache key
+            $cacheKey = $this->generateCacheKey($method, ...$args);
 
-        $this->setCacheKey($cacheKey);
+            // Set the key
+            $this->setCacheKey($cacheKey);
+        }
 
         // Forward the data and cache the result.
         return $this->cache(
@@ -56,6 +55,7 @@ abstract class AbstractController extends Controller
                 // Forward the data and cache in the response
                 $result = $this->forward($method, ...$args);
 
+                // Return the result resourcefully
                 return $this->resourceful($result);
             }
         );

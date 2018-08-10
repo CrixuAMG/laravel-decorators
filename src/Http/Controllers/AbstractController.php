@@ -6,6 +6,7 @@ use CrixuAMG\Decorators\Caches\CacheKey;
 use CrixuAMG\Decorators\Traits\HasCacheProfiles;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
+use CrixuAMG\Decorators\Traits\HasResources;
 use ShareFeed\Http\Controllers\Controller;
 
 /**
@@ -15,7 +16,7 @@ use ShareFeed\Http\Controllers\Controller;
  */
 abstract class AbstractController extends Controller
 {
-    use HasForwarding, HasCaching, HasCacheProfiles;
+    use HasForwarding, HasCaching, HasCacheProfiles, HasResources;
 
     /**
      * @param string $method
@@ -28,7 +29,7 @@ abstract class AbstractController extends Controller
         // Forward the data
         $result = $this->forward($method, ...$args);
 
-        return $this->resourceFul($result);
+        return $this->resourceful($result);
     }
 
     /**
@@ -50,7 +51,7 @@ abstract class AbstractController extends Controller
                 // Forward the data and cache in the response
                 $result = $this->forward($method, ...$args);
 
-                return $this->resourceFul($result);
+                return $this->resourceful($result);
             }
         );
     }

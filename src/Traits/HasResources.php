@@ -34,7 +34,7 @@ trait HasResources
      *
      * @return mixed
      */
-    public function resourceFul($data)
+    public function resourceful($data)
     {
         if ($this->resource) {
             if ($data instanceof LengthAwarePaginator || $data instanceof Collection) {

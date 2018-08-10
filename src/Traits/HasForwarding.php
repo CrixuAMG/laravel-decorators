@@ -24,7 +24,7 @@ trait HasForwarding
      *
      * @return HasForwarding
      */
-    public function setNext($next = null): HasForwarding
+    public function setNext($next = null)
     {
         // Do this only if next is supplied by the developer.
         if ($next) {

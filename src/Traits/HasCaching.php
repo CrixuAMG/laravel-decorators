@@ -102,7 +102,7 @@ trait HasCaching
      *
      * @return HasCaching
      */
-    protected function setCacheTags(...$cacheTags): HasCaching
+    protected function setCacheTags(...$cacheTags)
     {
         // Set the firstTag variable that we can use to perform checks on
         $firstTag = reset($cacheTags);
@@ -221,7 +221,7 @@ trait HasCaching
      *
      * @return HasCaching
      */
-    protected function setCacheKey(string $cacheKey): HasCaching
+    protected function setCacheKey(string $cacheKey)
     {
         $this->cacheKey = $cacheKey;
 
@@ -233,7 +233,7 @@ trait HasCaching
      *
      * @return HasCaching
      */
-    protected function setCacheParameters(array $cacheParameters): HasCaching
+    protected function setCacheParameters(array $cacheParameters)
     {
         $this->cacheParameters = $cacheParameters;
 
@@ -245,7 +245,7 @@ trait HasCaching
      *
      * @return HasCaching
      */
-    protected function setCacheTime(int $cacheTime): HasCaching
+    protected function setCacheTime(int $cacheTime)
     {
         $this->cacheTime = $cacheTime;
 

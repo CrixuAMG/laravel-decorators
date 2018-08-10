@@ -58,11 +58,11 @@ trait HasCaching
     }
 
     /**
-     * @param callable $callback
+     * @param \Closure $callback
      *
      * @return mixed
      */
-    protected function cache(callable $callback)
+    protected function cache(\Closure $callback)
     {
         // Get the cache tags
         $cacheTags = array_merge(
@@ -88,7 +88,7 @@ trait HasCaching
         return cache()->tags($cacheTags)->remember(
             $cacheKey,
             $cacheTime,
-            ($callback)()
+            $callback
         );
     }
 

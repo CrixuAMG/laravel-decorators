@@ -20,13 +20,11 @@ trait HasForwarding
     protected $next;
 
     /**
-     * HasForwarding constructor.
+     * @param null $next
      *
-     * @param $next
-     *
-     * @throws \Throwable
+     * @return HasForwarding
      */
-    public function __construct($next = null)
+    public function setNext($next = null): HasForwarding
     {
         // Do this only if next is supplied by the developer.
         if ($next) {
@@ -36,6 +34,8 @@ trait HasForwarding
             // Set the next class so methods can be called on it
             $this->next = $next;
         }
+
+        return $this;
     }
 
     /**

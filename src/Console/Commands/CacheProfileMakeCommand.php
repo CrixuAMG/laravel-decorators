@@ -6,7 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ProfileMakeCommand extends GeneratorCommand
+class CacheProfileMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
@@ -46,7 +46,7 @@ class ProfileMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Profiles';
+        return $rootNamespace . '\CacheProfiles';
     }
 
     /**
@@ -61,13 +61,18 @@ class ProfileMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace([
-            'RootNamespace\\',
-            'dummy:command',
-        ], [
-            $this->rootNamespace(),
-            $this->option('command'),
-        ], $stub);
+        return str_replace(
+            [
+
+                'RootNamespace\\',
+                'dummy:command',
+            ],
+            [
+                $this->rootNamespace(),
+                $this->option('command'),
+            ],
+            $stub
+        );
     }
 
     /**

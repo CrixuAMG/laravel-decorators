@@ -68,13 +68,18 @@ class CacheMakeCommand extends GeneratorCommand
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
 
-        return str_replace([
-            'RootNamespace\\',
-            'dummy:command',
-        ], [
-            $this->rootNamespace(),
-            $this->option('command'),
-        ], $stub);
+        return str_replace(
+            [
+
+                'RootNamespace\\',
+                'dummy:command',
+            ],
+            [
+                $this->rootNamespace(),
+                $this->option('command'),
+            ],
+            $stub
+        );
     }
 
     /**

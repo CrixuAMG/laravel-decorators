@@ -24,6 +24,10 @@ return [
         'default_tags'       => [
             //
         ],
+        /*
+         * Profile to use for more cache functionalities
+         */
+        'default_profile'    => \CrixuAMG\Decorators\Profiles\DefaultProfile::class,
     ],
 
     /**

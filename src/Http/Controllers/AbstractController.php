@@ -16,27 +16,11 @@ use ShareFeed\Http\Controllers\Controller;
 abstract class AbstractController extends Controller
 {
     use HasForwarding;
-    /**
-     * @var
-     */
-    protected $next;
 
     /**
      * @var
      */
     protected $resource;
-
-    /**
-     * @param mixed $next
-     *
-     * @return AbstractController
-     */
-    public function setNext($next)
-    {
-        $this->next = $next;
-
-        return $this;
-    }
 
     /**
      * @param mixed $resource

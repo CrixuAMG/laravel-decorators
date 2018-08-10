@@ -2,16 +2,45 @@
 
 namespace CrixuAMG\Decorators\Caches;
 
+/**
+ * Class CacheKey
+ * @package CrixuAMG\Decorators\Caches
+ */
 class CacheKey
 {
+    /**
+     * @param mixed ...$data
+     *
+     * @return string
+     */
     public static function generate(...$data)
     {
-        dd($data);
-
         $format = '';
         $parameters = [];
+
+        foreach ($data as $value) {
+            if (self::valueCanBeStringified($value)) {
+                if ($format) {
+                    $format .= '.';
+                }
+
+                // Update the format
+                $format .= self::getCacheKeyType($value);
+
+                // Add it to the parameters
+                $parameters[] = $value;
+            }
+        }
+
+        return self::fromFormat($format, $parameters);
     }
 
+    /**
+     * @param string $format
+     * @param array  $parameters
+     *
+     * @return string
+     */
     public static function fromFormat(string $format, array $parameters)
     {
         return md5(vsprintf($format, $parameters));
@@ -22,7 +51,7 @@ class CacheKey
      *
      * @return string
      */
-    private function getCacheKeyType($value): string
+    protected static function getCacheKeyType($value): string
     {
         // Make sure to preserve float values
         if (\is_float($value)) {
@@ -36,5 +65,26 @@ class CacheKey
 
         // Default fall back to string
         return '%s';
+    }
+
+    /**
+     * @param $value
+     *
+     * @return bool
+     */
+    private static function valueCanBeStringified($value): bool
+    {
+        return
+            (
+            !is_array($value)
+            ) &&
+            (
+                (
+                    !is_object($value) && settype($value, 'string') !== false
+                ) ||
+                (
+                    is_object($value) && method_exists($value, '__toString')
+                )
+            );
     }
 }

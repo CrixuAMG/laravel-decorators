@@ -44,9 +44,10 @@ abstract class AbstractController extends Controller
         // Create the cache key
         $cacheKey = CacheKey::generate($method, ...$args);
 
+        $this->setCacheKey($cacheKey);
+
         // Forward the data and cache the result.
         return $this->cache(
-            $cacheKey,
             function () use ($method, $args) {
                 // Forward the data and cache in the response
                 $result = $this->forward($method, ...$args);

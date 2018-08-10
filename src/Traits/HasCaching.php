@@ -59,11 +59,10 @@ trait HasCaching
 
     /**
      * @param callable $callback
-     * @param null     $cacheKey
      *
      * @return mixed
      */
-    protected function cache(callable $callback, $cacheKey = null)
+    protected function cache(callable $callback)
     {
         // Get the cache tags
         $cacheTags = $this->getCacheTags();
@@ -78,7 +77,10 @@ trait HasCaching
 
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
-        $cacheKey = $this->generateCacheKey();
+        $cacheKey = $this->getCacheKey() ?? CacheKey::generate(
+                ...$cacheTags,
+                ...request()->only((array)config('decorators.cache.request_parameters'))
+            );
 
         return cache()->tags($cacheTags)->remember(
             $cacheKey,

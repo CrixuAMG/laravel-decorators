@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Caches\CacheKey;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use Exception;
 
@@ -39,13 +40,16 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
-        // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, ...$args);
+        // Get the amount of minutes the data should be cached
+        $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
+        if (!$cacheTime || !cacheEnabled()) {
+            // No cache time, don't continue
+            // Forward the data and return the response
+            return $this->forward($method, ...$args);
+        }
 
         // Forward the data and cache the result.
         return $this->cache(
-            $cacheKey,
-            $cacheTime,
             function () use ($method, $args) {
                 // Forward the data and cache in the response
                 return $this->forward($method, ...$args);
@@ -54,12 +58,12 @@ trait HasCaching
     }
 
     /**
-     * @param          $cacheKey
      * @param callable $callback
+     * @param null     $cacheKey
      *
      * @return mixed
      */
-    protected function cache($cacheKey, callable $callback)
+    protected function cache(callable $callback, $cacheKey = null)
     {
         // Get the cache tags
         $cacheTags = $this->getCacheTags();
@@ -74,11 +78,7 @@ trait HasCaching
 
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
-        if (!$cacheTime || !((bool)config('decorators.cache.enabled'))) {
-            // No cache time, don't continue
-            // Forward the data and return the response
-            return $this->forward($method, ...$args);
-        }
+        $cacheKey = $this->generateCacheKey();
 
         return cache()->tags($cacheTags)->remember(
             $cacheKey,
@@ -172,7 +172,7 @@ trait HasCaching
         }
 
         // Return the formatted cache key
-        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
+        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
     }
 
     /**
@@ -189,27 +189,6 @@ trait HasCaching
     private function getCacheParameters(): array
     {
         return (array)$this->cacheParameters;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return string
-     */
-    private function getCacheKeyType($value): string
-    {
-        // Make sure to preserve float values
-        if (\is_float($value)) {
-            return '%f';
-        }
-
-        // Use it as an unsigned integer
-        if (is_numeric($value)) {
-            return '%u';
-        }
-
-        // Default fall back to string
-        return '%s';
     }
 
     /**

@@ -12,19 +12,6 @@ if (!function_exists('cacheEnabled')) {
     }
 }
 
-if (!function_exists('cacheKey')) {
-    /**
-     * @param       $format
-     * @param array $parameters
-     *
-     * @return string
-     */
-    function cacheKey(string $format, array $parameters)
-    {
-        return md5(vsprintf($format, $parameters));
-    }
-}
-
 if (!function_exists('implementsCache')) {
     /**
      * Returns true when the class implements the cache class

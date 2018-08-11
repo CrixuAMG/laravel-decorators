@@ -43,7 +43,7 @@ trait HasCaching
     {
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime() ?? Cache::time();
-        if (!$cacheTime || !cacheEnabled()) {
+        if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
             // Forward the data and return the response
             return $this->forward($method, ...$args);

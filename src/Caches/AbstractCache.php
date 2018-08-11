@@ -4,8 +4,8 @@ namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Traits\HasCacheProfiles;
-use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasCaching;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,6 +63,19 @@ abstract class AbstractCache implements DecoratorContract
     public function show(Model $model, ...$relations)
     {
         return $this->forwardCached(__FUNCTION__, $model, ...$relations);
+    }
+
+    /**
+     * @param mixed ...$relations
+     *
+     * @throws Exception
+     * @throws \Throwable
+     *
+     * @return mixed
+     */
+    public function simpleShow(...$relations)
+    {
+        return $this->forwardCached(__FUNCTION__, ...$relations);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\UnauthorizedException;
@@ -68,6 +67,16 @@ abstract class AbstractDecorator implements DecoratorContract
     public function show(Model $model, ...$relations)
     {
         return $this->forward(__FUNCTION__, $model, ...$relations);
+    }
+
+    /**
+     * @param array $relations
+     *
+     * @return mixed
+     */
+    public function simpleShow(...$relations)
+    {
+        return $this->forward(__FUNCTION__, ...$relations);
     }
 
     /**

@@ -139,6 +139,9 @@ abstract class AbstractRepository implements DecoratorContract
         if (!empty($relations)) {
             // Load only specified relations
             $model->load(...$relations);
+        } elseif (method_exists($class, 'getShowRelations')) {
+            // If the method getShowRelations exists, call it to load in relations before returning the model
+            $model->load((array)$class::getShowRelations());
         } elseif (method_exists($class, 'getDefaultRelations')) {
             // If the method getDefaultRelations exists, call it to load in relations before returning the model
             $model->load((array)$class::getDefaultRelations());
@@ -146,6 +149,16 @@ abstract class AbstractRepository implements DecoratorContract
 
         // Return the model
         return $model;
+    }
+
+    /**
+     * @param mixed ...$relations
+     *
+     * @return mixed
+     */
+    public function simpleShow(...$relations)
+    {
+        return $this->show($this->model, ...$relations);
     }
 
     /**

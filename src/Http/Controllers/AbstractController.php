@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
-use CrixuAMG\Decorators\Traits\HasCacheProfiles;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
@@ -15,7 +14,7 @@ use ShareFeed\Http\Controllers\Controller;
  */
 abstract class AbstractController extends Controller
 {
-    use HasForwarding, HasCaching, HasCacheProfiles, HasResources;
+    use HasForwarding, HasCaching, HasResources;
 
     /**
      * @param string $method

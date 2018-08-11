@@ -32,38 +32,26 @@ trait HasCacheProfiles
      */
     public function setDefaultProfile()
     {
-        return $this->setProfile(config('decorators.cache.default_profile'));
+        return $this->setProfile($this->getDefaultProfile());
     }
 
     /**
-     * @param $method
-     * @param $arguments
-     *
-     * @return mixed
+     * @return \Illuminate\Config\Repository|mixed
      */
-    public function __call($method, $arguments)
+    protected function getDefaultProfile()
     {
-        // Check the method exists in this class
-        if (method_exists($this, $method)) {
-            // If the method exists on the profile, call it
-            if (method_exists($this->profile, $method)) {
-                call_user_func_array(
-                    [
-                        $this->profile,
-                        $method,
-                    ],
-                    $arguments
-                );
-            }
+        return config('decorators.cache.default_profile');
+    }
 
-            // The method exists on this class, execute it and return the result
-            return call_user_func_array(
-                [
-                    $this,
-                    $method,
-                ],
-                $arguments
-            );
+    /**
+     * @param string $method
+     * @param mixed  ...$args
+     */
+    public function callProfileMethod(string $method, ...$args)
+    {
+        // If the method exists on the profile, call it
+        if (method_exists($this->profile, $method)) {
+            $this->profile->{$method}(...$args);
         }
     }
 }

@@ -13,6 +13,7 @@ use Exception;
  */
 trait HasCaching
 {
+    use HasCacheProfiles;
     /**
      * @var array
      */
@@ -57,6 +58,8 @@ trait HasCaching
         // Forward the data and cache the result.
         return $this->cache(
             function () use ($method, $args) {
+                $this->callProfileMethod($method, ...$args);
+
                 // Forward the data and cache in the response
                 return $this->forward($method, ...$args);
             }

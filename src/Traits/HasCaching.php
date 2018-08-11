@@ -42,7 +42,7 @@ trait HasCaching
     protected function forwardCached(string $method, ...$args)
     {
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? Cache::time();
+        $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
             // Forward the data and return the response
@@ -78,7 +78,7 @@ trait HasCaching
         }
 
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? Cache::time();
+        $cacheTime = $this->getCacheTime();
         $cacheKey = $this->getCacheKey() ?? CacheKey::generate(
                 ...$cacheTags,
                 ...request()->only((array)config('decorators.cache.request_parameters'))
@@ -137,7 +137,7 @@ trait HasCaching
      */
     private function getCacheTime()
     {
-        return $this->cacheTime;
+        return $this->cacheTime ?? Cache::time();
     }
 
     /**

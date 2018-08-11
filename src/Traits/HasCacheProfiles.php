@@ -16,11 +16,11 @@ trait HasCacheProfiles
     protected $profile;
 
     /**
-     * @param AbstractProfile $profile
+     * @param $profile
      *
      * @return HasCacheProfiles
      */
-    public function setProfile(AbstractProfile $profile)
+    public function setProfile($profile)
     {
         $this->profile = $profile;
 

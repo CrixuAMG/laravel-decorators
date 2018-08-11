@@ -26,6 +26,10 @@ abstract class AbstractCache implements DecoratorContract
     public function __construct($next = null)
     {
         $this->setNext($next);
+
+        if (!$this->profile) {
+            $this->setDefaultProfile();
+        }
     }
 
     /**

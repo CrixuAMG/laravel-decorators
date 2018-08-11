@@ -21,9 +21,6 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "autoload": {
-    "files": [
-      "src/helpers.php"
-    ],
     "psr-4": {
       "CrixuAMG\\Decorators\\": "src"
     }

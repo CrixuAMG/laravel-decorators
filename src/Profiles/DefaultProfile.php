@@ -42,6 +42,16 @@ class DefaultProfile extends AbstractProfile implements CacheProfileContract
     }
 
     /**
+     * @param mixed ...$relations
+     *
+     * @return mixed
+     */
+    public function simpleShow(...$relations)
+    {
+        // TODO: Implement simpleShow() method.
+    }
+
+    /**
      * @param array $data
      *
      * @return mixed

@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Profiles;
 
+use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Contracts\CacheProfileContract;
 
 /**
@@ -18,18 +19,13 @@ abstract class AbstractProfile implements CacheProfileContract
      * @var bool
      */
     protected $enabled;
-    /**
-     * @var array
-     */
-    protected $defaultTags;
 
     /**
      * DefaultProfile constructor.
      */
     public function __construct()
     {
-        $this->enabled = (bool)config('decorators.cache.enabled');
-        $this->time = (int)config('decorators.cache.minutes');
-        $this->defaultTags = (array)config('decorators.cache.default_tags');
+        $this->enabled = Cache::enabled();
+        $this->time = Cache::time();
     }
 }

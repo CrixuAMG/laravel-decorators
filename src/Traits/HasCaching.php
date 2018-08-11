@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Caches\CacheDriver;
 use CrixuAMG\Decorators\Caches\CacheKey;
 use Exception;
@@ -41,7 +42,7 @@ trait HasCaching
     protected function forwardCached(string $method, ...$args)
     {
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
+        $cacheTime = $this->getCacheTime() ?? Cache::time();
         if (!$cacheTime || !cacheEnabled()) {
             // No cache time, don't continue
             // Forward the data and return the response
@@ -77,7 +78,7 @@ trait HasCaching
         }
 
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
+        $cacheTime = $this->getCacheTime() ?? Cache::time();
         $cacheKey = $this->getCacheKey() ?? CacheKey::generate(
                 ...$cacheTags,
                 ...request()->only((array)config('decorators.cache.request_parameters'))

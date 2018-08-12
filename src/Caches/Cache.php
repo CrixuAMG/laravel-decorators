@@ -16,8 +16,7 @@ class Cache
     public static function enabled(bool $enabled = null): bool
     {
         if (!\is_null($enabled)) {
-            $enabled ? self::enable()
-                : self::disable();
+            config(['decorators.cache.enabled' => $enabled]);
         }
 
         return (bool)config('decorators.cache.enabled');
@@ -42,18 +41,16 @@ class Cache
     }
 
     /**
+     * @param bool|null $force
      *
+     * @return bool
      */
-    public static function enable()
+    public static function forceCacheTags(bool $force = null): bool
     {
-        config(['decorators.cache.enabled' => true]);
-    }
+        if (!\is_null($force)) {
+            config(['decorators.cache.enable_forced_tags' => $force]);
+        }
 
-    /**
-     *
-     */
-    public static function disable()
-    {
-        config(['decorators.cache.enabled' => false]);
+        return (bool)config('decorators.cache.enable_forced_tags');
     }
 }

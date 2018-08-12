@@ -5,6 +5,7 @@ namespace CrixuAMG\Decorators\Traits;
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Caches\CacheDriver;
 use CrixuAMG\Decorators\Caches\CacheKey;
+use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use Exception;
 
 /**
@@ -74,11 +75,25 @@ trait HasCaching
      */
     protected function cache(\Closure $callback)
     {
+        $cacheTags = null;
         $implementsTags = CacheDriver::checkImplementsTags();
 
         if ($implementsTags) {
             // Get the cache tags
             $cacheTags = $this->getCacheTags();
+        }
+
+        if ($implementsTags) {
+            // If tags are implemented in the driver, check if they are required
+            $forcedTagsEnabled = Cache::forceCacheTags();
+
+            // If tags are required, but there are none set, throw the exception
+            throw_if(
+                $forcedTagsEnabled && !$cacheTags,
+                InvalidCacheDataException::class,
+                'Cache tags are required.',
+                500
+            );
         }
 
         // Get the amount of minutes the data should be cached

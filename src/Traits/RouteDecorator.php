@@ -29,10 +29,10 @@ trait RouteDecorator
         }
 
         // Get the matchables to check against
-        $matchAbles = $this->getRouteMatchables();
+        $matchables = $this->getRouteMatchables();
 
         // First try to get it this way
-        $match = $this->getDirectMatch($matchAbles, $source);
+        $match = $this->getDirectMatch($matchables, $source);
         $result = $this->checkMatch($match);
         if ($result) {
             $this->decorateMatch($match);
@@ -40,43 +40,21 @@ trait RouteDecorator
             return true;
         }
 
-        // Parse the source
-        $sourceParts = $this->parseRouteSource($source);
+        // Try to find a match
+        $routeMatch = $this->findMatch($source, $matchables);
 
-        $foundCompleteMatch = null;
-
-        // Go through the parts and try to find a match
-        foreach ($sourceParts as $sourcePart) {
-            $match = $this->matchRouteData($sourcePart, $matchAbles);
-
-            if ($this->checkMatch($match)) {
-                $foundCompleteMatch = $match;
-            }
-
-            if (!empty($match)) {
-                // A match has been found, but we need to go deeper into the data
-                $matchAbles = $match;
-            }
-        }
-
-        if ($foundCompleteMatch) {
-            $this->decorateMatch($foundCompleteMatch);
+        if ($routeMatch) {
+            $this->decorateMatch($routeMatch);
 
             return true;
         }
 
         if (!$silent) {
-            // No match could be found
-            if ($errorCallback) {
-                ($errorCallback)();
-            } else {
-                throw new RouteDecoratorMatchMissingException(
-                    'No decorator match could be found for this route.',
-                    500
-                );
-            }
+            // Either execute the set callback or throw an exception
+            $this->matchNotFound($errorCallback);
         }
 
+        // 'Silently' return false, no error has occurred
         return false;
     }
 
@@ -157,5 +135,53 @@ trait RouteDecorator
     private function matchRouteData(string $string, array $possibleMatches): array
     {
         return $possibleMatches[$string] ?? [];
+    }
+
+    /**
+     * @param $source
+     * @param $matchables
+     *
+     * @return array|null
+     */
+    private function findMatch($source, $matchables)
+    {
+        // Parse the source
+        $sourceParts = $this->parseRouteSource($source);
+
+        $routeMatch = null;
+
+        // Go through the parts and try to find a match
+        foreach ($sourceParts as $sourcePart) {
+            $match = $this->matchRouteData($sourcePart, $matchables);
+
+            if ($this->checkMatch($match)) {
+                $routeMatch = $match;
+            }
+
+            if (!empty($match)) {
+                // A match has been found, but we need to go deeper into the data
+                $matchables = $match;
+            }
+        }
+
+        return $routeMatch;
+    }
+
+    /**
+     * @param callable $errorCallback
+     *
+     * @throws RouteDecoratorMatchMissingException
+     */
+    private function matchNotFound(callable $errorCallback): void
+    {
+        // No match could be found
+        if ($errorCallback) {
+            ($errorCallback)();
+        } else {
+            throw new RouteDecoratorMatchMissingException(
+                'No decorator match could be found for this route.',
+                500
+            );
+        }
     }
 }

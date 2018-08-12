@@ -42,6 +42,9 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
+        // Call the profile method before continueing, in the profile, any cache related properties can be changed
+        $this->callProfileMethod($method, ...$args);
+
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
@@ -58,8 +61,6 @@ trait HasCaching
         // Forward the data and cache the result.
         return $this->cache(
             function () use ($method, $args) {
-                $this->callProfileMethod($method, ...$args);
-
                 // Forward the data and cache in the response
                 return $this->forward($method, ...$args);
             }

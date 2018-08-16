@@ -18,12 +18,24 @@
     "php": ">=7.0",
     "laravel/framework": "5.*"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^7.3",
+    "orchestra/testbench": "^3.6"
+  },
   "minimum-stability": "stable",
   "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "CrixuAMG\\Decorators\\": "src"
     }
+  },
+  "autoload-dev": {
+      "psr-4": {
+          "CrixuAMG\\Decorators\\Test\\": "tests"
+      }
+  },
+  "scripts": {
+      "test": "vendor/bin/phpunit"
   },
   "extra": {
     "laravel": {

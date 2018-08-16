@@ -1,16 +1,16 @@
 <?php
 
-namespace CrixuAMG\Decorators\Profiles;
+namespace CrixuAMG\Decorators\CacheProfiles;
 
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Contracts\CacheProfileContract;
 use Illuminate\Http\Request;
 
 /**
- * Class DefaultProfile
+ * Class AbstractProfile
  * @package CrixuAMG\Decorators\CacheProfiles
  */
-class DefaultProfile extends AbstractProfile implements CacheProfileContract
+abstract class AbstractProfile implements CacheProfileContract
 {
     /**
      * Get or set the enabled state for caching

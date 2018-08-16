@@ -98,10 +98,7 @@ trait HasCaching
 
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime();
-        $cacheKey = $this->getCacheKey() ?? CacheKey::generate(
-                ...$cacheTags,
-                ...request()->only((array)config('decorators.cache.request_parameters'))
-            );
+        $cacheKey = $this->getCacheKey() ?? CacheKey::generate(...$cacheTags);
 
         if (!empty($cacheTags) && $implementsTags) {
             $return = cache()->tags($cacheTags)->remember(
@@ -188,7 +185,7 @@ trait HasCaching
         // If request parameters are defined, use them to generate a more unique key based on request values
         $configRequestParameters = (array)config('decorators.cache.request_parameters');
         if (!empty($configRequestParameters)) {
-            $cacheKeyTemplate .= '%s';
+            $cacheKeyTemplate .= '.%s';
             $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
         }
 

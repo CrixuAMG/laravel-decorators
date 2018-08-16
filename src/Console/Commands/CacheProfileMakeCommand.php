@@ -13,7 +13,7 @@ class CacheProfileMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:profile';
+    protected $name = 'decorators:profile';
     /**
      * The console command description.
      *

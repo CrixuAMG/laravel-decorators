@@ -18,7 +18,7 @@ class DecoratorMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:decorator';
+    protected $name = 'decorators:decorator';
     /**
      * The console command description.
      *

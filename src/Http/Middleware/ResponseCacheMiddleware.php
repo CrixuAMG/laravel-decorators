@@ -25,8 +25,12 @@ class ResponseCacheMiddleware
      */
     public function handle($request, \Closure $next, $guard = null)
     {
+        $next($request);
+        dump($request->cacheProfile()->cacheKeyExtension());
+
         // If this was a cachable request and caching is enabled, cache in the response
         if ($request->isMethodCacheable() && Cache::enabled()) {
+
             // Perform the request, cache in the result
             $response = $this->cache(function () use ($next, $request) {
                 return $next($request);

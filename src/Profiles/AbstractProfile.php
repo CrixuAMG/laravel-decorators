@@ -7,7 +7,7 @@ use CrixuAMG\Decorators\Contracts\CacheProfileContract;
 
 /**
  * Class AbstractProfile
- * @package CrixuAMG\Decorators\Profiles
+ * @package CrixuAMG\Decorators\CacheProfiles
  */
 abstract class AbstractProfile implements CacheProfileContract
 {

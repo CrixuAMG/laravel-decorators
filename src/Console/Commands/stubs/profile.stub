@@ -3,7 +3,7 @@
 namespace DummyNamespace;
 
 use CrixuAMG\Decorators\Contracts\CacheProfileContract;
-use CrixuAMG\Decorators\Profiles\AbstractProfile;
+use CrixuAMG\Decorators\CacheProfiles\AbstractProfile;
 
 /**
  * Class DummyClass

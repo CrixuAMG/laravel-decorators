@@ -2,6 +2,8 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Caches\Cache;
+
 /**
  * Trait HasCacheProfiles
  * @package CrixuAMG\Decorators\Traits
@@ -18,16 +20,9 @@ trait HasCacheProfiles
      *
      * @return HasCacheProfiles
      */
-    public function setProfile($profile)
+    public function profile($profile = null)
     {
-        if (\is_string($profile) && class_exists($profile)) {
-            // Convert the string to an instance of the profile
-            $profile = new $profile;
-        }
-
-        $this->profile = $profile;
-
-        return $this;
+        return Cache::profile($profile);
     }
 
     /**
@@ -35,7 +30,7 @@ trait HasCacheProfiles
      */
     public function setDefaultProfile()
     {
-        return $this->setProfile($this->getDefaultProfile());
+        return $this->profile($this->getDefaultProfile());
     }
 
     /**

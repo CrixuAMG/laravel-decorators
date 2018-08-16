@@ -43,6 +43,13 @@ class CacheKey
      */
     public static function fromFormat(string $format, array $parameters)
     {
+        $requestExtension = self::getDataFromRequest();
+
+        if ($requestExtension) {
+            $format .= '.%s';
+            $parameters[] = $requestExtension;
+        }
+
         return md5(vsprintf($format, $parameters));
     }
 
@@ -86,5 +93,20 @@ class CacheKey
                     is_object($value) && method_exists($value, '__toString')
                 )
             );
+    }
+
+    /**
+     * @return string
+     */
+    private static function getDataFromRequest()
+    {
+        $data = request()->only((array)config('decorators.cache.request_parameters'));
+        $string = '';
+
+        foreach ($data as $name => $value) {
+            $string .= sprintf('%s.%s', $name, $value);
+        }
+
+        return $string;
     }
 }

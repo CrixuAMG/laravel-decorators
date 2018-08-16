@@ -69,19 +69,6 @@ abstract class AbstractCache implements DecoratorContract
     }
 
     /**
-     * @param mixed ...$relations
-     *
-     * @throws Exception
-     * @throws \Throwable
-     *
-     * @return mixed
-     */
-    public function simpleShow(...$relations)
-    {
-        return $this->forwardCached(__FUNCTION__, ...$relations);
-    }
-
-    /**
      * @param array $data
      *
      * @throws Exception

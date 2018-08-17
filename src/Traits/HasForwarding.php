@@ -17,7 +17,7 @@ trait HasForwarding
     /**
      * @var AbstractCache|AbstractRepository
      */
-    protected $next;
+    public $next;
 
     /**
      * @param null $next

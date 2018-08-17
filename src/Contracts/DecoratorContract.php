@@ -33,13 +33,6 @@ interface DecoratorContract
     public function show(Model $model, ...$relations);
 
     /**
-     * @param mixed ...$relations
-     *
-     * @return mixed
-     */
-    public function simpleShow(...$relations);
-
-    /**
      * @param array $data
      *
      * @return mixed

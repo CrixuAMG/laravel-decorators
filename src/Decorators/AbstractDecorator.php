@@ -70,16 +70,6 @@ abstract class AbstractDecorator implements DecoratorContract
     }
 
     /**
-     * @param array $relations
-     *
-     * @return mixed
-     */
-    public function simpleShow(...$relations)
-    {
-        return $this->forward(__FUNCTION__, ...$relations);
-    }
-
-    /**
      * @param array $data
      *
      * @return mixed

@@ -152,16 +152,6 @@ abstract class AbstractRepository implements DecoratorContract
     }
 
     /**
-     * @param mixed ...$relations
-     *
-     * @return mixed
-     */
-    public function simpleShow(...$relations)
-    {
-        return $this->show($this->model, ...$relations);
-    }
-
-    /**
      * Delete a model
      *
      * @param Model $model

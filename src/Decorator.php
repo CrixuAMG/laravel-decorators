@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators;
 
+use Carbon\Carbon;
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
 use CrixuAMG\Decorators\Traits\RouteDecorator;
@@ -47,31 +48,31 @@ class Decorator
      */
     public function decorate(string $contract, $chain): void
     {
-        $this->registerDecoratedInstance($contract, (array)$chain);
+        $this->decorateContract($contract, (array)$chain);
     }
 
     /**
      * Registers a decorated instance of a class
      *
      * @param string $contract
-     * @param        $instance
+     * @param array  $chain
      */
-    private function registerDecoratedInstance(string $contract, $instance): void
+    private function decorateContract(string $contract, array $chain): void
     {
-        $this->app->singleton($contract, function () use ($contract, $instance) {
-            return Decorator::processChain($contract, $instance);
+        $this->app->singleton($contract, function () use ($contract, $chain) {
+            return Decorator::processChain($contract, $chain);
         });
     }
 
     /**
      * @param string $contract
-     * @param        $chain
+     * @param array  $chain
      *
      * @throws \Throwable
      *
      * @return mixed
      */
-    private function processChain(string $contract, $chain)
+    private function processChain(string $contract, array $chain)
     {
         // Create a variable that will hold the instance
         $instance = null;

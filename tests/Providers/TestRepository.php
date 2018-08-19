@@ -3,9 +3,22 @@
 namespace CrixuAMG\Decorators\Test\Providers;
 
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * Class TestRepository
+ * @package CrixuAMG\Decorators\Test\Providers
+ */
 class TestRepository extends AbstractRepository implements TestContract
 {
+    /**
+     * TestRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->setModel(new TestModel);
+    }
+
     /**
      * Returns the index
      *
@@ -13,7 +26,7 @@ class TestRepository extends AbstractRepository implements TestContract
      */
     public function index()
     {
-        // TODO: Implement index() method.
+        return new Collection();
     }
 
     /**
@@ -25,6 +38,6 @@ class TestRepository extends AbstractRepository implements TestContract
      */
     public function store(array $data)
     {
-        // TODO: Implement store() method.
+        return new TestModel();
     }
 }

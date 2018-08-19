@@ -42,7 +42,6 @@ trait RouteDecorator
 
         // Try to find a match
         $routeMatch = $this->findMatch($source, $matchables);
-
         if ($routeMatch) {
             $this->decorateMatch($routeMatch);
 
@@ -172,7 +171,7 @@ trait RouteDecorator
      *
      * @throws RouteDecoratorMatchMissingException
      */
-    private function matchNotFound(callable $errorCallback): void
+    private function matchNotFound(callable $errorCallback = null): void
     {
         // No match could be found
         if ($errorCallback) {

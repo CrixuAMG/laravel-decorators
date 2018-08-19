@@ -30,7 +30,8 @@ class DecoratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->setDecorator();
+        Cache::enabled(true);
+        $this->decorator = app(Decorator::class);
     }
 
     /**
@@ -45,7 +46,6 @@ class DecoratorTest extends TestCase
         $instance = app(TestContract::class);
 
         $this->assertInstanceOf(TestRepository::class, $instance);
-        $this->setDecorator();
     }
 
     /**
@@ -62,7 +62,6 @@ class DecoratorTest extends TestCase
         $instance = app(TestContract::class);
 
         $this->assertInstanceOf(TestCache::class, $instance);
-        $this->setDecorator();
     }
 
     /**
@@ -81,7 +80,6 @@ class DecoratorTest extends TestCase
         $instance = app(TestContract::class);
 
         $this->assertInstanceOf(TestDecorator::class, $instance);
-        $this->setDecorator();
     }
 
     /**
@@ -100,17 +98,5 @@ class DecoratorTest extends TestCase
         $this->expectException(InterfaceNotImplementedException::class);
         app(TestContract::class);
         $this->getExpectedException();
-
-        $this->setDecorator();
-    }
-
-    /**
-     *
-     */
-    private function setDecorator(): void
-    {
-        Cache::enabled(true);
-        $this->decorator = null;
-        $this->decorator = app(Decorator::class);
     }
 }

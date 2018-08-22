@@ -20,7 +20,7 @@ abstract class AbstractRepository implements DecoratorContract
     /**
      * @var Model
      */
-    private $model;
+    protected $model;
 
     /**
      * @param Model $model

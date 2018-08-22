@@ -64,4 +64,30 @@ class RepositoryTest extends TestCase
 
         $this->assertInstanceOf(TestModel::class, $result);
     }
+
+    /**
+     * @test
+     */
+    public function it_can_get_a_single_model()
+    {
+        $model = new TestModel();
+
+        $result = $this->forward('show', $model);
+
+        $this->assertSame($model, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_a_single_model()
+    {
+        $model = new TestModel([
+            'foo' => 'foo',
+        ]);
+
+        $result = $this->forward('update', $model, ['foo' => 'bar']);
+
+        $this->assertEquals('bar', $result->foo);
+    }
 }

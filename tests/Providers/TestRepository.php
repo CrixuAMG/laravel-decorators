@@ -4,6 +4,8 @@ namespace CrixuAMG\Decorators\Test\Providers;
 
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class TestRepository
@@ -53,18 +55,6 @@ class TestRepository extends AbstractRepository implements TestContract
     }
 
     /**
-     * Create a new model
-     *
-     * @param array $data
-     *
-     * @return mixed
-     */
-    public function store(array $data)
-    {
-        return new $this->model;
-    }
-
-    /**
      * @param array  $data
      * @param string $createMethod
      *
@@ -86,6 +76,10 @@ class TestRepository extends AbstractRepository implements TestContract
      */
     public function update(Model $model, array $data)
     {
+        foreach ($data as $name => $value) {
+            $model->{$name} = $value;
+        }
+
         return $model;
     }
 

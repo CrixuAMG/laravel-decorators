@@ -33,7 +33,7 @@ interface CacheProfileContract
      *
      * @return null|string
      */
-    public function cacheKeyExtension(): ?string;
+    public function cacheKeyExtension();
 
     /**
      * Use data from the array to add to the cache key
@@ -42,5 +42,5 @@ interface CacheProfileContract
      *
      * @return array|null
      */
-    public function requestCallback(Request $request): ?array;
+    public function requestCallback(Request $request);
 }

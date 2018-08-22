@@ -41,7 +41,7 @@ class DefaultProfile extends AbstractProfile implements CacheProfileContract
      *
      * @return null|string
      */
-    public function cacheKeyExtension(): ?string
+    public function cacheKeyExtension()
     {
         // TODO: Implement cacheKeyExtension() method.
     }
@@ -53,7 +53,7 @@ class DefaultProfile extends AbstractProfile implements CacheProfileContract
      *
      * @return array|null
      */
-    public function requestCallback(Request $request): ?array
+    public function requestCallback(Request $request)
     {
         // TODO: Implement requestCallback() method.
     }

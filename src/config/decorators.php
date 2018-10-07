@@ -31,27 +31,6 @@ return [
         'default_tags'       => [
             //
         ],
-        /**
-         * Profile to use for more cache functionalities
-         */
-        'default_profile'    => \CrixuAMG\Decorators\CacheProfiles\DefaultProfile::class,
-        /**
-         * Function to generate the cachekey in the default cache profile
-         */
-        'key_callback'       => function (\Illuminate\Http\Request $request) {
-            $data = [];
-
-            // Add anything you want to the data to generate your callback
-
-            if ($user = $request->user()) {
-                $data[] = sprintf(
-                    'user.%u',
-                    $request->user()->id
-                );
-            }
-
-            return \CrixuAMG\Decorators\Caches\CacheKey::generate(...$data);
-        },
     ],
 
     /**

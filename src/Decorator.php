@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators;
 
-use Carbon\Carbon;
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
 use CrixuAMG\Decorators\Traits\RouteDecorator;

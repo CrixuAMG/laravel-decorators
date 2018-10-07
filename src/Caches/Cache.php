@@ -59,18 +59,4 @@ class Cache
 
         return (bool)config('decorators.cache.enable_forced_tags');
     }
-
-    /**
-     * @param null $profile
-     *
-     * @return \Illuminate\Config\Repository|mixed
-     */
-    public static function profile($profile = null)
-    {
-        if ($profile) {
-            config(['decorators.cache.default_profile' => $profile]);
-        }
-
-        return config('decorators.cache.default_profile');
-    }
 }

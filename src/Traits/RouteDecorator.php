@@ -3,10 +3,12 @@
 namespace CrixuAMG\Decorators\Traits;
 
 use CrixuAMG\Decorators\Exceptions\RouteDecoratorMatchMissingException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Artisan;
 
+/**
+ * Trait RouteDecorator
+ * @package CrixuAMG\Decorators\Traits
+ */
 trait RouteDecorator
 {
     /**
@@ -18,10 +20,10 @@ trait RouteDecorator
      */
     public function autoregisterRoute(bool $silent = false, callable $errorCallback = null): bool
     {
-//        if (App::runningInConsole()) {
-//             Prevent issues from occurring when clearing cache for example
-//            return false;
-//        }
+        if (App::runningInConsole()) {
+            // Prevent issues from occurring when clearing cache for example
+            return false;
+        }
 
         // Get the source
         $source = $this->getRouteSource();

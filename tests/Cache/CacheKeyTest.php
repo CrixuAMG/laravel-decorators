@@ -1,13 +1,13 @@
 <?php
 
-namespace CrixuAMG\Decorators\Test\CacheProfiles;
+namespace CrixuAMG\Decorators\Test\Cache;
 
 use CrixuAMG\Decorators\Caches\CacheKey;
 use CrixuAMG\Decorators\Test\TestCase;
 
 /**
  * Class CacheKeyTest
- * @package CrixuAMG\Decorators\Test\CacheProfiles
+ * @package CrixuAMG\Decorators\Test\Cache
  */
 class CacheKeyTest extends TestCase
 {

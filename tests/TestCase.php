@@ -3,8 +3,8 @@
 namespace CrixuAMG\Decorators\Test;
 
 use CrixuAMG\Decorators\Test\Providers\TestContract;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 /**
  * Class TestCase

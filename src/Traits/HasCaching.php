@@ -14,7 +14,6 @@ use Exception;
  */
 trait HasCaching
 {
-    use HasCacheProfiles;
     /**
      * @var array
      */
@@ -43,9 +42,6 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
-        // Call the profile method before continueing, in the profile, any cache related properties can be changed
-        $this->callProfileMethod($method, ...$args);
-
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
@@ -149,82 +145,6 @@ trait HasCaching
     }
 
     /**
-     * @return mixed
-     */
-    private function getCacheTime()
-    {
-        return $this->cacheTime ?? Cache::time();
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws \Throwable
-     *
-     * @return mixed|string
-     */
-    private function generateCacheKey(string $method, ...$args)
-    {
-        // Check if there is a cache key set
-        $cacheKey = $this->getCacheKey();
-        if ($cacheKey) {
-            // There is a cache key set, don't go further
-            return $cacheKey;
-        }
-
-        // Build the basic template and parameter set
-        $cacheKeyTemplate = '%s.%s.%s.%s';
-        $cacheKeyParameters = [
-            config('app.name'),
-            implode('.', $this->getCacheTags()),
-            $method,
-            json_encode($args),
-        ];
-
-        // If request parameters are defined, use them to generate a more unique key based on request values
-        $configRequestParameters = (array)config('decorators.cache.request_parameters');
-        if (!empty($configRequestParameters)) {
-            $cacheKeyTemplate .= '.%s';
-            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
-        }
-
-        // Get the custom parameters
-        $parameters = $this->getCacheParameters();
-        if ($parameters) {
-            // There are parameters, build upon the template and parameter set
-            foreach ($parameters as $key => $value) {
-                if (\is_array($value)) {
-                    // If the value is an array, convert it to a JSON string
-                    $value = json_encode($value);
-                }
-
-                $cacheKeyTemplate .= sprintf('.%s', $this->getCacheKeyType($value));
-                $cacheKeyParameters[] = $value;
-            }
-        }
-
-        // Return the formatted cache key
-        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-
-    /**
-     * @return array
-     */
-    private function getCacheParameters(): array
-    {
-        return (array)$this->cacheParameters;
-    }
-
-    /**
      * @param array $args
      *
      * @throws Exception
@@ -300,5 +220,81 @@ trait HasCaching
 
         // Return the result
         return $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheTime()
+    {
+        return $this->cacheTime ?? Cache::time();
+    }
+
+    /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws \Throwable
+     *
+     * @return mixed|string
+     */
+    private function generateCacheKey(string $method, ...$args)
+    {
+        // Check if there is a cache key set
+        $cacheKey = $this->getCacheKey();
+        if ($cacheKey) {
+            // There is a cache key set, don't go further
+            return $cacheKey;
+        }
+
+        // Build the basic template and parameter set
+        $cacheKeyTemplate = '%s.%s.%s.%s';
+        $cacheKeyParameters = [
+            config('app.name'),
+            implode('.', $this->getCacheTags()),
+            $method,
+            json_encode($args),
+        ];
+
+        // If request parameters are defined, use them to generate a more unique key based on request values
+        $configRequestParameters = (array)config('decorators.cache.request_parameters');
+        if (!empty($configRequestParameters)) {
+            $cacheKeyTemplate .= '.%s';
+            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+        }
+
+        // Get the custom parameters
+        $parameters = $this->getCacheParameters();
+        if ($parameters) {
+            // There are parameters, build upon the template and parameter set
+            foreach ($parameters as $key => $value) {
+                if (\is_array($value)) {
+                    // If the value is an array, convert it to a JSON string
+                    $value = json_encode($value);
+                }
+
+                $cacheKeyTemplate .= sprintf('.%s', $this->getCacheKeyType($value));
+                $cacheKeyParameters[] = $value;
+            }
+        }
+
+        // Return the formatted cache key
+        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheParameters(): array
+    {
+        return (array)$this->cacheParameters;
     }
 }

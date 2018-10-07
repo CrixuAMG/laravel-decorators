@@ -36,21 +36,24 @@ class CacheKey
     }
 
     /**
-     * @param string $format
-     * @param array  $parameters
+     * @param $value
      *
-     * @return string
+     * @return bool
      */
-    public static function fromFormat(string $format, array $parameters)
+    private static function valueCanBeStringified($value): bool
     {
-        $requestExtension = self::getDataFromRequest();
-
-        if ($requestExtension) {
-            $format .= '.%s';
-            $parameters[] = $requestExtension;
-        }
-
-        return md5(vsprintf($format, $parameters));
+        return
+            (
+            !is_array($value)
+            ) &&
+            (
+                (
+                    !is_object($value) && settype($value, 'string') !== false
+                ) ||
+                (
+                    is_object($value) && method_exists($value, '__toString')
+                )
+            );
     }
 
     /**
@@ -75,24 +78,21 @@ class CacheKey
     }
 
     /**
-     * @param $value
+     * @param string $format
+     * @param array  $parameters
      *
-     * @return bool
+     * @return string
      */
-    private static function valueCanBeStringified($value): bool
+    public static function fromFormat(string $format, array $parameters)
     {
-        return
-            (
-            !is_array($value)
-            ) &&
-            (
-                (
-                    !is_object($value) && settype($value, 'string') !== false
-                ) ||
-                (
-                    is_object($value) && method_exists($value, '__toString')
-                )
-            );
+        $requestExtension = self::getDataFromRequest();
+
+        if ($requestExtension) {
+            $format .= '.%s';
+            $parameters[] = $requestExtension;
+        }
+
+        return md5(vsprintf($format, $parameters));
     }
 
     /**

@@ -31,12 +31,12 @@
     }
   },
   "autoload-dev": {
-      "psr-4": {
-          "CrixuAMG\\Decorators\\Test\\": "tests"
-      }
+    "psr-4": {
+      "CrixuAMG\\Decorators\\Test\\": "tests"
+    }
   },
   "scripts": {
-      "test": "vendor/bin/phpunit"
+    "test": "vendor/bin/phpunit"
   },
   "extra": {
     "laravel": {

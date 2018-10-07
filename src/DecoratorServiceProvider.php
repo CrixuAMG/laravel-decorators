@@ -2,16 +2,11 @@
 
 namespace CrixuAMG\Decorators;
 
-use CrixuAMG\Decorators\Caches\Cache;
-use CrixuAMG\Decorators\Caches\CacheProfile;
 use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
-use CrixuAMG\Decorators\Console\Commands\CacheProfileMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
-use CrixuAMG\Decorators\Traits\HasCacheProfiles;
-use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -21,8 +16,6 @@ use Illuminate\Support\ServiceProvider;
  */
 class DecoratorServiceProvider extends ServiceProvider
 {
-    use HasCacheProfiles;
-
     /**
      *
      */
@@ -45,8 +38,6 @@ class DecoratorServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CacheProfileMakeCommand::class,
-                // decorators:profile
                 CacheMakeCommand::class,
                 // decorators:cache
                 ContractMakeCommand::class,
@@ -59,18 +50,6 @@ class DecoratorServiceProvider extends ServiceProvider
                 // decorators:make
             ]);
         }
-    }
-
-    /**
-     * Register macros
-     */
-    private function registerMacros()
-    {
-        Request::macro('cacheProfile', function ($profile = null) {
-            $profile = Cache::profile($profile);
-
-            return new $profile;
-        });
     }
 
     /**

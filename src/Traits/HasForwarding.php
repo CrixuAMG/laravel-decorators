@@ -17,16 +17,14 @@ trait HasForwarding
     /**
      * @var AbstractCache|AbstractRepository
      */
-    protected $next;
+    public $next;
 
     /**
-     * HasForwarding constructor.
+     * @param null $next
      *
-     * @param $next
-     *
-     * @throws \Throwable
+     * @return HasForwarding
      */
-    public function __construct($next = null)
+    public function setNext($next = null)
     {
         // Do this only if next is supplied by the developer.
         if ($next) {
@@ -36,27 +34,8 @@ trait HasForwarding
             // Set the next class so methods can be called on it
             $this->next = $next;
         }
-    }
 
-    /**
-     * @param $next
-     *
-     * @throws \Throwable
-     */
-    private function validateNextClass($next): void
-    {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
-            \UnexpectedValueException::class,
-            500
-        );
+        return $this;
     }
 
     /**
@@ -80,6 +59,27 @@ trait HasForwarding
 
         // Method does not exist or is not callable
         $this->throwMethodNotCallable($method);
+    }
+
+    /**
+     * @param $next
+     *
+     * @throws \Throwable
+     */
+    private function validateNextClass($next): void
+    {
+        $allowedNextClasses = [
+            AbstractDecorator::class,
+            AbstractCache::class,
+            AbstractRepository::class,
+        ];
+
+        throw_unless(
+            \in_array(get_parent_class($next), $allowedNextClasses, true),
+            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
+            \UnexpectedValueException::class,
+            500
+        );
     }
 
     /**

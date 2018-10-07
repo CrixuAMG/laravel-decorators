@@ -2,9 +2,16 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Caches\Cache;
+use CrixuAMG\Decorators\Caches\CacheDriver;
+use CrixuAMG\Decorators\Caches\CacheKey;
 use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
 use Exception;
 
+/**
+ * Trait HasCaching
+ * @package CrixuAMG\Decorators\Traits
+ */
 trait HasCaching
 {
     /**
@@ -35,47 +42,75 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
-        // Get the cache tags
-        $cacheTags = $this->getCacheTags();
-
-        // Make sure we have the cache tags
-        throw_unless(
-            $cacheTags,
-            InvalidCacheDataException::class,
-            'The cache tags cannot be empty.',
-            422
-        );
-
         // Get the amount of minutes the data should be cached
-        $cacheTime = $this->getCacheTime() ?? config('decorators.cache.minutes');
-        if (!$cacheTime) {
+        $cacheTime = $this->getCacheTime();
+        if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
             // Forward the data and return the response
             return $this->forward($method, ...$args);
         }
 
-        // Create the cache key
-        $cacheKey = $this->generateCacheKey($method, ...$args);
+        // Generate a new cache key if none is set
+        if (!$this->getCacheKey()) {
+            $this->setCacheKey($this->generateCacheKey($method, ...$args));
+        }
 
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([
-                $this->next,
-                $method,
-            ])) {
-            // Fetch all items from the database
-            // in this call, we cache the result.
-            return cache()->tags($cacheTags)->remember(
-                $cacheKey,
-                $cacheTime,
-                function () use ($method, $args) {
-                    // Forward the data and cache in the response
-                    return $this->forward($method, ...$args);
-                }
+        // Forward the data and cache the result.
+        return $this->cache(
+            function () use ($method, $args) {
+                // Forward the data and cache in the response
+                return $this->forward($method, ...$args);
+            }
+        );
+    }
+
+    /**
+     * @param \Closure $callback
+     *
+     * @return mixed
+     */
+    protected function cache(\Closure $callback)
+    {
+        $cacheTags = null;
+        $implementsTags = CacheDriver::checkImplementsTags();
+
+        if ($implementsTags) {
+            // Get the cache tags
+            $cacheTags = $this->getCacheTags();
+        }
+
+        if ($implementsTags) {
+            // If tags are implemented in the driver, check if they are required
+            $forcedTagsEnabled = Cache::forceCacheTags();
+
+            // If tags are required, but there are none set, throw the exception
+            throw_if(
+                $forcedTagsEnabled && !$cacheTags,
+                InvalidCacheDataException::class,
+                'Cache tags are required.',
+                500
             );
         }
 
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
+        // Get the amount of minutes the data should be cached
+        $cacheTime = $this->getCacheTime();
+        $cacheKey = $this->getCacheKey() ?? CacheKey::generate(...$cacheTags);
+
+        if (!empty($cacheTags) && $implementsTags) {
+            $return = cache()->tags($cacheTags)->remember(
+                $cacheKey,
+                $cacheTime,
+                $callback
+            );
+        } else {
+            $return = cache()->remember(
+                $cacheKey,
+                $cacheTime,
+                $callback
+            );
+        }
+
+        return $return;
     }
 
     /**
@@ -83,7 +118,10 @@ trait HasCaching
      */
     protected function getCacheTags(): array
     {
-        return (array)$this->cacheTags;
+        return array_merge(
+            (array)$this->cacheTags,
+            (array)config('decorators.cache.default_tags')
+        );
     }
 
     /**
@@ -91,7 +129,7 @@ trait HasCaching
      *
      * @return HasCaching
      */
-    protected function setCacheTags(...$cacheTags): HasCaching
+    protected function setCacheTags(...$cacheTags)
     {
         // Set the firstTag variable that we can use to perform checks on
         $firstTag = reset($cacheTags);
@@ -107,11 +145,89 @@ trait HasCaching
     }
 
     /**
+     * @param array $args
+     *
+     * @throws Exception
+     *
+     * @return bool|null
+     */
+    protected function flushCache(...$args)
+    {
+        if (empty($args)) {
+            // No tags have been provided, empty the tags that are attached to the current cache class
+            return cache()->tags($this->getCacheTags())->flush();
+        }
+
+        if (\count($args) === 1 && reset($args) === true) {
+            // Empty the entire cache
+            return cache()->flush();
+        }
+
+        // Flush the cache using the supplied arguments
+        return cache()->tags(...$args)->flush();
+    }
+
+    /**
+     * @param mixed $cacheKey
+     *
+     * @return HasCaching
+     */
+    protected function setCacheKey(string $cacheKey)
+    {
+        $this->cacheKey = $cacheKey;
+
+        return $this;
+    }
+
+    /**
+     * @param array $cacheParameters
+     *
+     * @return HasCaching
+     */
+    protected function setCacheParameters(array $cacheParameters)
+    {
+        $this->cacheParameters = $cacheParameters;
+
+        return $this;
+    }
+
+    /**
+     * @param int $cacheTime
+     *
+     * @return HasCaching
+     */
+    protected function setCacheTime(int $cacheTime)
+    {
+        $this->cacheTime = $cacheTime;
+
+        return $this;
+    }
+
+    /**
+     * @param string $method
+     * @param mixed  ...$args
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    protected function flushAfterForward(string $method, ...$args)
+    {
+        // Forward to the repository
+        $result = $this->forward($method, ...$args);
+
+        // Flush the cache
+        $this->flushCache();
+
+        // Return the result
+        return $result;
+    }
+
+    /**
      * @return mixed
      */
     private function getCacheTime()
     {
-        return $this->cacheTime;
+        return $this->cacheTime ?? Cache::time();
     }
 
     /**
@@ -143,7 +259,7 @@ trait HasCaching
         // If request parameters are defined, use them to generate a more unique key based on request values
         $configRequestParameters = (array)config('decorators.cache.request_parameters');
         if (!empty($configRequestParameters)) {
-            $cacheKeyTemplate .= '%s';
+            $cacheKeyTemplate .= '.%s';
             $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
         }
 
@@ -163,7 +279,7 @@ trait HasCaching
         }
 
         // Return the formatted cache key
-        return cacheKey($cacheKeyTemplate, $cacheKeyParameters);
+        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
     }
 
     /**
@@ -180,104 +296,5 @@ trait HasCaching
     private function getCacheParameters(): array
     {
         return (array)$this->cacheParameters;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return string
-     */
-    private function getCacheKeyType($value): string
-    {
-        // Make sure to preserve float values
-        if (\is_float($value)) {
-            return '%f';
-        }
-
-        // Use it as an unsigned integer
-        if (is_numeric($value)) {
-            return '%u';
-        }
-
-        // Default fall back to string
-        return '%s';
-    }
-
-    /**
-     * @param array $args
-     *
-     * @throws Exception
-     *
-     * @return bool|null
-     */
-    protected function flushCache(...$args)
-    {
-        if (empty($args)) {
-            // No tags have been provided, empty the tags that are attached to the current cache class
-            return cache()->tags($this->getCacheTags())->flush();
-        }
-
-        if (\count($args) === 1 && reset($args) === true) {
-            // Empty the entire cache
-            return cache()->flush();
-        }
-
-        // Flush the cache using the supplied arguments
-        return cache()->tags(...$args)->flush();
-    }
-
-    /**
-     * @param mixed $cacheKey
-     *
-     * @return HasCaching
-     */
-    protected function setCacheKey(string $cacheKey): HasCaching
-    {
-        $this->cacheKey = $cacheKey;
-
-        return $this;
-    }
-
-    /**
-     * @param array $cacheParameters
-     *
-     * @return HasCaching
-     */
-    protected function setCacheParameters(array $cacheParameters): HasCaching
-    {
-        $this->cacheParameters = $cacheParameters;
-
-        return $this;
-    }
-
-    /**
-     * @param int $cacheTime
-     *
-     * @return HasCaching
-     */
-    protected function setCacheTime(int $cacheTime): HasCaching
-    {
-        $this->cacheTime = $cacheTime;
-
-        return $this;
-    }
-
-    /**
-     * @param string $method
-     * @param mixed  ...$args
-     *
-     * @return mixed
-     * @throws Exception
-     */
-    protected function flushAfterForward(string $method, ...$args)
-    {
-        // Forward to the repository
-        $result = $this->forward($method, ...$args);
-
-        // Flush the cache
-        $this->flushCache();
-
-        // Return the result
-        return $result;
     }
 }

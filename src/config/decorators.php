@@ -18,6 +18,19 @@ return [
         'request_parameters' => [
             'page',
         ],
+        /**
+         * Enable this to enforce tags throughout cache classes and controllers extending the AbstractController
+         * This is only used for cache drivers that support the tags feature
+         *
+         * https://laravel.com/docs/master/cache#cache-tags
+         */
+        'enable_forced_tags' => (bool)env('APP_CACHE_FORCE_TAGS', false),
+        /**
+         * Put any tags that should be used by default
+         */
+        'default_tags'       => [
+            //
+        ],
     ],
 
     /**

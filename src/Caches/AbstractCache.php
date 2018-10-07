@@ -3,8 +3,8 @@
 namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasCaching;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +16,16 @@ use Illuminate\Database\Eloquent\Model;
 abstract class AbstractCache implements DecoratorContract
 {
     use HasForwarding, HasCaching;
+
+    /**
+     * AbstractCache constructor.
+     *
+     * @param null $next
+     */
+    public function __construct($next = null)
+    {
+        $this->setNext($next);
+    }
 
     /**
      * @throws Exception

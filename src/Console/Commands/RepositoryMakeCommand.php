@@ -13,7 +13,7 @@ class RepositoryMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:repository';
+    protected $name = 'decorators:repository';
     /**
      * The console command description.
      *
@@ -76,13 +76,18 @@ class RepositoryMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace([
-            'RootNamespace\\',
-            'dummy:command',
-        ], [
-            $this->rootNamespace(),
-            $this->option('command'),
-        ], $stub);
+        return str_replace(
+            [
+
+                'RootNamespace\\',
+                'dummy:command',
+            ],
+            [
+                $this->rootNamespace(),
+                $this->option('command'),
+            ],
+            $stub
+        );
     }
 
     /**

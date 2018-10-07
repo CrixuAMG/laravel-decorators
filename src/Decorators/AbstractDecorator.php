@@ -17,6 +17,16 @@ abstract class AbstractDecorator implements DecoratorContract
     use HasForwarding;
 
     /**
+     * AbstractDecorator constructor.
+     *
+     * @param null $next
+     */
+    public function __construct($next = null)
+    {
+        $this->setNext($next);
+    }
+
+    /**
      * @return mixed
      */
     public function index()

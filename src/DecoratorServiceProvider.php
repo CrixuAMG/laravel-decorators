@@ -26,6 +26,9 @@ class DecoratorServiceProvider extends ServiceProvider
 
         // Allow the user to get the config file
         $this->registerConfiguration();
+
+        // Register macros
+        $this->registerMacros();
     }
 
     /**
@@ -36,13 +39,13 @@ class DecoratorServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CacheMakeCommand::class,
-                // make:cache
+                // decorators:cache
                 ContractMakeCommand::class,
-                // make:contract
+                // decorators:contract
                 RepositoryMakeCommand::class,
-                // make:repository
+                // decorators:repository
                 DecoratorMakeCommand::class,
-                // make:decorator
+                // decorators:decorator
                 DecoratorsMakeCommand::class,
                 // decorators:make
             ]);

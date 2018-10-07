@@ -26,9 +26,6 @@ class DecoratorServiceProvider extends ServiceProvider
 
         // Allow the user to get the config file
         $this->registerConfiguration();
-
-        // Register macros
-        $this->registerMacros();
     }
 
     /**

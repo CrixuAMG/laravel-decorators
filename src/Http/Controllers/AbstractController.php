@@ -17,6 +17,32 @@ abstract class AbstractController extends Controller
     use HasForwarding, HasCaching, HasResources;
 
     /**
+     * @param             $next
+     * @param string|null $resourceClass
+     * @param string      ...$cacheTags
+     */
+    public function setup($next, string $resourceClass = null, string ...$cacheTags)
+    {
+        // Set next
+        $this->setNext($next);
+
+        if ($resourceClass) {
+            // Set the resource if it was supplied
+            $this->setResource($resourceClass);
+        }
+
+        if (!empty($cacheTags)) {
+            // If the first element is an array, and there is only one element, set it as the tags array
+            if (count($cacheTags) === 1 && is_array(reset($cacheTags))) {
+                $cacheTags = reset($cacheTags);
+            }
+
+            // Set the cache tags
+            $this->setCacheTags(...$cacheTags);
+        }
+    }
+
+    /**
      * @param string $method
      * @param mixed  ...$args
      *

@@ -5,14 +5,13 @@ namespace CrixuAMG\Decorators\Http\Controllers;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
-use ShareFeed\Http\Controllers\Controller;
 
 /**
  * Class AbstractController
  *
  * @package CrixuAMG\Decorators\Http\Controllers
  */
-abstract class AbstractController extends Controller
+abstract class AbstractController
 {
     use HasForwarding, HasCaching, HasResources;
 
@@ -33,7 +32,7 @@ abstract class AbstractController extends Controller
 
         if (!empty($cacheTags)) {
             // If the first element is an array, and there is only one element, set it as the tags array
-            if (count($cacheTags) === 1 && is_array(reset($cacheTags))) {
+            if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
                 $cacheTags = reset($cacheTags);
             }
 
@@ -69,11 +68,8 @@ abstract class AbstractController extends Controller
         // Forward the data and cache the result.
         return $this->cache(
             function () use ($method, $args) {
-                // Forward the data
-                $result = $this->forward($method, ...$args);
-
-                // Return the result resourcefully
-                return $this->resourceful($result);
+                // Forward the data and return the result resourcefully
+                return $this->forwardResourceful($method, ...$args);
             }
         );
     }

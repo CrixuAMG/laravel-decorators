@@ -61,7 +61,7 @@ class CacheKey
      *
      * @return string
      */
-    protected static function getCacheKeyType($value): string
+    public static function getCacheKeyType($value): string
     {
         // Make sure to preserve float values
         if (\is_float($value)) {

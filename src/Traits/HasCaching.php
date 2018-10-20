@@ -273,7 +273,7 @@ trait HasCaching
                     $value = json_encode($value);
                 }
 
-                $cacheKeyTemplate .= sprintf('.%s', $this->getCacheKeyType($value));
+                $cacheKeyTemplate .= sprintf('.%s', CacheKey::getCacheKeyType($value));
                 $cacheKeyParameters[] = $value;
             }
         }

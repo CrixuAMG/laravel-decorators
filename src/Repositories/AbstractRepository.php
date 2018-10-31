@@ -96,7 +96,7 @@ abstract class AbstractRepository implements DecoratorContract
         );
 
         if (\count($data) === 2 && ($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate')) {
-            $firstArray = reset($data);
+            $firstArray  = reset($data);
             $secondArray = next($data);
             if (is_array($firstArray) && is_array($secondArray)) {
                 return $classAndMethod($firstArray, $secondArray);

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\App;
 
 /**
  * Trait RouteDecorator
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait RouteDecorator
@@ -36,7 +37,7 @@ trait RouteDecorator
         $matchables = $this->getRouteMatchables();
 
         // First try to get it this way
-        $match = $this->getDirectMatch($matchables, $source);
+        $match  = $this->getDirectMatch($matchables, $source);
         $result = $this->checkMatch($match);
         if ($result) {
             $this->decorateMatch($match);
@@ -119,28 +120,6 @@ trait RouteDecorator
     }
 
     /**
-     * @param string $source
-     *
-     * @return array
-     */
-    private function parseRouteSource(string $source): array
-    {
-        // Get the parts of the uri
-        return explode('/', $source);
-    }
-
-    /**
-     * @param string $string
-     * @param array  $possibleMatches
-     *
-     * @return array
-     */
-    private function matchRouteData(string $string, array $possibleMatches): array
-    {
-        return $possibleMatches[$string] ?? [];
-    }
-
-    /**
      * @param $source
      * @param $matchables
      *
@@ -168,6 +147,28 @@ trait RouteDecorator
         }
 
         return $routeMatch;
+    }
+
+    /**
+     * @param string $source
+     *
+     * @return array
+     */
+    private function parseRouteSource(string $source): array
+    {
+        // Get the parts of the uri
+        return explode('/', $source);
+    }
+
+    /**
+     * @param string $string
+     * @param array  $possibleMatches
+     *
+     * @return array
+     */
+    private function matchRouteData(string $string, array $possibleMatches): array
+    {
+        return $possibleMatches[$string] ?? [];
     }
 
     /**

@@ -39,6 +39,27 @@ trait HasForwarding
     }
 
     /**
+     * @param $next
+     *
+     * @throws \Throwable
+     */
+    private function validateNextClass($next): void
+    {
+        $allowedNextClasses = [
+            AbstractDecorator::class,
+            AbstractCache::class,
+            AbstractRepository::class,
+        ];
+
+        throw_unless(
+            \in_array(get_parent_class($next), $allowedNextClasses, true),
+            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
+            \UnexpectedValueException::class,
+            500
+        );
+    }
+
+    /**
      * @param string $method
      * @param array  ...$args
      *
@@ -59,27 +80,6 @@ trait HasForwarding
 
         // Method does not exist or is not callable
         $this->throwMethodNotCallable($method);
-    }
-
-    /**
-     * @param $next
-     *
-     * @throws \Throwable
-     */
-    private function validateNextClass($next): void
-    {
-        $allowedNextClasses = [
-            AbstractDecorator::class,
-            AbstractCache::class,
-            AbstractRepository::class,
-        ];
-
-        throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
-            \UnexpectedValueException::class,
-            500
-        );
     }
 
     /**

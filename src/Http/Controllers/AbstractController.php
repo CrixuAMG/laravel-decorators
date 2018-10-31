@@ -31,29 +31,9 @@ abstract class AbstractController
         }
 
         if (!empty($cacheTags)) {
-            // If the first element is an array, and there is only one element, set it as the tags array
-            if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
-                $cacheTags = reset($cacheTags);
-            }
-
             // Set the cache tags
             $this->setCacheTags(...$cacheTags);
         }
-    }
-
-    /**
-     * @param string $method
-     * @param mixed  ...$args
-     *
-     * @return mixed
-     */
-    public function forwardResourceful(string $method, ...$args)
-    {
-        // Forward the data
-        $result = $this->forward($method, ...$args);
-
-        // Return the result resourcefully
-        return $this->resourceful($result);
     }
 
     /**
@@ -72,6 +52,21 @@ abstract class AbstractController
                 return $this->forwardResourceful($method, ...$args);
             }
         );
+    }
+
+    /**
+     * @param string $method
+     * @param mixed  ...$args
+     *
+     * @return mixed
+     */
+    public function forwardResourceful(string $method, ...$args)
+    {
+        // Forward the data
+        $result = $this->forward($method, ...$args);
+
+        // Return the result resourcefully
+        return $this->resourceful($result);
     }
 
     /**

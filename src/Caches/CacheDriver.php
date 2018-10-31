@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * Class CacheDriver
+ *
  * @package CrixuAMG\Decorators\Caches
  */
 class CacheDriver

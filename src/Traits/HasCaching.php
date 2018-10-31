@@ -10,6 +10,7 @@ use Exception;
 
 /**
  * Trait HasCaching
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait HasCaching
@@ -65,13 +66,129 @@ trait HasCaching
     }
 
     /**
+     * @return mixed
+     */
+    private function getCacheTime()
+    {
+        return $this->cacheTime ?? Cache::time();
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+
+    /**
+     * @param mixed $cacheKey
+     *
+     * @return HasCaching
+     */
+    protected function setCacheKey(string $cacheKey)
+    {
+        $this->cacheKey = $cacheKey;
+
+        return $this;
+    }
+
+    /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws \Throwable
+     *
+     * @return mixed|string
+     */
+    private function generateCacheKey(string $method, ...$args)
+    {
+        // Check if there is a cache key set
+        $cacheKey = $this->getCacheKey();
+        if ($cacheKey) {
+            // There is a cache key set, don't go further
+            return $cacheKey;
+        }
+
+        // Build the basic template and parameter set
+        $cacheKeyTemplate   = '%s.%s.%s.%s';
+        $cacheKeyParameters = [
+            config('app.name'),
+            implode('.', $this->getCacheTags()),
+            $method,
+            json_encode($args),
+        ];
+
+        // If request parameters are defined, use them to generate a more unique key based on request values
+        $configRequestParameters = (array)config('decorators.cache.request_parameters');
+        if (!empty($configRequestParameters)) {
+            $cacheKeyTemplate     .= '.%s';
+            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+        }
+
+        // Get the custom parameters
+        $parameters = $this->getCacheParameters();
+        if ($parameters) {
+            // There are parameters, build upon the template and parameter set
+            foreach ($parameters as $key => $value) {
+                if (\is_array($value)) {
+                    // If the value is an array, convert it to a JSON string
+                    $value = json_encode($value);
+                }
+
+                $cacheKeyTemplate     .= sprintf('.%s', CacheKey::getCacheKeyType($value));
+                $cacheKeyParameters[] = $value;
+            }
+        }
+
+        // Return the formatted cache key
+        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCacheTags(): array
+    {
+        return array_merge(
+            (array)$this->cacheTags,
+            (array)config('decorators.cache.default_tags')
+        );
+    }
+
+    /**
+     * @param string[] ...$cacheTags
+     *
+     * @return HasCaching
+     */
+    protected function setCacheTags(...$cacheTags)
+    {
+        // If the first element is an array, and there is only one element, set it as the tags array
+        if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
+            $cacheTags = reset($cacheTags);
+        }
+
+        $this->cacheTags = $cacheTags;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    private function getCacheParameters(): array
+    {
+        return (array)$this->cacheParameters;
+    }
+
+    /**
      * @param \Closure $callback
      *
      * @return mixed
      */
     protected function cache(\Closure $callback)
     {
-        $cacheTags = null;
+        $cacheTags      = null;
         $implementsTags = CacheDriver::checkImplementsTags();
 
         if ($implementsTags) {
@@ -94,7 +211,7 @@ trait HasCaching
 
         // Get the amount of minutes the data should be cached
         $cacheTime = $this->getCacheTime();
-        $cacheKey = $this->getCacheKey() ?? CacheKey::generate(...$cacheTags);
+        $cacheKey  = $this->getCacheKey() ?? CacheKey::generate(...$cacheTags);
 
         if (!empty($cacheTags) && $implementsTags) {
             $return = cache()->tags($cacheTags)->remember(
@@ -111,72 +228,6 @@ trait HasCaching
         }
 
         return $return;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCacheTags(): array
-    {
-        return array_merge(
-            (array)$this->cacheTags,
-            (array)config('decorators.cache.default_tags')
-        );
-    }
-
-    /**
-     * @param string[] ...$cacheTags
-     *
-     * @return HasCaching
-     */
-    protected function setCacheTags(...$cacheTags)
-    {
-        // Set the firstTag variable that we can use to perform checks on
-        $firstTag = reset($cacheTags);
-
-        /** @var array $cacheTags */
-        $cacheTags = $firstTag !== null && \is_array($firstTag) && \count($cacheTags) === 1
-            ? $firstTag
-            : $cacheTags;
-
-        $this->cacheTags = $cacheTags;
-
-        return $this;
-    }
-
-    /**
-     * @param array $args
-     *
-     * @throws Exception
-     *
-     * @return bool|null
-     */
-    protected function flushCache(...$args)
-    {
-        if (empty($args)) {
-            // No tags have been provided, empty the tags that are attached to the current cache class
-            return cache()->tags($this->getCacheTags())->flush();
-        }
-
-        if (\count($args) === 1 && reset($args) === true) {
-            // Empty the entire cache
-            return cache()->flush();
-        }
-
-        // Flush the cache using the supplied arguments
-        return cache()->tags(...$args)->flush();
-    }
-
-    /**
-     * @param mixed $cacheKey
-     *
-     * @return HasCaching
-     */
-    protected function setCacheKey(string $cacheKey)
-    {
-        $this->cacheKey = $cacheKey;
-
-        return $this;
     }
 
     /**
@@ -223,78 +274,25 @@ trait HasCaching
     }
 
     /**
-     * @return mixed
-     */
-    private function getCacheTime()
-    {
-        return $this->cacheTime ?? Cache::time();
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
+     * @param array $args
      *
-     * @throws \Throwable
+     * @throws Exception
      *
-     * @return mixed|string
+     * @return bool|null
      */
-    private function generateCacheKey(string $method, ...$args)
+    protected function flushCache(...$args)
     {
-        // Check if there is a cache key set
-        $cacheKey = $this->getCacheKey();
-        if ($cacheKey) {
-            // There is a cache key set, don't go further
-            return $cacheKey;
+        if (empty($args)) {
+            // No tags have been provided, empty the tags that are attached to the current cache class
+            return cache()->tags($this->getCacheTags())->flush();
         }
 
-        // Build the basic template and parameter set
-        $cacheKeyTemplate = '%s.%s.%s.%s';
-        $cacheKeyParameters = [
-            config('app.name'),
-            implode('.', $this->getCacheTags()),
-            $method,
-            json_encode($args),
-        ];
-
-        // If request parameters are defined, use them to generate a more unique key based on request values
-        $configRequestParameters = (array)config('decorators.cache.request_parameters');
-        if (!empty($configRequestParameters)) {
-            $cacheKeyTemplate .= '.%s';
-            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+        if (\count($args) === 1 && reset($args) === true) {
+            // Empty the entire cache
+            return cache()->flush();
         }
 
-        // Get the custom parameters
-        $parameters = $this->getCacheParameters();
-        if ($parameters) {
-            // There are parameters, build upon the template and parameter set
-            foreach ($parameters as $key => $value) {
-                if (\is_array($value)) {
-                    // If the value is an array, convert it to a JSON string
-                    $value = json_encode($value);
-                }
-
-                $cacheKeyTemplate .= sprintf('.%s', CacheKey::getCacheKeyType($value));
-                $cacheKeyParameters[] = $value;
-            }
-        }
-
-        // Return the formatted cache key
-        return CacheKey::fromFormat($cacheKeyTemplate, $cacheKeyParameters);
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-
-    /**
-     * @return array
-     */
-    private function getCacheParameters(): array
-    {
-        return (array)$this->cacheParameters;
+        // Flush the cache using the supplied arguments
+        return cache()->tags(...$args)->flush();
     }
 }

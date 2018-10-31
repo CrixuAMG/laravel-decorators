@@ -35,7 +35,7 @@ class Decorator
      */
     public function __construct(Application $app)
     {
-        $this->app = $app;
+        $this->app          = $app;
         $this->cacheEnabled = Cache::enabled();
     }
 

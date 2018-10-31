@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 
 /**
  * Trait HasResources
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait HasResources

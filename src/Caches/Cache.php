@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators\Caches;
 
 /**
  * Class Cache
+ *
  * @package CrixuAMG\Decorators\Caches
  */
 class Cache

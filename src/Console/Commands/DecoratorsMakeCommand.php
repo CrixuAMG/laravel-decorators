@@ -40,9 +40,9 @@ class DecoratorsMakeCommand extends Command
     public function handle()
     {
         $commandsToExecute = [
-            'make:contract'   => 'Contract',
-            'make:cache'      => 'Cache',
-            'make:repository' => 'Repository',
+            'decorators:contract'   => 'Contract',
+            'decorators:cache'      => 'Cache',
+            'decorators:repository' => 'Repository',
         ];
 
         $className = $this->getNameInput();
@@ -72,7 +72,11 @@ class DecoratorsMakeCommand extends Command
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the command.'],
+            [
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the command.',
+            ],
         ];
     }
 

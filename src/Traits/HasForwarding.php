@@ -8,61 +8,34 @@ use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
 
 /**
- * Trait Forwardable
+ * Trait HasForwarding
  *
  * @package CrixuAMG\Decorators\Traits
  */
-trait Forwardable
+trait HasForwarding
 {
     /**
      * @var AbstractCache|AbstractRepository
      */
-    protected $next;
+    public $next;
 
     /**
-     * Forwardable constructor.
+     * @param null $next
      *
-     * @param $next
-     *
-     * @throws \Throwable
+     * @return HasForwarding
      */
-    public function __construct($next)
+    public function setNext($next = null)
     {
-        // Validate the next class
-        $this->validateNextClass($next);
+        // Do this only if next is supplied by the developer.
+        if ($next) {
+            // Validate the next class
+            $this->validateNextClass($next);
 
-        // Set the next class so methods can be called on it
-        $this->next = $next;
-    }
-
-    /**
-     * @param string $method
-     * @param array  ...$args
-     *
-     * @throws \UnexpectedValueException
-     *
-     * @return mixed
-     */
-    protected function forward(string $method, ...$args)
-    {
-        // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([$this->next, $method])) {
-            // Forward the data
-            return $this->next->$method(...$args);
+            // Set the next class so methods can be called on it
+            $this->next = $next;
         }
 
-        // Method does not exist or is not callable
-        $this->throwMethodNotCallable($method);
-    }
-
-    /**
-     * @param string $method
-     *
-     * @throws \UnexpectedValueException
-     */
-    private function throwMethodNotCallable(string $method): void
-    {
-        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
+        return $this;
     }
 
     /**
@@ -84,5 +57,38 @@ trait Forwardable
             \UnexpectedValueException::class,
             500
         );
+    }
+
+    /**
+     * @param string $method
+     * @param array  ...$args
+     *
+     * @throws \UnexpectedValueException
+     *
+     * @return mixed
+     */
+    protected function forward(string $method, ...$args)
+    {
+        // Verify the method exists on the next iteration and that it is callable
+        if (method_exists($this->next, $method) && \is_callable([
+                $this->next,
+                $method,
+            ])) {
+            // Forward the data
+            return $this->next->$method(...$args);
+        }
+
+        // Method does not exist or is not callable
+        $this->throwMethodNotCallable($method);
+    }
+
+    /**
+     * @param string $method
+     *
+     * @throws \UnexpectedValueException
+     */
+    private function throwMethodNotCallable(string $method): void
+    {
+        throw new UnexpectedValueException(sprintf('Method %s does not exist or is not callable.', $method));
     }
 }

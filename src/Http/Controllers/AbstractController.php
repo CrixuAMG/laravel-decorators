@@ -2,52 +2,56 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
-use CrixuAMG\Decorators\Traits\Forwardable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
-use ShareFeed\Http\Controllers\Controller;
+use CrixuAMG\Decorators\Traits\HasCaching;
+use CrixuAMG\Decorators\Traits\HasForwarding;
+use CrixuAMG\Decorators\Traits\HasResources;
 
 /**
  * Class AbstractController
  *
  * @package CrixuAMG\Decorators\Http\Controllers
  */
-abstract class AbstractController extends Controller
+abstract class AbstractController
 {
-    use Forwardable;
-    /**
-     * @var
-     */
-    protected $next;
+    use HasForwarding, HasCaching, HasResources;
 
     /**
-     * @var
+     * @param             $next
+     * @param string|null $resourceClass
+     * @param string      ...$cacheTags
      */
-    protected $resource;
-
-    /**
-     * @param mixed $next
-     *
-     * @return AbstractController
-     */
-    public function setNext($next)
+    public function setup($next, string $resourceClass = null, string ...$cacheTags)
     {
-        $this->next = $next;
+        // Set next
+        $this->setNext($next);
 
-        return $this;
+        if ($resourceClass) {
+            // Set the resource if it was supplied
+            $this->setResource($resourceClass);
+        }
+
+        if (!empty($cacheTags)) {
+            // Set the cache tags
+            $this->setCacheTags(...$cacheTags);
+        }
     }
 
     /**
-     * @param mixed $resource
+     * @param string $method
+     * @param mixed  ...$args
      *
-     * @return AbstractController
+     * @return mixed
+     * @throws \Throwable
      */
-    public function setResource($resource)
+    public function forwardCachedResourceful(string $method, ...$args)
     {
-        $this->resource = $resource;
-
-        return $this;
+        // Forward the data and cache the result.
+        return $this->cache(
+            function () use ($method, $args) {
+                // Forward the data and return the result resourcefully
+                return $this->forwardResourceful($method, ...$args);
+            }
+        );
     }
 
     /**
@@ -58,16 +62,32 @@ abstract class AbstractController extends Controller
      */
     public function forwardResourceful(string $method, ...$args)
     {
+        // Forward the data
         $result = $this->forward($method, ...$args);
 
-        if ($this->resource) {
-            if ($result instanceof LengthAwarePaginator || $result instanceof Collection) {
-                $result = $this->resource::collection($result);
-            } elseif ($result instanceof Model) {
-                $result = new $this->resource($result);
-            }
-        }
+        // Return the result resourcefully
+        return $this->resourceful($result);
+    }
 
-        return $result;
+    /**
+     * @param string   $method
+     * @param \Closure $callback
+     * @param mixed    ...$args
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function forwardCachedCallback(string $method, \Closure $callback, ...$args)
+    {
+        // Forward the data and cache the result.
+        return $this->cache(
+            function () use ($method, $callback, $args) {
+                // Forward the data
+                $result = $this->forward($method, ...$args);
+
+                // Return the result after calling the callback function
+                return $callback($result);
+            }
+        );
     }
 }

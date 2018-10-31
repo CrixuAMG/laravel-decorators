@@ -29,31 +29,22 @@ class DecoratorServiceProvider extends ServiceProvider
     }
 
     /**
-     * @throws \Throwable
-     */
-    public function register()
-    {
-        // Create our instance
-        $this->app->singleton(
-            Decorator::class,
-            function () {
-                return new Decorator($this->app);
-            }
-        );
-    }
-
-    /**
      * Register console commands
      */
     private function registerCommands()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CacheMakeCommand::class,        // make:cache
-                ContractMakeCommand::class,     // make:contract
-                RepositoryMakeCommand::class,   // make:repository
-                DecoratorMakeCommand::class,    // make:decorator
-                DecoratorsMakeCommand::class,   // decorators:make
+                CacheMakeCommand::class,
+                // decorators:cache
+                ContractMakeCommand::class,
+                // decorators:contract
+                RepositoryMakeCommand::class,
+                // decorators:repository
+                DecoratorMakeCommand::class,
+                // decorators:decorator
+                DecoratorsMakeCommand::class,
+                // decorators:make
             ]);
         }
     }
@@ -66,5 +57,19 @@ class DecoratorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
         ]);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function register()
+    {
+        // Create our instance
+        $this->app->singleton(
+            Decorator::class,
+            function () {
+                return new Decorator($this->app);
+            }
+        );
     }
 }

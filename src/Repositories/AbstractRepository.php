@@ -3,13 +3,11 @@
 namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Traits\BuildsQueries;
 use CrixuAMG\Decorators\Traits\Transactionable;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use UnexpectedValueException;
 
 /**
  * Class AbstractRepository
@@ -18,11 +16,23 @@ use UnexpectedValueException;
  */
 abstract class AbstractRepository implements DecoratorContract
 {
-    use BuildsQueries, Transactionable;
+    use Transactionable;
     /**
      * @var Model
      */
-    private $model;
+    protected $model;
+
+    /**
+     * @param Model $model
+     *
+     * @return AbstractRepository
+     */
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
 
     /**
      * Returns the index
@@ -40,15 +50,6 @@ abstract class AbstractRepository implements DecoratorContract
     public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
     {
         $query = $this->model->query();
-
-        // If the where is not empty, use it to filter results
-        $query = $this->registerWheres($query);
-
-        // If whens are defined, add them to the query
-        $query = $this->registerWhens($query);
-
-        // If scopes are defined, add them to the query
-        $query = $this->registerScopes($query);
 
         // Get the class
         $class = \get_class($this->model);
@@ -88,37 +89,21 @@ abstract class AbstractRepository implements DecoratorContract
      */
     public function simpleStore(array $data, string $createMethod = 'create')
     {
-        throw_unless(
-            is_callable($this->model, $createMethod),
-            UnexpectedValueException::class,
-            'The specified method is not callable.',
-            422
+        $classAndMethod = sprintf(
+            '%s::%s',
+            get_class($this->model),
+            $createMethod
         );
 
-        if (\count($data) === 2 && $createMethod === 'updateOrCreate') {
-            $firstArray = reset($data);
+        if (\count($data) === 2 && ($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate')) {
+            $firstArray  = reset($data);
             $secondArray = next($data);
             if (is_array($firstArray) && is_array($secondArray)) {
-                return call_user_func_array(
-                    sprintf(
-                        '%s::%s',
-                        $this->model,
-                        $createMethod
-                    ),
-                    $firstArray,
-                    $secondArray
-                );
+                return $classAndMethod($firstArray, $secondArray);
             }
         }
 
-        return call_user_func_array(
-            sprintf(
-                '%s::%s',
-                $this->model,
-                $createMethod
-            ),
-            $data
-        );
+        return $classAndMethod($data);
     }
 
     /**
@@ -154,6 +139,9 @@ abstract class AbstractRepository implements DecoratorContract
         if (!empty($relations)) {
             // Load only specified relations
             $model->load(...$relations);
+        } elseif (method_exists($class, 'getShowRelations')) {
+            // If the method getShowRelations exists, call it to load in relations before returning the model
+            $model->load((array)$class::getShowRelations());
         } elseif (method_exists($class, 'getDefaultRelations')) {
             // If the method getDefaultRelations exists, call it to load in relations before returning the model
             $model->load((array)$class::getDefaultRelations());
@@ -174,7 +162,7 @@ abstract class AbstractRepository implements DecoratorContract
     public function delete(Model $model)
     {
         try {
-            $result = $model->delete();
+            $result = $model->delete() ?? false;
         } catch (Exception $exception) {
             $result = false;
         } finally {

@@ -18,7 +18,7 @@ class DecoratorMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:decorator';
+    protected $name = 'decorators:decorator';
     /**
      * The console command description.
      *
@@ -81,10 +81,18 @@ class DecoratorMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace(['RootNamespace\\', 'dummy:command'], [
-            $this->rootNamespace(),
-            $this->option('command'),
-        ], $stub);
+        return str_replace(
+            [
+
+                'RootNamespace\\',
+                'dummy:command',
+            ],
+            [
+                $this->rootNamespace(),
+                $this->option('command'),
+            ],
+            $stub
+        );
     }
 
     /**
@@ -95,7 +103,11 @@ class DecoratorMakeCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the command.'],
+            [
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the command.',
+            ],
         ];
     }
 

@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MissingDataException extends Exception
+class RouteDecoratorMatchMissingException extends Exception
 {
     /**
      * Render the exception into an HTTP response.

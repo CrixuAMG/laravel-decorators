@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Trait Transactionable
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait Transactionable

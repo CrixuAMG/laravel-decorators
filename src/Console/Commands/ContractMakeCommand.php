@@ -13,7 +13,7 @@ class ContractMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:contract';
+    protected $name = 'decorators:contract';
     /**
      * The console command description.
      *
@@ -76,10 +76,18 @@ class ContractMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace(['RootNamespace\\', 'dummy:command'], [
-            $this->rootNamespace(),
-            $this->option('command'),
-        ], $stub);
+        return str_replace(
+            [
+
+                'RootNamespace\\',
+                'dummy:command',
+            ],
+            [
+                $this->rootNamespace(),
+                $this->option('command'),
+            ],
+            $stub
+        );
     }
 
     /**
@@ -90,7 +98,11 @@ class ContractMakeCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the command.'],
+            [
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the command.',
+            ],
         ];
     }
 

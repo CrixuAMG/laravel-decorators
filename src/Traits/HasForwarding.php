@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Traits;
 
 use CrixuAMG\Decorators\Caches\AbstractCache;
+use CrixuAMG\Decorators\Decorator;
 use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
@@ -23,11 +24,23 @@ trait HasForwarding
      * @param null $next
      *
      * @return HasForwarding
+     * @throws \Throwable
      */
     public function setNext($next = null)
     {
         // Do this only if next is supplied by the developer.
         if ($next) {
+            if (!\is_object($next)) {
+                $contract  = config(sprintf('decorators.matchables.%s.__contract', $next));
+                $arguments = config(sprintf('decorators.matchables.%s.__arguments', $next));
+                if ($contract && $arguments) {
+                    // If a match has been found, decorate it, then instantiate the newly constructed singleton
+                    (new Decorator(app()))->decorate($contract, $arguments);
+
+                    $next = app()->make($contract);
+                }
+            }
+
             // Validate the next class
             $this->validateNextClass($next);
 

@@ -4,7 +4,6 @@ namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
-use CrixuAMG\Decorators\Traits\RouteDecorator;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -14,7 +13,6 @@ use Illuminate\Contracts\Foundation\Application;
  */
 class Decorator
 {
-    use RouteDecorator;
     /**
      * @var bool
      */
@@ -110,7 +108,7 @@ class Decorator
      *
      * @throws \Throwable
      */
-    private function assertClassImplementsContract(string $contract, $class)
+    private function assertClassImplementsContract(string $contract, $class): void
     {
         $implementedInterfaces = class_implements($class);
 
@@ -142,7 +140,7 @@ class Decorator
     /**
      * @param $environments
      */
-    public function enableCacheInEnvironments($environments)
+    public function enableCacheInEnvironments($environments): void
     {
         $this->cacheExceptions = is_array($environments)
             ? $environments

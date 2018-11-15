@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'cache'            => [
+    'cache'          => [
         /**
          * When this is disabled, any classes implementing
          * the CrixuAMG\Decorators\Caches\AbstractCache will be ignored
          */
-        'enabled'            => env('APP_CACHE_ENABLED', true),
+        'enabled'            => (bool)env('APP_CACHE_ENABLED', true),
         /**
          * The amount of minutes a set of cached data is valid
          * After that the cache will be refreshed with new data
@@ -34,31 +34,21 @@ return [
     ],
 
     /**
-     * Place any routes that should get ignored in the array below
-     */
-    'ignored_routes'   => [
-        '',
-        '/',
-        'oauth/token',
-    ],
-
-    /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
-    'pagination'       => (int)env('APP_PAGINATION', 25),
+    'pagination'     => (int)env('APP_PAGINATION', 25),
 
     /**
-     * Below is an example of how decorators can automatically be matched using the route
+     * Below is an example of how decorators can automatically be matched using `$this->setup('users')` in a
+     * controller extending the CrixuAMG\Decorators\Http\Controllers\AbstractController class
      */
-    'route_matchables' => [
-        // 'v1' => [
-        //     'users'   => [
-        //         '__contract'  => UserContract::class,
-        //         '__arguments' => [
-        //             UserRepository::class,
-        //             UserCache::class
-        //         ],
-        //     ],
-        // ]
+    'matchables'     => [
+//        'users' => [
+//            '__contract'  => UserContract::class,
+//            '__arguments' => [
+//                UserRepository::class,
+//                UserCache::class,
+//            ],
+//        ],
     ],
 ];

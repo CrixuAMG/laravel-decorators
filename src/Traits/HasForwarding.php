@@ -31,14 +31,7 @@ trait HasForwarding
         // Do this only if next is supplied by the developer.
         if ($next) {
             if (!\is_object($next)) {
-                $contract  = config(sprintf('decorators.matchables.%s.__contract', $next));
-                $arguments = config(sprintf('decorators.matchables.%s.__arguments', $next));
-                if ($contract && $arguments) {
-                    // If a match has been found, decorate it, then instantiate the newly constructed singleton
-                    (new Decorator(app()))->decorate($contract, $arguments);
-
-                    $next = app()->make($contract);
-                }
+                $next = $this->getNext($next);
             }
 
             // Validate the next class
@@ -49,6 +42,33 @@ trait HasForwarding
         }
 
         return $this;
+    }
+
+    /**
+     * @param $next
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    private function getNext($next)
+    {
+        $contract  = null;
+        $arguments = null;
+        if (\is_string($next)) {
+            $contract  = config(sprintf('decorators.matchables.%s.__contract', $next));
+            $arguments = config(sprintf('decorators.matchables.%s.__arguments', $next));
+        } elseif (\is_array($next)) {
+            $contract  = $next['contract'] ?? null;
+            $arguments = $next['arguments'] ?? null;
+        }
+        if ($contract && $arguments) {
+            // If a match has been found, decorate it, then instantiate the newly constructed singleton
+            (new Decorator(app()))->decorate($contract, $arguments);
+
+            $next = app()->make($contract);
+        }
+
+        return $next;
     }
 
     /**

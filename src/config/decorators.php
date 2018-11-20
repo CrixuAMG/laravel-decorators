@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'cache'          => [
+    'cache'      => [
         /**
          * When this is disabled, any classes implementing
          * the CrixuAMG\Decorators\Caches\AbstractCache will be ignored
@@ -36,19 +36,19 @@ return [
     /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
-    'pagination'     => (int)env('APP_PAGINATION', 25),
+    'pagination' => (int)env('APP_PAGINATION', 25),
 
     /**
      * Below is an example of how decorators can automatically be matched using `$this->setup('users')` in a
      * controller extending the CrixuAMG\Decorators\Http\Controllers\AbstractController class
      */
-    'matchables'     => [
-//        'users' => [
-//            '__contract'  => UserContract::class,
-//            '__arguments' => [
-//                UserRepository::class,
-//                UserCache::class,
-//            ],
-//        ],
+    'matchables' => [
+        //        'users' => [
+        //            '__contract'  => UserContract::class,
+        //            '__arguments' => [
+        //                UserRepository::class,
+        //                UserCache::class,
+        //            ],
+        //        ],
     ],
 ];

@@ -45,7 +45,12 @@ class Decorator
      */
     public function decorate(string $contract, $chain): void
     {
-        $this->decorateContract($contract, (array)$chain);
+        $this->decorateContract(
+            $contract,
+            \is_array($chain)
+                ? $chain
+                : [$chain]
+        );
     }
 
     /**
@@ -74,7 +79,7 @@ class Decorator
         // Create a variable that will hold the instance
         $instance = null;
 
-        foreach ((array)$chain as $class) {
+        foreach ($chain as $class) {
             // Check if cache is enabled and the class implements the cache class
             if (Cache::implementsCache($class) && !$this->shouldWrapCache()) {
                 continue;
@@ -142,7 +147,7 @@ class Decorator
      */
     public function enableCacheInEnvironments($environments): void
     {
-        $this->cacheExceptions = is_array($environments)
+        $this->cacheExceptions = \is_array($environments)
             ? $environments
             : (array)$environments;
     }

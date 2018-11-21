@@ -5,6 +5,7 @@ namespace CrixuAMG\Decorators\Traits;
 use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Decorator;
 use CrixuAMG\Decorators\Decorators\AbstractDecorator;
+use CrixuAMG\Decorators\Exceptions\DecoratorsNotSetupException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use UnexpectedValueException;
 
@@ -34,11 +35,13 @@ trait HasForwarding
                 $next = $this->getNext($next);
             }
 
-            // Validate the next class
-            $this->validateNextClass($next);
+            if (\is_object($next)) {
+                // Validate the next class
+                $this->validateNextClass($next);
 
-            // Set the next class so methods can be called on it
-            $this->next = $next;
+                // Set the next class so methods can be called on it
+                $this->next = $next;
+            }
         }
 
         return $this;
@@ -97,11 +100,16 @@ trait HasForwarding
      * @param array  ...$args
      *
      * @throws \UnexpectedValueException
+     * @throws DecoratorsNotSetupException
      *
      * @return mixed
      */
     protected function forward(string $method, ...$args)
     {
+        if (!$this->next) {
+            throw new DecoratorsNotSetupException('Decorators were not correctly setup.');
+        }
+
         // Verify the method exists on the next iteration and that it is callable
         if (method_exists($this->next, $method) && \is_callable([
                 $this->next,

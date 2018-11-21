@@ -2,7 +2,7 @@
 
 namespace CrixuAMG\Decorators\Exceptions;
 
-class InterfaceNotImplementedException extends BaseException
+class DecoratorsNotSetupException extends BaseException
 {
     //
 }

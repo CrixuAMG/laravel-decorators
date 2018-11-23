@@ -89,8 +89,8 @@ trait HasForwarding
 
         throw_unless(
             \in_array(get_parent_class($next), $allowedNextClasses, true),
-            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
             \UnexpectedValueException::class,
+            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
             500
         );
     }
@@ -100,15 +100,17 @@ trait HasForwarding
      * @param array  ...$args
      *
      * @throws \UnexpectedValueException
-     * @throws DecoratorsNotSetupException
      *
      * @return mixed
      */
     protected function forward(string $method, ...$args)
     {
-        if (!$this->next) {
-            throw new DecoratorsNotSetupException('Decorators were not correctly setup.');
-        }
+        throw_unless(
+            $this->next,
+            DecoratorsNotSetupException::class,
+            'Decorators were not correctly setup.',
+            500
+        );
 
         // Verify the method exists on the next iteration and that it is callable
         if (method_exists($this->next, $method) && \is_callable([

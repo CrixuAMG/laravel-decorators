@@ -53,15 +53,15 @@ abstract class AbstractRepository implements DecoratorContract
 
         // Get the class
         $class = \get_class($this->model);
-        if (method_exists($class, 'getDefaultRelations')) {
-            // If the method getDefaultRelations exists, call it to load in relations before returning the data
-            $query->with((array)$class::getDefaultRelations());
+        if (method_exists($class, 'defaultRelations')) {
+            // If the method defaultRelations exists, call it to load in relations before returning the data
+            $query->with((array)$class::defaultRelations());
         }
 
         if ($paginate && !$itemsPerPage) {
             $itemsPerPage = $this->getPaginationLimit();
             if (!$itemsPerPage) {
-                $itemsPerPage = config('decorators.pagination');
+                $itemsPerPage = (int)config('decorators.pagination');
             }
         }
 
@@ -91,14 +91,14 @@ abstract class AbstractRepository implements DecoratorContract
     {
         $classAndMethod = sprintf(
             '%s::%s',
-            get_class($this->model),
+            \get_class($this->model),
             $createMethod
         );
 
-        if (\count($data) === 2 && ($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate')) {
+        if (($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate') && \count($data) === 2) {
             $firstArray  = reset($data);
             $secondArray = next($data);
-            if (is_array($firstArray) && is_array($secondArray)) {
+            if (\is_array($firstArray) && \is_array($secondArray)) {
                 return $classAndMethod($firstArray, $secondArray);
             }
         }
@@ -139,12 +139,12 @@ abstract class AbstractRepository implements DecoratorContract
         if (!empty($relations)) {
             // Load only specified relations
             $model->load(...$relations);
-        } elseif (method_exists($class, 'getShowRelations')) {
-            // If the method getShowRelations exists, call it to load in relations before returning the model
-            $model->load((array)$class::getShowRelations());
-        } elseif (method_exists($class, 'getDefaultRelations')) {
-            // If the method getDefaultRelations exists, call it to load in relations before returning the model
-            $model->load((array)$class::getDefaultRelations());
+        } elseif (method_exists($class, 'showRelations')) {
+            // If the method showRelations exists, call it to load in relations before returning the model
+            $model->load((array)$class::showRelations());
+        } elseif (method_exists($class, 'defaultRelations')) {
+            // If the method defaultRelations exists, call it to load in relations before returning the model
+            $model->load((array)$class::defaultRelations());
         }
 
         // Return the model

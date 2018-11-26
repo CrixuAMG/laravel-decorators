@@ -99,8 +99,6 @@ trait HasForwarding
      * @param string $method
      * @param array  ...$args
      *
-     * @throws \UnexpectedValueException
-     *
      * @return mixed
      */
     protected function forward(string $method, ...$args)

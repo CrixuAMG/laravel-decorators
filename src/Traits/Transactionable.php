@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\DB;
 trait Transactionable
 {
     /**
-     * @param \Closure $callback
-     * @param int      $attempts
+     * @param \Closure $callback The callback to execute in the transaction
+     * @param int      $attempts The amount of attempts
      *
      * @return mixed
      */

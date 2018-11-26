@@ -21,7 +21,7 @@ trait HasResources
     /**
      * @param mixed $resource
      *
-     * @return HasResources
+     * @return mixed
      */
     public function setResource($resource)
     {
@@ -31,7 +31,7 @@ trait HasResources
     }
 
     /**
-     * @param $data
+     * @param mixed $data The data to check and make resourceful if possible
      *
      * @return mixed
      */

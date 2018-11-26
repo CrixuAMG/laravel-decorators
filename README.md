@@ -15,21 +15,22 @@
 ## About
 This package is designed to allow developers (inluding myself of course!) to start developing complex applications more easily. By using this design pattern I saved more than a couple of hours on projects, both personal and professional.
 
-But what is the decorator pattern?<br>
-Wikipedia: "In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class"
-
-[Wikipedia link](https://en.wikipedia.org/wiki/Decorator_pattern)
-
 ## Installation
 Put the following in your composer.json file: 
 ```json
     "require": {
-        "crixuamg/laravel-decorators": "^0.3.0",
+        "crixuamg/laravel-decorators": "^1.0.0",
         // ...
     }
 ```
 
 ## Usage
+Decorators can be registered in two ways.
+
+1) Config based \
+After publishing the config file, register your decorators as shown in the bottom of the file. Then extend the AbstractController in a controller and call `$this-setup()` in the `__construct()` using the key created in the config file.
+
+2) ServiceProvider based\
 Run `php artisan make:provider RepositoryServiceProvider`.
 Then, within the newly created provider register any set of class that you want to use the decorator pattern with.
 Example:

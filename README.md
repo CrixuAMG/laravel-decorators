@@ -1,7 +1,5 @@
 # laravel-decorators
 
-[![Build Status](https://travis-ci.org/CrixuAMG/laravel-decorators.svg?branch=master)](https://travis-ci.org/CrixuAMG/laravel-decorators)
-[![Maintainability](https://api.codeclimate.com/v1/badges/67f36779438bb4cb82be/maintainability)](https://codeclimate.com/github/CrixuAMG/laravel-decorators/maintainability)
 [![Latest Stable Version](https://poser.pugx.org/crixuamg/laravel-decorators/v/stable)](https://packagist.org/packages/crixuamg/laravel-decorators)
 [![Latest Unstable Version](https://poser.pugx.org/crixuamg/laravel-decorators/v/unstable)](https://packagist.org/packages/crixuamg/laravel-decorators)
 [![Total Downloads](https://poser.pugx.org/crixuamg/laravel-decorators/downloads)](https://packagist.org/packages/crixuamg/laravel-decorators)

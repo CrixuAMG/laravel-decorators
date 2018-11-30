@@ -274,25 +274,30 @@ trait HasCaching
     }
 
     /**
-     * @param array $args
+     * @param array $tags Only used if the cache driver utilizes tags
      *
      * @throws Exception
      *
      * @return bool|null
      */
-    protected function flushCache(...$args)
+    protected function flushCache(...$tags): ?bool
     {
-        if (empty($args)) {
+        // If the cache driver does not support tagging, flush the cache
+        if (!CacheDriver::checkImplementsTags()) {
+            return cache()->flush();
+        }
+
+        if (empty($tags)) {
             // No tags have been provided, empty the tags that are attached to the current cache class
             return cache()->tags($this->getCacheTags())->flush();
         }
 
-        if (\count($args) === 1 && reset($args) === true) {
+        if (\count($tags) === 1 && reset($tags) === true) {
             // Empty the entire cache
             return cache()->flush();
         }
 
         // Flush the cache using the supplied arguments
-        return cache()->tags(...$args)->flush();
+        return cache()->tags(...$tags)->flush();
     }
 }

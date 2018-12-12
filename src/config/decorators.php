@@ -22,9 +22,7 @@ return [
          * Any tags placed in this array will be automatically resolved when building the cache tags
          */
         'request_resolved_parameters' => [
-            //            'user_id' => function () {
-            //                return request()->user()->id || null;
-            //            },
+            'user.id',
         ],
         /**
          * Enable this to enforce tags throughout cache classes and controllers extending the AbstractController

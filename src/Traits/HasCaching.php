@@ -182,13 +182,23 @@ trait HasCaching
         $tags               = [];
         $configResolvedTags = (array)config('decorators.cache.request_resolved_parameters');
         if (!empty($configResolvedTags)) {
-            foreach ($configResolvedTags as $label => $configResolvedTag) {
-                $tag = '';
-                if (is_string($label)) {
-                    $tag .= $label;
-                }
+            foreach ($configResolvedTags as $configResolvedTag) {
+                $tag = null;
 
-                $tag .= $configResolvedTag();
+                $tagParts = explode('.', $configResolvedTag);
+                if (reset($tagParts) === 'user') {
+                    $user = request()->user();
+                    array_shift($tagParts);
+                    if ($user) {
+                        $user  = optional($user);
+                        $value = $user;
+                        foreach ($tagParts as $tagPart) {
+                            $value = $value->{$tagPart};
+                        }
+                    }
+                } else {
+                    $tag = data_get(request()->all(), $configResolvedTag);
+                }
 
                 $tags[] = $tag;
             }

@@ -152,7 +152,8 @@ trait HasCaching
     {
         return array_merge(
             (array)$this->cacheTags,
-            (array)config('decorators.cache.default_tags')
+            (array)config('decorators.cache.default_tags'),
+            $this->resolveRequestTags()
         );
     }
 
@@ -171,6 +172,29 @@ trait HasCaching
         $this->cacheTags = $cacheTags;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function resolveRequestTags(): array
+    {
+        $tags               = [];
+        $configResolvedTags = (array)config('decorators.cache.request_resolved_parameters');
+        if (!empty($configResolvedTags)) {
+            foreach ($configResolvedTags as $label => $configResolvedTag) {
+                $tag = '';
+                if (is_string($label)) {
+                    $tag .= $label;
+                }
+
+                $tag .= $configResolvedTag();
+
+                $tags[] = $tag;
+            }
+        }
+
+        return $tags;
     }
 
     /**

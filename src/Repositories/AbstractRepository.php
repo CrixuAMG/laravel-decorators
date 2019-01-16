@@ -59,10 +59,7 @@ abstract class AbstractRepository implements DecoratorContract
         }
 
         if ($paginate && !$itemsPerPage) {
-            $itemsPerPage = $this->getPaginationLimit();
-            if (!$itemsPerPage) {
-                $itemsPerPage = (int)config('decorators.pagination');
-            }
+            $itemsPerPage = (int)config('decorators.pagination');
         }
 
         // Return the data

@@ -193,14 +193,16 @@ trait HasCaching
                         $user  = optional($user);
                         $value = $user;
                         foreach ($tagParts as $tagPart) {
-                            $value = $value->{$tagPart};
+                            $tags[$tagPart] = $value->{$tagPart};
                         }
                     }
                 } else {
                     $tag = data_get(request()->all(), $configResolvedTag);
                 }
 
-                $tags[] = $tag;
+                if ($tag) {
+                    $tags[] = $tag;
+                }
             }
         }
 

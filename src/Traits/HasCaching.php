@@ -193,7 +193,7 @@ trait HasCaching
                         $user  = optional($user);
                         $value = $user;
                         foreach ($tagParts as $tagPart) {
-                            $tags[$tagPart] = $value->{$tagPart};
+                            $tags[] = $value->{$tagPart};
                         }
                     }
                 } else {

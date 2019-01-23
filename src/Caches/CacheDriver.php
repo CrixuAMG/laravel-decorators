@@ -23,7 +23,7 @@ class CacheDriver
      */
     public function __construct(string $driver = null)
     {
-        self::$driver = $driver ?? config('cache.default');
+        self::$driver = $driver ?? config('cache.default', 'file');
     }
 
     /**
@@ -31,7 +31,7 @@ class CacheDriver
      *
      * @return bool
      */
-    public static function checkImplementsTags(string $driver = null)
+    public static function implementsTags(string $driver = null): bool
     {
         if (!$driver) {
             $driver = self::$driver;

@@ -31,10 +31,10 @@ class Cache
     public static function time(int $time = null): int
     {
         if (!\is_null($time)) {
-            config(['decorators.cache.minutes' => $time]);
+            config(['decorators.cache.seconds' => $time]);
         }
 
-        return (int)config('decorators.cache.minutes');
+        return (int)config('decorators.cache.seconds');
     }
 
     /**

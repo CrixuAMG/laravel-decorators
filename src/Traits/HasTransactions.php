@@ -5,11 +5,11 @@ namespace CrixuAMG\Decorators\Traits;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Trait Transactionable
+ * Trait HasTransactions
  *
  * @package CrixuAMG\Decorators\Traits
  */
-trait Transactionable
+trait HasTransactions
 {
     /**
      * @param \Closure $callback The callback to execute in the transaction

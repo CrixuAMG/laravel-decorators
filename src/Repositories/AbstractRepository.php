@@ -3,7 +3,7 @@
 namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Traits\Transactionable;
+use CrixuAMG\Decorators\Traits\HasTransactions;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class AbstractRepository implements DecoratorContract
 {
-    use Transactionable;
+    use HasTransactions;
     /**
      * @var Model
      */

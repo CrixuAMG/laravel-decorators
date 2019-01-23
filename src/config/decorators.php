@@ -8,10 +8,11 @@ return [
          */
         'enabled'                     => (bool)env('APP_CACHE_ENABLED', true),
         /**
-         * The amount of minutes a set of cached data is valid
+         * The amount of seconds a set of cached data is valid
          * After that the cache will be refreshed with new data
+         * The default amount is an hour
          */
-        'minutes'                     => (int)env('APP_CACHE_MINUTES', 60),
+        'seconds'                     => (int)env('APP_CACHE_SECONDS', 60 * 60),
         /**
          * The parameters that can be retrieved from the request for the cache key
          */
@@ -54,6 +55,7 @@ return [
         //            '__arguments' => [
         //                UserRepository::class,
         //                UserCache::class,
+        //                UserDecorator::class,
         //            ],
         //        ],
     ],

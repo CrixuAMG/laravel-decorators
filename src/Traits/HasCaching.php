@@ -129,6 +129,8 @@ trait HasCaching
         // Get the custom parameters
         $parameters = $this->getCacheParameters();
         if ($parameters) {
+            dump($parameters);
+
             // There are parameters, build upon the template and parameter set
             foreach ($parameters as $key => $value) {
                 if (\is_array($value)) {

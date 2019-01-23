@@ -109,4 +109,24 @@ class TestRepository extends AbstractRepository implements TestContract
     {
         return true;
     }
+
+    /**
+     * @param int $number
+     *
+     * @return int
+     */
+    public function get(int $number): int
+    {
+        return $number;
+    }
+
+    /**
+     * @param int $number
+     *
+     * @return int
+     */
+    public function getWithoutCacheParameters(int $number): int
+    {
+        return $number;
+    }
 }

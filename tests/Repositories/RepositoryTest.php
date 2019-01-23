@@ -28,7 +28,7 @@ class RepositoryTest extends TestCase
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function it_can_get_index_results()
+    public function it_can_get_index_results(): void
     {
         $result = $this->forward('index');
 
@@ -58,7 +58,7 @@ class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function it_can_store_a_new_model()
+    public function it_can_store_a_new_model(): void
     {
         $result = $this->forward('store', []);
 
@@ -68,7 +68,7 @@ class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function it_can_get_a_single_model()
+    public function it_can_get_a_single_model(): void
     {
         $model = new TestModel();
 
@@ -80,7 +80,7 @@ class RepositoryTest extends TestCase
     /**
      * @test
      */
-    public function it_can_update_a_single_model()
+    public function it_can_update_a_single_model(): void
     {
         $model = new TestModel([
             'foo' => 'foo',

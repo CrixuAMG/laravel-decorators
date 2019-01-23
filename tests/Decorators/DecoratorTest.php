@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators\Test\Decorators;
 
-use Carbon\Carbon;
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Decorator;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
@@ -11,9 +10,11 @@ use CrixuAMG\Decorators\Test\Providers\TestContract;
 use CrixuAMG\Decorators\Test\Providers\TestDecorator;
 use CrixuAMG\Decorators\Test\Providers\TestRepository;
 use CrixuAMG\Decorators\Test\TestCase;
+use Mockery\Mock;
 
 /**
  * Class DecoratorTest
+ *
  * @package CrixuAMG\Decorators\Test\Decorators
  */
 class DecoratorTest extends TestCase
@@ -92,7 +93,7 @@ class DecoratorTest extends TestCase
     {
         $this->decorator->decorate(TestContract::class, [
             TestRepository::class,
-            Carbon::class,
+            Mock::class,
         ]);
 
         $this->expectException(InterfaceNotImplementedException::class);

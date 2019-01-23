@@ -14,7 +14,7 @@ class CacheKeyTest extends TestCase
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
@@ -27,7 +27,7 @@ class CacheKeyTest extends TestCase
      * @param array  $parameters
      * @param string $expected
      */
-    public function it_can_create_a_key(string $format, array $parameters, string $expected)
+    public function it_can_create_a_key(string $format, array $parameters, string $expected): void
     {
         $this->assertEquals($expected, CacheKey::fromFormat($format, $parameters));
     }
@@ -39,7 +39,7 @@ class CacheKeyTest extends TestCase
      * @param array  $data
      * @param string $expected
      */
-    public function it_can_generate_a_key(array $data, string $expected)
+    public function it_can_generate_a_key(array $data, string $expected): void
     {
         $this->assertEquals($expected, CacheKey::generate(...$data));
     }
@@ -47,7 +47,7 @@ class CacheKeyTest extends TestCase
     /**
      * @return array
      */
-    public function cacheKeyGenerateProvider()
+    public function cacheKeyGenerateProvider(): array
     {
         return [
             [
@@ -76,7 +76,7 @@ class CacheKeyTest extends TestCase
     /**
      * @return array
      */
-    public function cacheKeyProvider()
+    public function cacheKeyProvider(): array
     {
         return [
             [

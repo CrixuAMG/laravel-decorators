@@ -16,7 +16,7 @@ class Cache
      */
     public static function enabled(bool $enabled = null): bool
     {
-        if (!\is_null($enabled)) {
+        if ($enabled !== null) {
             config(['decorators.cache.enabled' => $enabled]);
         }
 
@@ -30,7 +30,7 @@ class Cache
      */
     public static function time(int $time = null): int
     {
-        if (!\is_null($time)) {
+        if ($time !== null) {
             config(['decorators.cache.seconds' => $time]);
         }
 
@@ -54,7 +54,7 @@ class Cache
      */
     public static function forceCacheTags(bool $force = null): bool
     {
-        if (!\is_null($force)) {
+        if ($force !== null) {
             config(['decorators.cache.enable_forced_tags' => $force]);
         }
 

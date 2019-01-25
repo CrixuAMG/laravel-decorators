@@ -129,8 +129,6 @@ trait HasCaching
         // Get the custom parameters
         $parameters = $this->getCacheParameters();
         if ($parameters) {
-            dump($parameters);
-
             // There are parameters, build upon the template and parameter set
             foreach ($parameters as $key => $value) {
                 if (\is_array($value)) {
@@ -169,6 +167,16 @@ trait HasCaching
         // If the first element is an array, and there is only one element, set it as the tags array
         if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
             $cacheTags = reset($cacheTags);
+        }
+
+        if (
+            $this->getCacheTags() !== array_merge(
+                $cacheTags,
+                (array)config('decorators.cache.default_tags'),
+                $this->resolveRequestTags()
+            )
+        ) {
+            $this->setCacheKey('');
         }
 
         $this->cacheTags = $cacheTags;
@@ -275,6 +283,10 @@ trait HasCaching
      */
     protected function setCacheParameters(array $cacheParameters)
     {
+        if ($this->getCacheParameters() !== $cacheParameters) {
+            $this->setCacheKey('');
+        }
+
         $this->cacheParameters = $cacheParameters;
 
         return $this;
@@ -287,6 +299,10 @@ trait HasCaching
      */
     protected function setCacheTime(int $cacheTime)
     {
+        if ($this->getCacheTime() !== $cacheTime) {
+            $this->setCacheKey('');
+        }
+
         $this->cacheTime = $cacheTime;
 
         return $this;

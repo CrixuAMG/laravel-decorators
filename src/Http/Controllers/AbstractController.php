@@ -19,8 +19,11 @@ abstract class AbstractController
      * @param             $next
      * @param string|null $resourceClass
      * @param string      ...$cacheTags
+     *
+     * @return void
+     * @throws \Throwable
      */
-    public function setup($next, string $resourceClass = null, string ...$cacheTags)
+    public function setup($next, string $resourceClass = null, string ...$cacheTags): void
     {
         // Set next
         $this->setNext($next);

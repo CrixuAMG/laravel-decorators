@@ -22,9 +22,9 @@ trait HasForwarding
     public $next;
 
     /**
-     * @param null $next
+     * @param mixed $next
      *
-     * @return HasForwarding
+     * @return mixed
      * @throws \Throwable
      */
     public function setNext($next = null)

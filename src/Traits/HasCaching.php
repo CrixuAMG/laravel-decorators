@@ -43,7 +43,7 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
-        // Get the amount of minutes the data should be cached
+        // Get the amount of seconds the data should be cached
         $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
@@ -84,7 +84,7 @@ trait HasCaching
     /**
      * @param mixed $cacheKey
      *
-     * @return HasCaching
+     * @return mixed
      */
     protected function setCacheKey(string $cacheKey)
     {
@@ -160,13 +160,23 @@ trait HasCaching
     /**
      * @param string[] ...$cacheTags
      *
-     * @return HasCaching
+     * @return mixed
      */
     protected function setCacheTags(...$cacheTags)
     {
         // If the first element is an array, and there is only one element, set it as the tags array
         if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
             $cacheTags = reset($cacheTags);
+        }
+
+        if (
+            $this->getCacheTags() !== array_merge(
+                $cacheTags,
+                (array)config('decorators.cache.default_tags'),
+                $this->resolveRequestTags()
+            )
+        ) {
+            $this->setCacheKey('');
         }
 
         $this->cacheTags = $cacheTags;
@@ -225,7 +235,7 @@ trait HasCaching
     protected function cache(\Closure $callback)
     {
         $cacheTags      = null;
-        $implementsTags = CacheDriver::checkImplementsTags();
+        $implementsTags = CacheDriver::implementsTags();
 
         if ($implementsTags) {
             // Get the cache tags
@@ -245,7 +255,7 @@ trait HasCaching
             );
         }
 
-        // Get the amount of minutes the data should be cached
+        // Get the amount of seconds the data should be cached
         $cacheTime = $this->getCacheTime();
         $cacheKey  = $this->getCacheKey() ?? CacheKey::generate(...$cacheTags);
 
@@ -269,10 +279,14 @@ trait HasCaching
     /**
      * @param array $cacheParameters
      *
-     * @return HasCaching
+     * @return mixed
      */
     protected function setCacheParameters(array $cacheParameters)
     {
+        if ($this->getCacheParameters() !== $cacheParameters) {
+            $this->setCacheKey('');
+        }
+
         $this->cacheParameters = $cacheParameters;
 
         return $this;
@@ -281,10 +295,14 @@ trait HasCaching
     /**
      * @param int $cacheTime
      *
-     * @return HasCaching
+     * @return mixed
      */
     protected function setCacheTime(int $cacheTime)
     {
+        if ($this->getCacheTime() !== $cacheTime) {
+            $this->setCacheKey('');
+        }
+
         $this->cacheTime = $cacheTime;
 
         return $this;
@@ -319,7 +337,7 @@ trait HasCaching
     protected function flushCache(...$tags): ?bool
     {
         // If the cache driver does not support tagging, flush the cache
-        if (!CacheDriver::checkImplementsTags()) {
+        if (!CacheDriver::implementsTags()) {
             return cache()->flush();
         }
 

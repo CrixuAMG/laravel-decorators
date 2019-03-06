@@ -2,6 +2,8 @@
 
 namespace CrixuAMG\Decorators\Caches;
 
+use CrixuAMG\Decorators\Exceptions\ValueCannotBeStringifiedException;
+
 /**
  * Class CacheKey
  *
@@ -13,8 +15,9 @@ class CacheKey
      * @param mixed ...$data
      *
      * @return string
+     * @throws ValueCannotBeStringifiedException
      */
-    public static function generate(...$data)
+    public static function generate(...$data): string
     {
         $format     = '';
         $parameters = [];
@@ -30,7 +33,13 @@ class CacheKey
 
                 // Add it to the parameters
                 $parameters[] = $value;
+
+                continue;
             }
+
+            throw new ValueCannotBeStringifiedException(
+                __('Value cannot be stringified.')
+            );
         }
 
         return self::fromFormat($format, $parameters);
@@ -84,7 +93,7 @@ class CacheKey
      *
      * @return string
      */
-    public static function fromFormat(string $format, array $parameters)
+    public static function fromFormat(string $format, array $parameters): string
     {
         $requestExtension = self::getDataFromRequest();
 
@@ -99,7 +108,7 @@ class CacheKey
     /**
      * @return string
      */
-    private static function getDataFromRequest()
+    private static function getDataFromRequest(): string
     {
         $data   = request()->only((array)config('decorators.cache.request_parameters'));
         $string = '';

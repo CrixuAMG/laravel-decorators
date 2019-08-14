@@ -17,7 +17,7 @@ This package is designed to allow developers (inluding myself of course!) to sta
 Put the following in your composer.json file: 
 ```json
     "require": {
-        "crixuamg/laravel-decorators": "^1.0.0",
+        "crixuamg/laravel-decorators": "^2.0.0",
         // ...
     }
 ```
@@ -26,7 +26,7 @@ Put the following in your composer.json file:
 Decorators can be registered in two ways.
 
 1) Config based \
-After publishing the config file, register your decorators as shown in the bottom of the file. Then extend the AbstractController in a controller and call `$this-setup()` in the `__construct()` using the key created in the config file.
+After publishing the config file, register your decorators as shown in the bottom of the file. Then extend the AbstractController in a controller and call `$this->setup()` in the `__construct()` using the key created in the config file.
 
 2) ServiceProvider based\
 Run `php artisan make:provider RepositoryServiceProvider`.

@@ -21,6 +21,10 @@ abstract class AbstractRepository implements DecoratorContract
      * @var Model
      */
     protected $model;
+    /**
+     * @var bool
+     */
+    protected $refreshModelBeforeLoadingRelations;
 
     /**
      * @param Model $model
@@ -43,7 +47,7 @@ abstract class AbstractRepository implements DecoratorContract
 
     /**
      * @param bool $paginate
-     * @param int  $itemsPerPage
+     * @param int $itemsPerPage
      *
      * @return LengthAwarePaginator|Collection|static[]
      */
@@ -78,7 +82,7 @@ abstract class AbstractRepository implements DecoratorContract
     abstract public function store(array $data);
 
     /**
-     * @param array  $data
+     * @param array $data
      * @param string $createMethod
      *
      * @return Model
@@ -93,7 +97,7 @@ abstract class AbstractRepository implements DecoratorContract
         );
 
         if (($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate') && \count($data) === 2) {
-            $firstArray  = reset($data);
+            $firstArray = reset($data);
             $secondArray = next($data);
             if (\is_array($firstArray) && \is_array($secondArray)) {
                 return $classAndMethod($firstArray, $secondArray);
@@ -133,13 +137,17 @@ abstract class AbstractRepository implements DecoratorContract
         // Get the class
         $class = \get_class($model);
 
+        if (!$this->refreshModelBeforeLoadingRelations) {
+            $model = $model->fresh();
+        }
+
         if (!empty($relations)) {
             // Load only specified relations
             $model->load(...$relations);
-        } elseif (method_exists($class, 'showRelations')) {
+        } else if (method_exists($class, 'showRelations')) {
             // If the method showRelations exists, call it to load in relations before returning the model
             $model->load((array)$class::showRelations());
-        } elseif (method_exists($class, 'defaultRelations')) {
+        } else if (method_exists($class, 'defaultRelations')) {
             // If the method defaultRelations exists, call it to load in relations before returning the model
             $model->load((array)$class::defaultRelations());
         }

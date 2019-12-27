@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -64,7 +65,7 @@ class CacheMakeCommand extends GeneratorCommand
         $name = $this->getNameInput();
 
         // Fill the cache tags
-        $name = "'" . strtolower(str_plural(explode($this->type, $name)[0])) . "'";
+        $name = "'" . strtolower(Str::plural(explode($this->type, $name)[0])) . "'";
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
 

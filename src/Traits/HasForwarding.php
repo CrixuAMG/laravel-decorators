@@ -106,7 +106,7 @@ trait HasForwarding
         throw_unless(
             $this->next,
             DecoratorsNotSetupException::class,
-            'Decorators were not correctly setup.',
+            'Decorators where not correctly setup.',
             500
         );
 

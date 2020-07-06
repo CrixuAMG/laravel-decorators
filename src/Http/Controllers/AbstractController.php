@@ -16,14 +16,14 @@ abstract class AbstractController
     use HasForwarding, HasCaching, HasResources;
 
     /**
-     * @param             $next
-     * @param string|null $resourceClass
-     * @param string      ...$cacheTags
+     * @param                   $next
+     * @param string|array|null $resourceClass
+     * @param string            ...$cacheTags
      *
      * @return void
      * @throws \Throwable
      */
-    public function setup($next, string $resourceClass = null, string ...$cacheTags): void
+    public function setup($next, $resourceClass = null, string ...$cacheTags): void
     {
         // Set next
         $this->setNext($next);

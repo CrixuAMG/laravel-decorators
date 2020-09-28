@@ -6,26 +6,26 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class RepositoryMakeCommand extends GeneratorCommand
+class ScopeMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'decorators:repository';
+    protected $name = 'decorators:scope';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new repository';
+    protected $description = 'Create a new scope';
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Repository';
+    protected $type = 'Scope';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +34,7 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/repository.stub';
+        return __DIR__ . '/stubs/scope.stub';
     }
 
     /**
@@ -46,7 +46,7 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Repositories';
+        return $rootNamespace . '\Scopes';
     }
 
     /**
@@ -76,18 +76,13 @@ class RepositoryMakeCommand extends GeneratorCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        return str_replace(
-            [
-
-                'RootNamespace\\',
-                'dummy:command',
-            ],
-            [
-                $this->rootNamespace(),
-                $this->option('command'),
-            ],
-            $stub
-        );
+        return str_replace([
+            'RootNamespace\\',
+            'dummy:command',
+        ], [
+            $this->rootNamespace(),
+            $this->option('command'),
+        ], $stub);
     }
 
     /**

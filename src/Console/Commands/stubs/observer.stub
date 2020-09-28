@@ -1,0 +1,46 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Available methods:
+ * retrieved    // When the model is retrieved from the database
+ * creating     // After calling save/create methods and before saving it to the database
+ * created      // After saving the model
+ * updating     // After calling save/create methods and before saving it to the database
+ * updated      // After saving the model
+ * saving       // Before saving the model
+ * saved        // After saving the model
+ * deleting     // Before deleting the model
+ * deleted      // After deleting the model
+ * restoring    // Before restoring the model
+ * restored     // After restoring the model
+ */
+class DummyClass
+{
+    /**
+     * @param Model $model
+     */
+    public function created(Model $model)
+    {
+        // Todo: fill or remove this
+    }
+
+    /**
+     * @param Model $model
+     */
+    public function updated(Model $model)
+    {
+        // Todo: fill or remove this
+    }
+
+    /**
+     * @param Model $model
+     */
+    public function deleted(Model $model)
+    {
+        // Todo: fill or remove this
+    }
+}

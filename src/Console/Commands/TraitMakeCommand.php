@@ -6,26 +6,26 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class RepositoryMakeCommand extends GeneratorCommand
+class TraitMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'decorators:repository';
+    protected $name = 'decorators:trait';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new repository';
+    protected $description = 'Create a new trait';
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Repository';
+    protected $type = 'Trait';
 
     /**
      * Get the stub file for the generator.
@@ -34,7 +34,7 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/repository.stub';
+        return __DIR__ . '/stubs/trait.stub';
     }
 
     /**
@@ -46,7 +46,28 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Repositories';
+        return $rootNamespace . '\Traits';
+    }
+
+    /**
+     * Replace the class name for the given stub.
+     *
+     * @param string $stub
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function replaceClass($stub, $name)
+    {
+        $stub = parent::replaceClass($stub, $name);
+
+        return str_replace([
+            'RootNamespace\\',
+            'dummy:command',
+        ], [
+            $this->rootNamespace(),
+            $this->option('command'),
+        ], $stub);
     }
 
     /**
@@ -62,32 +83,6 @@ class RepositoryMakeCommand extends GeneratorCommand
         }
 
         return $name;
-    }
-
-    /**
-     * Replace the class name for the given stub.
-     *
-     * @param string $stub
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function replaceClass($stub, $name)
-    {
-        $stub = parent::replaceClass($stub, $name);
-
-        return str_replace(
-            [
-
-                'RootNamespace\\',
-                'dummy:command',
-            ],
-            [
-                $this->rootNamespace(),
-                $this->option('command'),
-            ],
-            $stub
-        );
     }
 
     /**

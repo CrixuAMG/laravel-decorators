@@ -6,7 +6,11 @@ use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
+use CrixuAMG\Decorators\Console\Commands\ObserverMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -43,6 +47,14 @@ class DecoratorServiceProvider extends ServiceProvider
                 // decorators:repository
                 DecoratorMakeCommand::class,
                 // decorators:decorator
+                MakeStarterCommand::class,
+                // decorators:starter
+                TraitMakeCommand::class,
+                // decorators:trait
+                ObserverMakeCommand::class,
+                // decorators:observer
+                ScopeMakeCommand::class,
+                // decorators:scope
                 DecoratorsMakeCommand::class,
                 // decorators:make
             ]);

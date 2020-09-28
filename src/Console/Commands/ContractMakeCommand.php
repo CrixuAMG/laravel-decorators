@@ -40,7 +40,7 @@ class ContractMakeCommand extends GeneratorCommand
     /**
      * Get the default namespace for the class.
      *
-     * @param  string $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
@@ -67,8 +67,8 @@ class ContractMakeCommand extends GeneratorCommand
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string $stub
-     * @param  string $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

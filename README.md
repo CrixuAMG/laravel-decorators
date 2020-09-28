@@ -63,4 +63,19 @@ Or, create all three in a single command:
 ```bash
     php artisan decorators:make User
 ```
-The classes with automatically get their correct name based on the name provided.
+
+For your convenience, a command has been included that automatically creates the following:
+- Model
+- Controller
+- Contract
+- Cache
+- Repository
+- Resource
+
+```bash
+    php artisan decorators:starter User
+```
+The following options can be used to create extra files:
+- `-m` Creates a migration
+- `-d` Creates a decorator
+- `-r` Creates 4 request classes (Show, Store, Update, Delete) in app/Http/Requests/<MODEL_NAME>/

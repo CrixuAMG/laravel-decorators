@@ -137,7 +137,7 @@ abstract class AbstractRepository implements DecoratorContract
         // Get the class
         $class = \get_class($model);
 
-        if (!$this->refreshModelBeforeLoadingRelations) {
+        if ($this->refreshModelBeforeLoadingRelations) {
             $model = $model->fresh();
         }
 

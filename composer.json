@@ -4,6 +4,7 @@
     "license": "MIT",
     "type": "library",
     "keywords": [
+        "crixuamg",
         "laravel",
         "decorator",
         "pattern"
@@ -16,7 +17,13 @@
     ],
     "require": {
         "php": ">=7.1",
-        "laravel/framework": "^5.8.0||6.*||7.*||8.*"
+        "illuminate/contracts": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/console": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/database": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/http": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/validation": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/pagination": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/support": "^5.8|^6.0|^7.0|^8.0"
     },
     "require-dev": {
         "phpmd/phpmd": "2.*",

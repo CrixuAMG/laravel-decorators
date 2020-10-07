@@ -144,13 +144,6 @@ class BaseModel extends Model
 
         $filters = (array)$filters;
 
-        if (!empty($filters['alert_standaard_data'])) {
-            $filters[sprintf('%s.alert_standaard_data', $this->getTable())] = $filters['alert_standaard_data'];
-        }
-        if (!empty($filters['alert_datums'])) {
-            $filters[sprintf('%s.alert_datums', $this->getTable())] = $filters['alert_datums'];
-        }
-
         foreach ($this->filterableData() as $column) {
             if (!empty($filters[$column])) {
                 $filters[sprintf('%s.%s', $this->getTable(), $column)] = $filters[$column];

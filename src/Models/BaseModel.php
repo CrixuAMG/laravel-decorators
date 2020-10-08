@@ -1,6 +1,6 @@
 <?php
 
-namespace CrixuMG\Decorators\Models;
+namespace CrixuAMG\Decorators\Models;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class BaseModel
  *
- * @package CrixuMG\Decorators\Models
+ * @package CrixuAMG\Decorators\Models
  */
 class BaseModel extends Model
 {

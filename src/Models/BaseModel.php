@@ -14,11 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 class BaseModel extends Model
 {
     /**
-     * @var bool
-     */
-    protected $belongsToOrganisation = true;
-
-    /**
      * @return array
      */
     public static function defaultRelations(): array

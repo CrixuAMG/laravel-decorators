@@ -46,25 +46,25 @@ class MakeStarterCommand extends Command
     public function handle()
     {
         $commandsToExecute = [
-            'make:model'      => '',
-            'make:controller' => 'Controller',
-            'make:resource'   => 'Resource',
-            'make:contract'   => 'Contract',
-            'make:cache'      => 'Cache',
-            'make:repository' => 'Repository',
+            'make:model'            => '',
+            'make:controller'       => 'Controller',
+            'make:resource'         => 'Resource',
+            'decorators:contract'   => 'Contract',
+            'decorators:cache'      => 'Cache',
+            'decorators:repository' => 'Repository',
         ];
 
-        $className     = $this->getNameInput();
+        $className = $this->getNameInput();
         $classNameTemp = null;
 
         foreach ($commandsToExecute as $commandToExecute => $type) {
             if ($commandToExecute === 'make:model') {
                 $classNameTemp = $className;
-                $className     = config('nextlevel.model_namespace') . $className;
+                $className = config('nextlevel.model_namespace') . $className;
             }
             if ($commandToExecute === 'make:controller') {
                 $classNameTemp = $className;
-                $className     = 'Api\\' . $className;
+                $className = 'Api\\' . $className;
             }
 
             $this->info('php artisan ' . $commandToExecute . ' ' . $className . $type);

@@ -158,7 +158,7 @@ trait HasCaching
     }
 
     /**
-     * @param string[] ...$cacheTags
+     * @param string|string[] ...$cacheTags
      *
      * @return mixed
      */

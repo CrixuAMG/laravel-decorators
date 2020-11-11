@@ -93,4 +93,21 @@ abstract class AbstractController
             }
         );
     }
+
+    /**
+     * @param string $method
+     * @param \Closure $callback
+     * @param mixed ...$args
+     *
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function forwardWithCallback(string $method, \Closure $callback, ...$args)
+    {
+        // Forward the data
+        $result = $this->forward($method, ...$args);
+
+        // Return the result after calling the callback function
+        return $callback($result);
+    }
 }

@@ -113,7 +113,7 @@ abstract class AbstractCache implements DecoratorContract
      *
      * @return mixed
      */
-    public function delete(Model $model)
+    public function destroy(Model $model)
     {
         return $this->flushAfterForward(__FUNCTION__, $model);
     }

@@ -95,7 +95,7 @@ abstract class AbstractDecorator implements DecoratorContract
      *
      * @return mixed
      */
-    public function delete(Model $model)
+    public function destroy(Model $model)
     {
         return $this->forward(__FUNCTION__, $model);
     }

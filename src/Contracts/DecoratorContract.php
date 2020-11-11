@@ -60,5 +60,5 @@ interface DecoratorContract
      *
      * @return mixed
      */
-    public function delete(Model $model);
+    public function destroy(Model $model);
 }

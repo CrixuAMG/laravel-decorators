@@ -164,7 +164,7 @@ abstract class AbstractRepository implements DecoratorContract
      * @return mixed
      * @throws \Exception
      */
-    public function delete(Model $model)
+    public function destroy(Model $model)
     {
         try {
             $result = $model->delete() ?? false;

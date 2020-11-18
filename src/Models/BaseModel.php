@@ -139,15 +139,14 @@ class BaseModel extends Model
 
         $filters = (array)$filters;
 
+        $validatedFilters = [];
         foreach ($this->filterableData() as $column) {
             if (!empty($filters[$column])) {
-                $filters[sprintf('%s.%s', $this->getTable(), $column)] = $filters[$column];
+                $validatedFilters[sprintf('%s.%s', $this->getTable(), $column)] = $filters[$column];
             }
         }
 
-        return collect($filters)->filter(function ($filter, $key) {
-            return in_array($key, $this->filterableData());
-        })->toArray();
+        return $validatedFilters;
     }
 
     /**

@@ -112,10 +112,16 @@ class BaseModel extends Model
     public function handleFilter(Builder $query): Builder
     {
         $filters = $this->getFilters();
+        $model = $query->getModel();
 
         if (!empty($filters)) {
             foreach ($filters as $column => $filter) {
-                if (!is_array($filter)) {
+                $camelCase = \Illuminate\Support\Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
+
+                if (method_exists($model, $camelCase)) {
+                    // For custom handleUserIdFilter
+                    $query = $model->$camelCase($query, $filter);
+                } else if (!is_array($filter)) {
                     $query->where($column, $filter);
                 } else {
                     $query->whereIn($column, $filter);

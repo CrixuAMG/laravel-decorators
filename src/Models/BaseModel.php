@@ -86,6 +86,13 @@ class BaseModel extends Model
                     ),
                     $direction
                 );
+                if ($order['column'] === $model->getKeyName()) {
+                    $order['column'] = sprintf(
+                        '%s.%s',
+                        $model->getTable(),
+                        $order['column']
+                    );
+                }
                 $query = $query->orderBy($order['column'], $order['direction']);
             }
 
@@ -116,7 +123,7 @@ class BaseModel extends Model
 
         if (!empty($filters)) {
             foreach ($filters as $column => $filter) {
-                $camelCase = \Illuminate\Support\Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
+                $camelCase = \Illuminate\Support\Str::camel('handle ' . \str_replace('.', ' ', $column) . 'Filter');
 
                 if (method_exists($model, $camelCase)) {
                     // For custom handleUserIdFilter
@@ -173,11 +180,11 @@ class BaseModel extends Model
     private function getOrderBy(string $orderColumn, string $orderDirection)
     {
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
-        $orderColumn    = request()->input('order_column') ?? $orderColumn ?? 'id';
+        $orderColumn = request()->input('order_column') ?? $orderColumn ?? 'id';
         $orderDirection = request()->input('order_direction') ?? $orderDirection ?? 'ASC';
 
         return [
-            'column'    => strtolower($orderColumn),
+            'column' => strtolower($orderColumn),
             'direction' => strtoupper($orderDirection),
         ];
     }

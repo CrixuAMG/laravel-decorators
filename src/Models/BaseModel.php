@@ -155,11 +155,20 @@ class BaseModel extends Model
         $validatedFilters = [];
         foreach ($this->filterableData() as $column) {
             if (!empty($filters[$column])) {
-                $validatedFilters[sprintf('%s.%s', $this->getTable(), $column)] = $filters[$column];
+                $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
             }
         }
 
         return $validatedFilters;
+    }
+
+    /**
+     * @param string $column
+     * @return string
+     */
+    protected function getFilterSelectColumn(string $column): string
+    {
+        return sprintf('%s.%s', $this->getTable(), $column);
     }
 
     /**

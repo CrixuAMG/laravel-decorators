@@ -152,7 +152,7 @@ class MakeStarterCommand extends Command
     {
         $name = $this->getNameInput();
 
-        $this->info('php artisan make:decorator ' . $name . 'Decorator');
+        $this->info('php artisan decorators:decorator ' . $name . 'Decorator');
 
         Artisan::call('make:decorator', [
             'name' => $name . 'Decorator',

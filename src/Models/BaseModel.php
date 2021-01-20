@@ -186,7 +186,7 @@ class BaseModel extends Model
      * @param string $orderDirection
      * @return array
      */
-    private function getOrderBy(string $orderColumn, string $orderDirection)
+    protected function getOrderBy(string $orderColumn, string $orderDirection)
     {
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
         $orderColumn = request()->input('order_column') ?? $orderColumn ?? 'id';
@@ -205,7 +205,7 @@ class BaseModel extends Model
      *
      * @return int
      */
-    private function getPerPageFromRequest(int $maximum = 25)
+    protected function getPerPageFromRequest(int $maximum = 25)
     {
         $perPage = request()->input('per_page') ?? config('decorators.pagination');
 

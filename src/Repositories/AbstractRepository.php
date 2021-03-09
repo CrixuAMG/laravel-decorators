@@ -46,33 +46,6 @@ abstract class AbstractRepository implements DecoratorContract
     abstract public function index();
 
     /**
-     * @param bool $paginate
-     * @param int $itemsPerPage
-     *
-     * @return LengthAwarePaginator|Collection|static[]
-     */
-    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
-    {
-        $query = $this->model->query();
-
-        // Get the class
-        $class = \get_class($this->model);
-        if (method_exists($class, 'defaultRelations')) {
-            // If the method defaultRelations exists, call it to load in relations before returning the data
-            $query->with((array)$class::defaultRelations());
-        }
-
-        if ($paginate && !$itemsPerPage) {
-            $itemsPerPage = (int)config('decorators.pagination');
-        }
-
-        // Return the data
-        return $paginate && $itemsPerPage
-            ? $query->paginate($itemsPerPage)
-            : $query->get();
-    }
-
-    /**
      * Create a new model
      *
      * @param array $data
@@ -80,32 +53,6 @@ abstract class AbstractRepository implements DecoratorContract
      * @return mixed
      */
     abstract public function store(array $data);
-
-    /**
-     * @param array $data
-     * @param string $createMethod
-     *
-     * @return Model
-     * @throws \Throwable
-     */
-    public function simpleStore(array $data, string $createMethod = 'create')
-    {
-        $classAndMethod = sprintf(
-            '%s::%s',
-            \get_class($this->model),
-            $createMethod
-        );
-
-        if (($createMethod === 'updateOrCreate' || $createMethod === 'firstOrCreate') && \count($data) === 2) {
-            $firstArray = reset($data);
-            $secondArray = next($data);
-            if (\is_array($firstArray) && \is_array($secondArray)) {
-                return $classAndMethod($firstArray, $secondArray);
-            }
-        }
-
-        return $classAndMethod($data);
-    }
 
     /**
      * Update a model

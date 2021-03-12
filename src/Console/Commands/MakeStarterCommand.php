@@ -20,7 +20,7 @@ class MakeStarterCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:starter';
+    protected $name = 'decorators:starter {--module=}';
     /**
      * The console command description.
      *
@@ -53,17 +53,22 @@ class MakeStarterCommand extends Command
             'decorators:cache'      => 'Cache',
             'decorators:repository' => 'Repository',
         ];
+        $module = $this->option('module');
 
         $className = $this->getNameInput();
         $classNameTemp = null;
 
         foreach ($commandsToExecute as $commandToExecute => $type) {
+            $classNameTemp = $className;
+
+            if ($module) {
+                $className = $module . '\\' . $className;
+            }
+
             if ($commandToExecute === 'make:model') {
-                $classNameTemp = $className;
                 $className = config('nextlevel.model_namespace') . $className;
             }
             if ($commandToExecute === 'make:controller') {
-                $classNameTemp = $className;
                 $className = 'Api\\' . $className;
             }
 
@@ -81,19 +86,19 @@ class MakeStarterCommand extends Command
         if ($this->option('request')) {
             $this->info('Creating the requests');
 
-            $this->createRequests();
+            $this->createRequests($module);
         }
 
         if ($this->option('decorator')) {
             $this->info('Creating the decorator');
 
-            $this->createDecorator();
+            $this->createDecorator($module);
         }
 
         if ($this->option('seeder')) {
             $this->info('Creating the seeder');
 
-            $this->createSeeder();
+            $this->createSeeder($module);
         }
 
         if ($this->option('migration')) {
@@ -114,9 +119,10 @@ class MakeStarterCommand extends Command
     /**
      * Create two request files for the model.
      *
+     * @param string|null $module
      * @return void
      */
-    protected function createRequests()
+    protected function createRequests(string $module = null)
     {
         $name = $this->getNameInput();
 
@@ -126,6 +132,10 @@ class MakeStarterCommand extends Command
             'Update',
             'Delete',
         ];
+
+        if ($module) {
+            $name = $module . '\\' . $name;
+        }
 
         foreach ($nameExtensions as $nameExtension) {
             $this->info('php artisan make:request ' . $name . '\\' . $nameExtension . 'Request');
@@ -146,15 +156,20 @@ class MakeStarterCommand extends Command
     /**
      * Create a new decorator class for the model.
      *
+     * @param string|null $module
      * @return void
      */
-    private function createDecorator()
+    private function createDecorator(string $module = null)
     {
         $name = $this->getNameInput();
 
+        if ($module) {
+            $name = $module . '\\' . $name;
+        }
+
         $this->info('php artisan decorators:decorator ' . $name . 'Decorator');
 
-        Artisan::call('make:decorator', [
+        Artisan::call('decorators:decorator', [
             'name' => $name . 'Decorator',
         ]);
     }
@@ -162,11 +177,16 @@ class MakeStarterCommand extends Command
     /**
      * Create a new seeder class for the model.
      *
+     * @param string|null $module
      * @return void
      */
-    private function createSeeder()
+    private function createSeeder(string $module = null)
     {
         $name = $this->getNameInput();
+
+        if ($module) {
+            $name = $module . '/' . $name;
+        }
 
         $this->info('php artisan make:seeder ' . $name . 'Seeder');
 
@@ -221,6 +241,12 @@ class MakeStarterCommand extends Command
                 InputOption::VALUE_OPTIONAL,
                 'The terminal command that should be assigned.',
                 'command:name',
+            ],
+            [
+                'module',
+                'module',
+                InputOption::VALUE_REQUIRED,
+                'Put the generated files inside of a module folder.',
             ],
             [
                 'migration',

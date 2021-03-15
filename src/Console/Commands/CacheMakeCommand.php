@@ -65,7 +65,7 @@ class CacheMakeCommand extends GeneratorCommand
         $name = $this->getNameInput();
 
         // Fill the cache tags
-        $name = "'" . strtolower(Str::plural(explode($this->type, $name)[0])) . "'";
+        $name = "'" . Str::snake(Str::plural(explode($this->type, $name)[0])) . "'";
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
 

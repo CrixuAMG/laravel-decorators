@@ -96,7 +96,7 @@ trait Resultable
 
             $perPage = (int)$this->getPerPageFromRequest($perPage);
             if ($perPage === 1) {
-                $result = $query->first();
+                $result = $query->first() ?: abort(404);
             } elseif ($perPage > 0) {
                 $result = $query->paginate($perPage);
             } else {

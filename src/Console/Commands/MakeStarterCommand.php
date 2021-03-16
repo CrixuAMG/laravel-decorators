@@ -49,6 +49,7 @@ class MakeStarterCommand extends Command
             'make:model'            => '',
             'make:controller'       => 'Controller',
             'make:resource'         => 'Resource',
+            'make:factory'          => 'Factory',
             'decorators:contract'   => 'Contract',
             'decorators:cache'      => 'Cache',
             'decorators:repository' => 'Repository',

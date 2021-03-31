@@ -51,8 +51,8 @@ class MakeStarterCommand extends Command
             'make:resource'         => 'Resource',
             'make:factory'          => 'Factory',
             'decorators:contract'   => 'Contract',
-            'decorators:cache'      => 'Cache',
             'decorators:repository' => 'Repository',
+            'decorators:cache'      => 'Cache',
         ];
         $module = $this->option('module');
 
@@ -63,20 +63,20 @@ class MakeStarterCommand extends Command
             $classNameTemp = $className;
 
             if ($module) {
-                $className = $module . '\\' . $className;
+                $className = $module.'\\'.$className;
             }
 
             if ($commandToExecute === 'make:model') {
-                $className = config('nextlevel.model_namespace') . $className;
+                $className = config('nextlevel.model_namespace').$className;
             }
             if ($commandToExecute === 'make:controller') {
-                $className = 'Api\\' . $className;
+                $className = 'Api\\'.$className;
             }
 
-            $this->info('php artisan ' . $commandToExecute . ' ' . $className . $type);
+            $this->info('php artisan '.$commandToExecute.' '.$className.$type);
 
             Artisan::call($commandToExecute, [
-                'name' => $className . $type,
+                'name' => $className.$type,
             ]);
 
             if ($classNameTemp !== null) {
@@ -120,7 +120,7 @@ class MakeStarterCommand extends Command
     /**
      * Create two request files for the model.
      *
-     * @param string|null $module
+     * @param  string|null  $module
      * @return void
      */
     protected function createRequests(string $module = null)
@@ -135,29 +135,29 @@ class MakeStarterCommand extends Command
         ];
 
         if ($module) {
-            $name = $module . '\\' . $name;
+            $name = $module.'\\'.$name;
         }
 
         foreach ($nameExtensions as $nameExtension) {
-            $this->info('php artisan make:request ' . $name . '\\' . $nameExtension . 'Request');
+            $this->info('php artisan make:request '.$name.'\\'.$nameExtension.'Request');
 
             Artisan::call('make:request', [
-                'name' => $name . '\\' . $nameExtension . 'Request',
+                'name' => $name.'\\'.$nameExtension.'Request',
             ]);
         }
 
         // Create a policy
-        $this->info('php artisan make:policy ' . $name . 'Policy');
+        $this->info('php artisan make:policy '.$name.'Policy');
 
         Artisan::call('make:policy', [
-            'name' => $name . 'Policy',
+            'name' => $name.'Policy',
         ]);
     }
 
     /**
      * Create a new decorator class for the model.
      *
-     * @param string|null $module
+     * @param  string|null  $module
      * @return void
      */
     private function createDecorator(string $module = null)
@@ -165,20 +165,20 @@ class MakeStarterCommand extends Command
         $name = $this->getNameInput();
 
         if ($module) {
-            $name = $module . '\\' . $name;
+            $name = $module.'\\'.$name;
         }
 
-        $this->info('php artisan decorators:decorator ' . $name . 'Decorator');
+        $this->info('php artisan decorators:decorator '.$name.'Decorator');
 
         Artisan::call('decorators:decorator', [
-            'name' => $name . 'Decorator',
+            'name' => $name.'Decorator',
         ]);
     }
 
     /**
      * Create a new seeder class for the model.
      *
-     * @param string|null $module
+     * @param  string|null  $module
      * @return void
      */
     private function createSeeder(string $module = null)
@@ -186,13 +186,13 @@ class MakeStarterCommand extends Command
         $name = $this->getNameInput();
 
         if ($module) {
-            $name = $module . '/' . $name;
+            $name = $module.'/'.$name;
         }
 
-        $this->info('php artisan make:seeder ' . $name . 'Seeder');
+        $this->info('php artisan make:seeder '.$name.'Seeder');
 
         Artisan::call('make:seeder', [
-            'name' => $name . 'Seeder',
+            'name' => $name.'Seeder',
         ]);
     }
 

@@ -3,13 +3,22 @@
 namespace DummyNamespace;
 
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use DummyContractNamespace;
 
 /**
  * Class DummyClass
  *
  * @package DummyNamespace
  */
-class DummyClass extends AbstractRepository // Todo: Implement a contract
+class DummyClass extends AbstractRepository implements DummyContractClass
 {
-    //
+    public function index()
+    {
+        // TODO: Implement index() method.
+    }
+
+    public function store(array $data)
+    {
+        // TODO: Implement store() method.
+    }
 }

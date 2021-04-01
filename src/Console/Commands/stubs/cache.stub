@@ -5,13 +5,14 @@ namespace DummyNamespace;
 use CrixuAMG\Decorators\Caches\AbstractCache;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
 use Illuminate\Database\Eloquent\Model;
+use DummyContractNamespace;
 
 /**
  * Class DummyClass
  *
  * @package DummyNamespace
  */
-class DummyClass extends AbstractCache // Todo: Implement a contract
+class DummyClass extends AbstractCache implements DummyContractClass
 {
     /**
      * DummyClass constructor.

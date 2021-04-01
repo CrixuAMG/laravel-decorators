@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -34,19 +35,19 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/repository.stub';
+        return __DIR__.'/stubs/repository.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param string $rootNamespace
+     * @param  string  $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Repositories';
+        return $rootNamespace.'\Repositories';
     }
 
     /**
@@ -67,13 +68,21 @@ class RepositoryMakeCommand extends GeneratorCommand
     /**
      * Replace the class name for the given stub.
      *
-     * @param string $stub
-     * @param string $name
+     * @param  string  $stub
+     * @param  string  $name
      *
      * @return string
      */
     protected function replaceClass($stub, $name)
     {
+        $contractNamespace = str_replace(Str::plural($this->type), 'Contracts',
+            str_replace($this->type, 'Contract', $name));
+        $namespaceParts = array_reverse(explode('\\', $contractNamespace));
+        $contractClassname = reset($namespaceParts);
+
+        $stub = str_replace('DummyContractNamespace', $contractNamespace, $stub);
+        $stub = str_replace('DummyContractClass', $contractClassname, $stub);
+
         $stub = parent::replaceClass($stub, $name);
 
         return str_replace(

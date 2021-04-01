@@ -4,10 +4,9 @@ namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class CacheMakeCommand extends GeneratorCommand
+class CacheMakeCommand extends AbstractCommand
 {
     /**
      * The name and signature of the console command.
@@ -73,7 +72,9 @@ class CacheMakeCommand extends GeneratorCommand
         $name = $this->getNameInput();
 
         // Fill the cache tags
-        $name = "'" . Str::snake(Str::plural(explode($this->type, $name)[0])) . "'";
+        $name = "'" . Str::snake(Str::plural(explode($this->type, str_replace('\\', '.', $name))[0])) . "'";
+
+        $name = str_replace('._', '.', $name);
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
         $stub = str_replace('DummyContract', rtrim($name, $this->type) . 'Contract', $stub);
@@ -90,37 +91,6 @@ class CacheMakeCommand extends GeneratorCommand
             ],
             $stub
         );
-    }
-
-    /**
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            [
-                'name',
-                InputArgument::REQUIRED,
-                'The name of the command.',
-            ],
-        ];
     }
 
     /**

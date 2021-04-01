@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class RepositoryMakeCommand extends GeneratorCommand
+class RepositoryMakeCommand extends AbstractCommand
 {
     /**
      * The name and signature of the console command.
@@ -51,21 +51,6 @@ class RepositoryMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
-    }
-
-    /**
      * Replace the class name for the given stub.
      *
      * @param  string  $stub
@@ -97,22 +82,6 @@ class RepositoryMakeCommand extends GeneratorCommand
             ],
             $stub
         );
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            [
-                'name',
-                InputArgument::REQUIRED,
-                'The name of the command.',
-            ],
-        ];
     }
 
     /**

@@ -6,7 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class ContractMakeCommand extends GeneratorCommand
+class ContractMakeCommand extends AbstractCommand
 {
     /**
      * The name and signature of the console command.
@@ -50,21 +50,6 @@ class ContractMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
-    }
-
-    /**
      * Replace the class name for the given stub.
      *
      * @param string $stub
@@ -88,22 +73,6 @@ class ContractMakeCommand extends GeneratorCommand
             ],
             $stub
         );
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            [
-                'name',
-                InputArgument::REQUIRED,
-                'The name of the command.',
-            ],
-        ];
     }
 
     /**

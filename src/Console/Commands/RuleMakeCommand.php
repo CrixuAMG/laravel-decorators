@@ -46,6 +46,12 @@ class RuleMakeCommand extends AbstractCommand
                 'The terminal command that should be assigned.',
                 'command:name',
             ],
+            [
+                'module',
+                'module',
+                InputOption::VALUE_REQUIRED,
+                'Put the generated files inside of a module folder.',
+            ],
         ];
     }
 

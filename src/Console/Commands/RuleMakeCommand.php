@@ -48,4 +48,9 @@ class RuleMakeCommand extends AbstractCommand
             ],
         ];
     }
+
+    protected function getStub()
+    {
+        // TODO: Implement getStub() method.
+    }
 }

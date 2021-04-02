@@ -18,25 +18,9 @@ abstract class AbstractRepository implements DecoratorContract
 {
     use HasTransactions;
     /**
-     * @var Model
-     */
-    protected $model;
-    /**
      * @var bool
      */
     protected $refreshModelBeforeLoadingRelations;
-
-    /**
-     * @param Model $model
-     *
-     * @return AbstractRepository
-     */
-    public function setModel(Model $model)
-    {
-        $this->model = $model;
-
-        return $this;
-    }
 
     /**
      * Returns the index

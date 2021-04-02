@@ -9,9 +9,11 @@ use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
 use CrixuAMG\Decorators\Console\Commands\ObserverMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
 use Illuminate\Support\ServiceProvider;
+use PHPMD\Rule;
 
 /**
  * Class DecoratorServiceProvider
@@ -57,6 +59,8 @@ class DecoratorServiceProvider extends ServiceProvider
                 // decorators:scope
                 DecoratorsMakeCommand::class,
                 // decorators:make
+                RuleMakeCommand::class,
+                // decorators:rule
             ]);
         }
     }

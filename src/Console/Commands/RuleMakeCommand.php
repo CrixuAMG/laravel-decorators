@@ -12,7 +12,7 @@ class RuleMakeCommand extends AbstractCommand
      *
      * @var string
      */
-    protected $name = 'decorators:rule --module=';
+    protected $name = 'decorators:rule {--module=}';
     /**
      * The console command description.
      *

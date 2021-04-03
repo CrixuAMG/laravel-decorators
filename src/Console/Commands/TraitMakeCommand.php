@@ -75,14 +75,7 @@ class TraitMakeCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
+        return trim($this->argument('name'));
     }
 
     /**

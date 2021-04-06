@@ -40,6 +40,6 @@ jobs:
             - ./vendor
 
       # run tests with phpunit or codecept
-      - run: ./vendor/bin/phpunit
+      - run: XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-text
       #- run: ./vendor/bin/codecept build
       #- run: ./vendor/bin/codecept run

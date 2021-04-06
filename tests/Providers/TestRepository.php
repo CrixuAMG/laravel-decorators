@@ -14,11 +14,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class TestRepository extends AbstractRepository implements TestContract
 {
     /**
+     * @var TestModel
+     */
+    private $model;
+
+    /**
      * TestRepository constructor.
      */
     public function __construct()
     {
-        $this->setModel(new TestModel);
+        $this->model = new TestModel();
     }
 
     /**

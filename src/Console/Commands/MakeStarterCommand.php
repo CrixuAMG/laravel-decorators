@@ -310,8 +310,6 @@ class MakeStarterCommand extends Command
         );
 
         $fullNamespace = 'App\\'.$folder.'\\'.$className;
-
-        $snakedModule = Str::snake($this->option('module'));
         $snakedClassname = Str::snake($this->getNameInput());
 
         $key = '__arguments';
@@ -319,7 +317,7 @@ class MakeStarterCommand extends Command
             $key = '__contract';
         }
 
-        $this->addToGeneratedList($snakedClassname, $key, $fullNamespace);
+        $this->addToGeneratedList($snakedClassname, $key, $fullNamespace.Str::ucfirst($classToGenerate));
     }
 
     private function addToGeneratedList(string $className, string $key, $value)
@@ -361,10 +359,10 @@ class MakeStarterCommand extends Command
                 $output .= "$indent'$key' => [".PHP_EOL.$this->convertGeneratedClassesToCode($value, $depth + 1);
             } elseif (is_string($key) && is_string($value)) {
                 // Add string to string values
-                $output .= "$indent'$key' => '$value',".PHP_EOL;
+                $output .= "$indent'$key' => $value::class,".PHP_EOL;
             } elseif (is_int($key) && is_string($value)) {
                 // Add only string values
-                $output .= "$indent'$value',".PHP_EOL;
+                $output .= "$indent $value::class,".PHP_EOL;
                 $addClosingBracket = false;
             }
         }
@@ -380,9 +378,14 @@ class MakeStarterCommand extends Command
     {
         $output = $this->convertGeneratedClassesToCode($this->generatedClasses);
 
+        $snakedModule = Str::snake($this->option('module'));
+        $moduleText = !empty($snakedModule) && config('decorators.matchables.'.$snakedModule)
+            ? PHP_EOL."Note: Add the inner array to the decorators.matchables.$snakedModule array"
+            : '';
+
         echo <<< CONFIG
 
-To enable the classes generated, simply add the array listed below to the matchables array in your decorators.php:
+To enable the classes generated, simply add the array listed below to the matchables array in your decorators.php $moduleText
 
 $output
 CONFIG;

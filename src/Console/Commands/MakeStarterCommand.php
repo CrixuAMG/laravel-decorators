@@ -379,13 +379,13 @@ class MakeStarterCommand extends Command
         $output = $this->convertGeneratedClassesToCode($this->generatedClasses);
 
         $snakedModule = Str::snake($this->option('module'));
-        $moduleText = !empty($snakedModule) && config('decorators.matchables.'.$snakedModule)
-            ? PHP_EOL."Note: Add the inner array to the decorators.matchables.$snakedModule array"
+        $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
+            ? PHP_EOL."Note: Add the inner array to the decorators.tree.$snakedModule array"
             : '';
 
         echo <<< CONFIG
 
-To enable the classes generated, simply add the array listed below to the matchables array in your decorators.php $moduleText
+To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
 
 $output
 CONFIG;

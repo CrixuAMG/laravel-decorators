@@ -49,7 +49,7 @@ After publishing the config file, register your decorators as shown in the botto
     config/decorators.php
 
     ```php
-        'matchables' => [
+        'tree' => [
             'users'                => [
                 '__contract'  => App\Contracts\UserContract::class,
                 '__arguments' => [

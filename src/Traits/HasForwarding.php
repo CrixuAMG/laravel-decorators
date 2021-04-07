@@ -58,8 +58,8 @@ trait HasForwarding
         $contract  = null;
         $arguments = null;
         if (\is_string($next)) {
-            $contract  = config(sprintf('decorators.matchables.%s.__contract', $next));
-            $arguments = config(sprintf('decorators.matchables.%s.__arguments', $next));
+            $contract  = config(sprintf('decorators.tree.%s.__contract', $next));
+            $arguments = config(sprintf('decorators.tree.%s.__arguments', $next));
         } elseif (\is_array($next)) {
             $contract  = $next['contract'] ?? null;
             $arguments = $next['arguments'] ?? null;

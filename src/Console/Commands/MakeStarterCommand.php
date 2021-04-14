@@ -291,7 +291,7 @@ class MakeStarterCommand extends Command
         $classToGenerate = Str::after($command, 'make:');
         if ($classToGenerate === $command) {
             // Was decorator command
-            $classToGenerate = Str::after($command, 'decorators:');
+            $classToGenerate = str_replace(['decorators:', 'make:'], '', $command);
         }
 
         $classesToRegister = [
@@ -299,6 +299,7 @@ class MakeStarterCommand extends Command
             'cache',
             'contract',
             'decorator',
+            'model',
         ];
 
         if (!in_array($classToGenerate, $classesToRegister)) {
@@ -316,8 +317,15 @@ class MakeStarterCommand extends Command
         if ($folder === 'Contracts') {
             $key = '__contract';
         }
+        if ($folder === 'Models') {
+            $key = '__model';
+        }
 
-        $this->addToGeneratedList($snakedClassname, $key, $fullNamespace.Str::ucfirst($classToGenerate));
+        $fullyQualifiedClassName = $folder === 'Models'
+            ? $fullNamespace
+            : $fullNamespace.Str::ucfirst($classToGenerate);
+
+        $this->addToGeneratedList($snakedClassname, $key, $fullyQualifiedClassName);
     }
 
     private function addToGeneratedList(string $className, string $key, $value)

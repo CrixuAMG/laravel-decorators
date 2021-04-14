@@ -12,13 +12,5 @@ use DummyContractNamespace;
  */
 class DummyClass extends AbstractRepository implements DummyContractClass
 {
-    public function index()
-    {
-        // TODO: Implement index() method.
-    }
-
-    public function store(array $data)
-    {
-        // TODO: Implement store() method.
-    }
+    //
 }

@@ -16,7 +16,7 @@ class TestRepository extends AbstractRepository implements TestContract
     /**
      * @var TestModel
      */
-    private $model;
+    protected $model;
 
     /**
      * TestRepository constructor.

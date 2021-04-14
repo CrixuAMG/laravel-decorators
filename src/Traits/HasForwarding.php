@@ -57,16 +57,19 @@ trait HasForwarding
     {
         $contract  = null;
         $arguments = null;
+        $model     = null;
         if (\is_string($next)) {
             $contract  = config(sprintf('decorators.tree.%s.__contract', $next));
             $arguments = config(sprintf('decorators.tree.%s.__arguments', $next));
+            $model     = config(sprintf('decorators.tree.%s.__model', $next));
         } elseif (\is_array($next)) {
             $contract  = $next['contract'] ?? null;
             $arguments = $next['arguments'] ?? null;
+            $model     = $next['model'] ?? null;
         }
         if ($contract && $arguments) {
             // If a match has been found, decorate it, then instantiate the newly constructed singleton
-            (new Decorator(app()))->decorate($contract, $arguments);
+            (new Decorator(app()))->decorate($contract, $arguments, $model);
 
             $next = app()->make($contract);
         }

@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Traits\HasTransactions;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -14,9 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package CrixuAMG\Decorators\Repositories
  */
-abstract class AbstractRepository implements DecoratorContract
+abstract class AbstractRepository extends AbstractDecoratorContainer implements DecoratorContract
 {
     use HasTransactions;
+
     /**
      * @var bool
      */
@@ -27,22 +29,30 @@ abstract class AbstractRepository implements DecoratorContract
      *
      * @return mixed
      */
-    abstract public function index();
+    public function index()
+    {
+        return $this->getModelInstance()->result();
+    }
 
     /**
      * Create a new model
      *
-     * @param array $data
+     * @param  array  $data
      *
      * @return mixed
      */
-    abstract public function store(array $data);
+    public function store(array $data)
+    {
+        $newModelInstance = $this->getModelInstance()->create($data);
+
+        return $this->show($newModelInstance);
+    }
 
     /**
      * Update a model
      *
-     * @param Model $model
-     * @param array $data
+     * @param  Model  $model
+     * @param  array  $data
      *
      * @return mixed
      */
@@ -58,8 +68,8 @@ abstract class AbstractRepository implements DecoratorContract
     /**
      * Return a single model
      *
-     * @param Model $model
-     * @param mixed $relations
+     * @param  Model  $model
+     * @param  mixed  $relations
      *
      * @return mixed
      */
@@ -75,12 +85,12 @@ abstract class AbstractRepository implements DecoratorContract
         if (!empty($relations)) {
             // Load only specified relations
             $model->load(...$relations);
-        } else if (method_exists($class, 'showRelations')) {
+        } elseif (method_exists($class, 'showRelations')) {
             // If the method showRelations exists, call it to load in relations before returning the model
-            $model->load((array)$class::showRelations());
-        } else if (method_exists($class, 'defaultRelations')) {
+            $model->load((array) $class::showRelations());
+        } elseif (method_exists($class, 'defaultRelations')) {
             // If the method defaultRelations exists, call it to load in relations before returning the model
-            $model->load((array)$class::defaultRelations());
+            $model->load((array) $class::defaultRelations());
         }
 
         // Return the model
@@ -90,7 +100,7 @@ abstract class AbstractRepository implements DecoratorContract
     /**
      * Delete a model
      *
-     * @param Model $model
+     * @param  Model  $model
      *
      * @return mixed
      * @throws \Exception

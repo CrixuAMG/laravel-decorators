@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
+use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -29,52 +30,52 @@ class Decorator
     /**
      * Decorator constructor.
      *
-     * @param Application $app
+     * @param  Application  $app
      */
     public function __construct(Application $app)
     {
-        $this->app          = $app;
+        $this->app = $app;
         $this->cacheEnabled = Cache::enabled();
     }
 
     /**
-     * @param string $contract
-     * @param array  $chain
-     *
-     * @throws \Throwable
+     * @param  string  $contract
+     * @param  array  $chain
+     * @param  string|null  $model
      */
-    public function decorate(string $contract, $chain): void
+    public function decorate(string $contract, $chain, string $model = null): void
     {
         $this->decorateContract(
             $contract,
             \is_array($chain)
                 ? $chain
-                : [$chain]
+                : [$chain],
+            $model
         );
     }
 
     /**
      * Registers a decorated instance of a class
      *
-     * @param string $contract
-     * @param array  $chain
+     * @param  string  $contract
+     * @param  array  $chain
+     * @param  string|null  $model
      */
-    private function decorateContract(string $contract, array $chain): void
+    private function decorateContract(string $contract, array $chain, string $model = null): void
     {
-        $this->app->singleton($contract, function () use ($contract, $chain) {
-            return Decorator::processChain($contract, $chain);
+        $this->app->singleton($contract, function () use ($contract, $chain, $model) {
+            return Decorator::processChain($contract, $chain, $model);
         });
     }
 
     /**
-     * @param string $contract
-     * @param array  $chain
-     *
-     * @throws \Throwable
-     *
+     * @param  string  $contract
+     * @param  array  $chain
+     * @param  string|null  $model
      * @return mixed
+     * @throws \Throwable
      */
-    private function processChain(string $contract, array $chain)
+    private function processChain(string $contract, array $chain, string $model = null)
     {
         // Create a variable that will hold the instance
         $instance = null;
@@ -93,6 +94,11 @@ class Decorator
 
             // Decorate the instance with the class
             $instance = $this->getDecoratedInstance($class, $instance);
+
+            if ($model) {
+                /** @var AbstractDecoratorContainer $instance */
+                $instance->setModel($model);
+            }
         }
 
         // Return the instance
@@ -108,7 +114,7 @@ class Decorator
     }
 
     /**
-     * @param string $contract
+     * @param  string  $contract
      * @param        $class
      *
      * @throws \Throwable
@@ -130,8 +136,8 @@ class Decorator
     }
 
     /**
-     * @param string $class
-     * @param null   $instance
+     * @param  string  $class
+     * @param  null  $instance
      *
      * @return mixed
      */
@@ -149,6 +155,6 @@ class Decorator
     {
         $this->cacheExceptions = \is_array($environments)
             ? $environments
-            : (array)$environments;
+            : (array) $environments;
     }
 }

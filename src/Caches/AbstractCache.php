@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use Exception;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package CrixuAMG\Decorators\Caches
  */
-abstract class AbstractCache implements DecoratorContract
+abstract class AbstractCache extends AbstractDecoratorContainer implements DecoratorContract
 {
     use HasForwarding, HasCaching;
 

@@ -90,9 +90,7 @@ trait Resultable
                 $query = $query->orderBy($order['column'], $order['direction']);
             }
 
-            if (!empty($relations)) {
-                $query = $query->with($relations);
-            }
+            $this->addRelationsToQuery($query, $relations);
 
             $perPage = (int)$this->getPerPageFromRequest($perPage);
             if ($perPage === 1) {
@@ -208,5 +206,27 @@ trait Resultable
         return (int)($perPage > $maximum
             ? $maximum
             : $perPage);
+    }
+
+    /**
+     * Get default relations from class
+     */
+    protected function getRelationsFromModel(array $relations = [])
+    {
+        return get_called_class()::defaultRelations();
+    }
+
+    /**
+     * Add relations to the query
+     */
+    protected function addRelationsToQuery(Builder &$query, $relations)
+    {
+        if (empty($relations) && $relations !== false) {
+            $relations = $this->getRelationsFromModel($relations);
+        }
+
+        if (!empty($relations)) {
+            $query = $query->with($relations);
+        }
     }
 }

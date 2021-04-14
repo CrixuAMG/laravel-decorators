@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Models;
 
+use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\Resultable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,5 +13,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
-    use Resultable;
+    use Resultable, HasCaching;
 }

@@ -18,8 +18,8 @@ trait Resultable
     }
 
     /**
-     * @param Builder $query
-     * @param array $relations
+     * @param  Builder  $query
+     * @param  array  $relations
      * @return Builder
      */
     public function scopeWithRelations(Builder $query, array $relations = [])
@@ -32,12 +32,12 @@ trait Resultable
     }
 
     /**
-     * @param Builder $query
-     * @param int $perPage
-     * @param string|null $column
-     * @param string $direction
-     * @param array $relations
-     * @param bool $forceCount
+     * @param  Builder  $query
+     * @param  int  $perPage
+     * @param  string|null  $column
+     * @param  string  $direction
+     * @param  array  $relations
+     * @param  bool  $forceCount
      *
      * @return array|LengthAwarePaginator
      */
@@ -48,8 +48,7 @@ trait Resultable
         string $direction = 'DESC',
         array $relations = [],
         bool $forceCount = false
-    )
-    {
+    ) {
         $result = null;
 
         $model = $query->getModel();
@@ -92,7 +91,7 @@ trait Resultable
 
             $this->addRelationsToQuery($query, $relations);
 
-            $perPage = (int)$this->getPerPageFromRequest($perPage);
+            $perPage = (int) $this->getPerPageFromRequest($perPage);
             if ($perPage === 1) {
                 $result = $query->first() ?: abort(404);
             } elseif ($perPage > 0) {
@@ -106,7 +105,7 @@ trait Resultable
     }
 
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      *
      * @return Builder
      */
@@ -117,15 +116,17 @@ trait Resultable
 
         if (!empty($filters)) {
             foreach ($filters as $column => $filter) {
-                $camelCase = \Illuminate\Support\Str::camel('handle ' . \str_replace('.', ' ', $column) . 'Filter');
+                $camelCase = \Illuminate\Support\Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
 
                 if (method_exists($model, $camelCase)) {
                     // For custom handleUserIdFilter
                     $query = $model->$camelCase($query, $filter);
-                } else if (!is_array($filter)) {
-                    $query->where($column, $filter);
                 } else {
-                    $query->whereIn($column, $filter);
+                    if (!is_array($filter)) {
+                        $query->where($column, $filter);
+                    } else {
+                        $query->whereIn($column, $filter);
+                    }
                 }
             }
         }
@@ -144,7 +145,7 @@ trait Resultable
             $filters = json_decode($filters, true);
         }
 
-        $filters = (array)$filters;
+        $filters = (array) $filters;
 
         $validatedFilters = [];
         foreach ($this->filterableData() as $column) {
@@ -157,7 +158,7 @@ trait Resultable
     }
 
     /**
-     * @param string $column
+     * @param  string  $column
      * @return string
      */
     protected function getFilterSelectColumn(string $column): string
@@ -176,18 +177,23 @@ trait Resultable
     /**
      * Get the column to order and the direction to order the data by
      *
-     * @param string $orderColumn
-     * @param string $orderDirection
+     * @param  string  $orderColumn
+     * @param  string  $orderDirection
      * @return array
      */
     protected function getOrderBy(string $orderColumn, string $orderDirection)
     {
+        $baseOrderColumn = $orderColumn;
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
-        $orderColumn = request()->input('order_column') ?? $orderColumn ?? 'id';
+        $orderColumn = strtolower(request()->input('order_column') ?? $orderColumn ?? 'id');
         $orderDirection = request()->input('order_direction') ?? $orderDirection ?? 'ASC';
 
+        if (!$this->canBeOrderedByColumn($orderColumn)) {
+            $orderColumn = $baseOrderColumn ?: 'id';
+        }
+
         return [
-            'column' => strtolower($orderColumn),
+            'column'    => $orderColumn,
             'direction' => strtoupper($orderDirection),
         ];
     }
@@ -195,7 +201,7 @@ trait Resultable
     /**
      * Retrieves the amount of items requested per page
      *
-     * @param int $maximum
+     * @param  int  $maximum
      *
      * @return int
      */
@@ -203,7 +209,7 @@ trait Resultable
     {
         $perPage = request()->input('per_page') ?? config('decorators.pagination');
 
-        return (int)($perPage > $maximum
+        return (int) ($perPage > $maximum
             ? $maximum
             : $perPage);
     }
@@ -211,7 +217,7 @@ trait Resultable
     /**
      * Get default relations from class
      */
-    protected function getRelationsFromModel(array $relations = [])
+    protected function getRelationsFromModel()
     {
         return get_called_class()::defaultRelations();
     }
@@ -222,11 +228,22 @@ trait Resultable
     protected function addRelationsToQuery(Builder &$query, $relations)
     {
         if (empty($relations) && $relations !== false) {
-            $relations = $this->getRelationsFromModel($relations);
+            $relations = $this->getRelationsFromModel();
         }
 
         if (!empty($relations)) {
             $query = $query->with($relations);
         }
+    }
+
+    protected function canBeOrderedByColumn(string $column)
+    {
+        $orderableColumns = get_called_class()::orderableColumns();
+        return empty($orderableColumns) || in_array($column, $orderableColumns);
+    }
+
+    public static function orderableColumns(): array
+    {
+        return [];
     }
 }

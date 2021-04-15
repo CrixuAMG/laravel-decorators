@@ -31,7 +31,12 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function index()
     {
-        return $this->getModelInstance()->result();
+        // TODO: set a index method in the config, default 'paginate'
+        $method = method_exists($this->getModelInstance(), 'scopeResult')
+            ? 'result'
+            : 'paginate';
+
+        return $this->getModelInstance()->$method();
     }
 
     /**

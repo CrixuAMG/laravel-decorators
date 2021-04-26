@@ -4,10 +4,9 @@ namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
+use CrixuAMG\Decorators\Services\ConfigResolver;
 use CrixuAMG\Decorators\Traits\HasTransactions;
 use Exception;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -31,10 +30,9 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function index()
     {
-        // TODO: set a index method in the config, default 'paginate'
         $method = method_exists($this->getModelInstance(), 'scopeResult')
             ? 'result'
-            : 'paginate';
+            : ConfigResolver::get('default_index_method', 'paginate', true);
 
         return $this->getModelInstance()->$method();
     }

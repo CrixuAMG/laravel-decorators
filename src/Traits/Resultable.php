@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -139,7 +140,9 @@ trait Resultable
      */
     public function getFilters(): array
     {
-        $filters = request()->get('filters');
+        $filters = request()->get(
+            ConfigResolver::get('query_params.filters', 'filters', true)
+        );
 
         if (is_string($filters)) {
             $filters = json_decode($filters, true);
@@ -183,10 +186,20 @@ trait Resultable
      */
     protected function getOrderBy(string $orderColumn, string $orderDirection)
     {
+        $configOrderColumn = ConfigResolver::get(
+            'query_params.order_column',
+            'order_column',
+            true
+        );
+        $configOrderDirection = ConfigResolver::get(
+            'query_params.order_direction',
+            'order_direction',
+            true
+        );
         $baseOrderColumn = $orderColumn;
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
-        $orderColumn = strtolower(request()->input('order_column') ?? $orderColumn ?? 'id');
-        $orderDirection = request()->input('order_direction') ?? $orderDirection ?? 'ASC';
+        $orderColumn = strtolower(request()->input($configOrderColumn) ?? $orderColumn ?? 'id');
+        $orderDirection = request()->input($configOrderDirection) ?? $orderDirection ?? 'ASC';
 
         if (!$this->canBeOrderedByColumn($orderColumn)) {
             $orderColumn = $baseOrderColumn ?: 'id';
@@ -207,7 +220,13 @@ trait Resultable
      */
     protected function getPerPageFromRequest(int $maximum = 25)
     {
-        $perPage = request()->input('per_page') ?? config('decorators.pagination');
+        $perPage = request()->input(
+            ConfigResolver::get(
+                'query_params.per_page',
+                'per_page',
+                true
+            )
+        );
 
         return (int) ($perPage > $maximum
             ? $maximum

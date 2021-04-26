@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'cache'      => [
+    'cache' => [
         /**
          * When this is disabled, any classes implementing
          * the CrixuAMG\Decorators\Caches\AbstractCache will be ignored
@@ -17,7 +17,12 @@ return [
          * The parameters that can be retrieved from the request for the cache key
          */
         'request_parameters'          => [
+            '__resource',
             'page',
+            'per_page',
+            'filters',
+            'order_column',
+            'order_direction',
         ],
         /**
          * Any tags placed in this array will be automatically resolved when building the cache tags
@@ -40,16 +45,28 @@ return [
         ],
     ],
 
+    'configuration' => [
+        'default_index_method' => 'paginate',
+
+        'query_params' => [
+            '__resource'      => '__resource',
+            'filters'         => 'filters',
+            'per_page'        => 'per_page',
+            'order_column'    => 'order_column',
+            'order_direction' => 'order_direction',
+        ],
+    ],
+
     /**
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
-    'pagination' => (int) env('APP_PAGINATION', 25),
+    'pagination'    => (int) env('APP_PAGINATION', 25),
 
     /**
      * Below is an example of how decorators can automatically be matched using `$this->setup('users')` in a
      * controller extending the CrixuAMG\Decorators\Http\Controllers\AbstractController class
      */
-    'tree'       => [
+    'tree'          => [
         //        'users' => [
         //            '__contract'  => UserContract::class,
         //            '__arguments' => [

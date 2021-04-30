@@ -1,0 +1,44 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Http\Requests\DummyModuleDummyModel\ShowRequest;
+use App\Http\Requests\DummyModuleDummyModel\StoreRequest;
+use App\Http\Requests\DummyModuleDummyModel\UpdateRequest;
+use App\Http\Requests\DummyModuleDummyModel\DeleteRequest;
+use App\Http\Resources\DummyModuleProductResource;
+use DummyModelNamespace;
+use CrixuAMG\Decorators\Http\Controllers\AbstractController;
+
+class DummyClass extends AbstractController
+{
+    public function __construct()
+    {
+        $this->setup('DummyDecoratorConfig', DummyModelResource::class);
+    }
+
+    public function index()
+    {
+        return $this->forwardResourceful(__FUNCTION__);
+    }
+
+    public function show(DummyModel $DummyModelVariable, ShowRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $request->validated());
+    }
+
+    public function update(DummyModel $DummyModelVariable, UpdateRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable, $request->validated());
+    }
+
+    public function delete(DummyModel $DummyModelVariable, DeleteRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable, $request->validated());
+    }
+}

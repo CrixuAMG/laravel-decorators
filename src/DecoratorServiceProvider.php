@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators;
 
 use CrixuAMG\Decorators\Console\Commands\CacheMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\ControllerMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
@@ -49,6 +50,8 @@ class DecoratorServiceProvider extends ServiceProvider
                 // decorators:repository
                 DecoratorMakeCommand::class,
                 // decorators:decorator
+                ControllerMakeCommand::class,
+                // decorators:controller
                 MakeStarterCommand::class,
                 // decorators:starter
                 TraitMakeCommand::class,

@@ -49,9 +49,9 @@ class MakeStarterCommand extends Command
     {
         $commandsToExecute = [
             'make:model'            => '',
-            'make:controller'       => 'Controller',
             'make:resource'         => 'Resource',
             'make:factory'          => 'Factory',
+            'decorators:controller' => 'Controller',
             'decorators:contract'   => 'Contract',
             'decorators:repository' => 'Repository',
             'decorators:cache'      => 'Cache',
@@ -63,6 +63,7 @@ class MakeStarterCommand extends Command
 
         foreach ($commandsToExecute as $commandToExecute => $type) {
             $classNameTemp = $className;
+            $append = '';
 
             if ($module) {
                 $className = $module.'\\'.$className;
@@ -71,13 +72,14 @@ class MakeStarterCommand extends Command
             if ($commandToExecute === 'make:model') {
                 $className = config('nextlevel.model_namespace').$className;
             }
-            if ($commandToExecute === 'make:controller') {
+            if ($commandToExecute === 'decorators:controller') {
                 $className = 'Api\\'.$className;
+                $append = ' --module='.$module.' --model='.$classNameTemp;
             }
 
             $this->addToGenerated($commandToExecute, $className);
 
-            $this->info('php artisan '.$commandToExecute.' '.$className.$type);
+            $this->info('php artisan '.$commandToExecute.' '.$className.$type.$append);
 
             Artisan::call($commandToExecute, [
                 'name' => $className.$type,

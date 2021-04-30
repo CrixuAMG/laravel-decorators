@@ -12,7 +12,7 @@ class ControllerMakeCommand extends AbstractCommand
      *
      * @var string
      */
-    protected $name = 'decorators:controller {module} {model}';
+    protected $name = 'decorators:controller';
     /**
      * The console command description.
      *
@@ -76,12 +76,11 @@ class ControllerMakeCommand extends AbstractCommand
         $stub = str_replace('DummyModule', $module, $stub);
 
         $model = $this->option('model');
-
-        dd($model, $module);
-
         $modelVariable = Str::camel($model);
+        $modelNamespace = $this->rootNamespace()."Models\\".$module.$model;
 
         $stub = str_replace('DummyModelVariable', $modelVariable, $stub);
+        $stub = str_replace('DummyModelNamespace', $modelNamespace, $stub);
         $stub = str_replace('DummyModel', $model, $stub);
 
         return str_replace(

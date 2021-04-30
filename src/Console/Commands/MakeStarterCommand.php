@@ -79,11 +79,11 @@ class MakeStarterCommand extends Command
 
             $this->addToGenerated($commandToExecute, $className);
 
-            $this->info('php artisan '.$commandToExecute.' '.$className.$type.$append);
+            $command = $commandToExecute.' '.$className.$type.$append;
 
-            Artisan::call($commandToExecute, [
-                'name' => $className.$type,
-            ]);
+            $this->info('php artisan '.$command);
+
+            Artisan::call($command);
 
             if ($classNameTemp !== null) {
                 $className = $classNameTemp;

@@ -75,6 +75,10 @@ class MakeStarterCommand extends Command
             if ($commandToExecute === 'decorators:controller') {
                 $className = 'Api\\'.$className;
                 $append = ' --module='.$module.' --model='.$classNameTemp;
+
+                if ($this->option('request')) {
+                    $append .= ' --request';
+                }
             }
 
             $this->addToGenerated($commandToExecute, $className);
@@ -82,6 +86,8 @@ class MakeStarterCommand extends Command
             $command = $commandToExecute.' '.$className.$type.$append;
 
             $this->info('php artisan '.$command);
+
+            $command = str_replace("\\", '/', $command);
 
             Artisan::call($command);
 

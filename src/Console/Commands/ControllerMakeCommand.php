@@ -33,7 +33,9 @@ class ControllerMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/controller.stub';
+        return $this->option('request')
+            ? __DIR__ . '/stubs/controller_requests.stub'
+            : __DIR__ . '/stubs/controller.stub';
     }
 
     /**
@@ -62,20 +64,20 @@ class ControllerMakeCommand extends AbstractCommand
 
         $name = $this->getNameInput();
 
+        $module = $this->option('module')
+            ? $this->option('module') . "\\"
+            : '';
+        $model = $this->option('model');
+
         // Fill the controller tags
-        $name = Str::snake(Str::plural(explode($this->type, str_replace('\\', '.', $name))[0]));
+        $name = Str::snake(str_replace('\\', '.', $module.$model));
 
         $name = str_replace('._', '.', $name);
 
         $stub = str_replace('DummyDecoratorConfig', $name, $stub);
 
-        $module = $this->option('module')
-            ? $this->option('module') . "\\"
-            : '';
-
         $stub = str_replace('DummyModule', $module, $stub);
 
-        $model = $this->option('model');
         $modelVariable = Str::camel($model);
         $modelNamespace = $this->rootNamespace()."Models\\".$module.$model;
 
@@ -123,6 +125,12 @@ class ControllerMakeCommand extends AbstractCommand
                 'model',
                 InputOption::VALUE_REQUIRED,
                 'The model used by this controller.',
+            ],
+            [
+                'request',
+                'request',
+                InputOption::VALUE_NONE,
+                'Whether or not to add requests into the controller method signatures.',
             ],
         ];
     }

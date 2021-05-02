@@ -62,8 +62,6 @@ class ControllerMakeCommand extends AbstractCommand
     {
         $stub = parent::replaceClass($stub, $name);
 
-        $name = $this->getNameInput();
-
         $module = $this->option('module')
             ? $this->option('module') . "\\"
             : '';

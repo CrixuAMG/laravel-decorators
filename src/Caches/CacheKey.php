@@ -114,6 +114,10 @@ class CacheKey
         $string = '';
 
         foreach ($data as $name => $value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
             $string .= sprintf('%s.%s', $name, $value);
         }
 

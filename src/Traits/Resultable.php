@@ -5,6 +5,7 @@ namespace CrixuAMG\Decorators\Traits;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 trait Resultable
 {
@@ -116,12 +117,18 @@ trait Resultable
         $model = $query->getModel();
 
         if (!empty($filters)) {
-            foreach ($filters as $column => $filter) {
-                $camelCase = \Illuminate\Support\Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
+            $modelTable = $model->getTable();
 
-                if (method_exists($model, $camelCase)) {
+            foreach ($filters as $column => $filter) {
+                if (stripos($column, $modelTable) === 0) {
+                    $column = str_replace(['.', $modelTable], '', $column);
+                }
+
+                $filterMethod = $this->getFilterMethod($column);
+
+                if (method_exists($model, $filterMethod)) {
                     // For custom handleUserIdFilter
-                    $query = $model->$camelCase($query, $filter);
+                    $query = $model->$filterMethod($query, $filter);
                 } else {
                     if (!is_array($filter)) {
                         $query->where($column, $filter);
@@ -136,6 +143,15 @@ trait Resultable
     }
 
     /**
+     * @param  string  $column
+     * @return string
+     */
+    public function getFilterMethod(string $column)
+    {
+        return Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
+    }
+
+    /**
      * @return array
      */
     public function getFilters(): array
@@ -143,6 +159,10 @@ trait Resultable
         $filters = request()->get(
             ConfigResolver::get('query_params.filters', 'filters', true)
         );
+
+        if (empty($filters)) {
+            return [];
+        }
 
         if (is_string($filters)) {
             $filters = json_decode($filters, true);

@@ -186,11 +186,9 @@ class MakeStarterCommand extends Command
 
         $this->info('php artisan decorators:decorator '.$name.'Decorator');
 
-        $this->addToGenerated('decorators:decorator', $name.'Decorator');
+        $this->addToGenerated('decorators:decorator', $name);
 
-        Artisan::call('decorators:decorator', [
-            'name' => $name.'Decorator',
-        ]);
+        Artisan::call('decorators:decorator ' . $name.'Decorator');
     }
 
     /**

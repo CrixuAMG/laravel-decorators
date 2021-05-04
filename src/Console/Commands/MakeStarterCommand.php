@@ -181,7 +181,7 @@ class MakeStarterCommand extends Command
         $name = $this->getNameInput();
 
         if ($module) {
-            $name = $module.'\\'.$name;
+            $name = $module.'/'.$name;
         }
 
         $this->info('php artisan decorators:decorator '.$name.'Decorator');

@@ -74,10 +74,9 @@ class CacheMakeCommand extends AbstractCommand
         // Fill the cache tags
         $name = "'" . Str::snake(Str::plural(explode($this->type, str_replace('\\', '.', $name))[0])) . "'";
 
-        $name = str_replace('._', '.', $name);
+        $name = str_replace(['._', "/_"], '.', $name);
 
         $stub = str_replace('DummyCacheTags', $name, $stub);
-        $stub = str_replace('DummyContract', rtrim($name, $this->type) . 'Contract', $stub);
 
         return str_replace(
             [

@@ -25,18 +25,9 @@ abstract class AbstractController
      */
     public function setup($next, $resourceClass = null, string ...$cacheTags): void
     {
-        // Set next
-        $this->setNext($next);
-
-        if ($resourceClass) {
-            // Set the resource if it was supplied
-            $this->setResource($resourceClass);
-        }
-
-        if (!empty($cacheTags)) {
-            // Set the cache tags
-            $this->setCacheTags(...$cacheTags);
-        }
+        $this->setNext($next)
+            ->setResource($resourceClass)
+            ->setCacheTags(...$cacheTags);
     }
 
     /**

@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": ">=7.1",
-        "illuminate/contracts": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/console": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/database": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/http": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/validation": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/pagination": "^5.8|^6.0|^7.0|^8.0",
-        "illuminate/support": "^5.8|^6.0|^7.0|^8.0"
+        "illuminate/contracts": "^8.0",
+        "illuminate/console": "^8.0",
+        "illuminate/database": "^8.0",
+        "illuminate/http": "^8.0",
+        "illuminate/validation": "^8.0",
+        "illuminate/pagination": "^8.0",
+        "illuminate/support": "^8.0"
     },
     "require-dev": {
         "phpmd/phpmd": "2.*",

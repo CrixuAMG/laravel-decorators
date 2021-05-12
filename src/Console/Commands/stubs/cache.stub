@@ -21,7 +21,6 @@ class DummyClass extends AbstractCache implements DummyContractClass
      */
     public function __construct(AbstractRepository $next)
     {
-        // Set the cache tags
         $this->setCacheTags(DummyCacheTags);
 
         parent::__construct($next);

@@ -2,9 +2,6 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 class RepositoryMakeCommand extends AbstractCommand
@@ -60,13 +57,7 @@ class RepositoryMakeCommand extends AbstractCommand
      */
     protected function replaceClass($stub, $name)
     {
-        $contractNamespace = str_replace(Str::plural($this->type), 'Contracts',
-            str_replace($this->type, 'Contract', $name));
-        $namespaceParts = array_reverse(explode('\\', $contractNamespace));
-        $contractClassname = reset($namespaceParts);
-
-        $stub = str_replace('DummyContractNamespace', $contractNamespace, $stub);
-        $stub = str_replace('DummyContractClass', $contractClassname, $stub);
+        $this->replaceContract($stub, $name);
 
         $stub = parent::replaceClass($stub, $name);
 

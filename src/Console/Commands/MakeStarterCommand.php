@@ -375,6 +375,8 @@ class MakeStarterCommand extends Command
                 // Add string to string values
                 $output .= "$indent'$key' => $value::class,".PHP_EOL;
             } elseif (is_int($key) && is_string($value)) {
+                $value =  str_replace('/', "\\", $value);
+
                 // Add only string values
                 $output .= "$indent $value::class,".PHP_EOL;
                 $addClosingBracket = false;

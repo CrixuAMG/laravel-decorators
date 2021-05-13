@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 
 abstract class AbstractCommand extends GeneratorCommand
@@ -38,5 +39,19 @@ abstract class AbstractCommand extends GeneratorCommand
                 'The name of the command.',
             ],
         ];
+    }
+
+    protected function replaceContract(string &$stub, $name)
+    {
+        $contractNamespace = str_replace(
+            Str::plural($this->type),
+            'Contracts',
+            str_replace($this->type, 'Contract', $name)
+        );
+        $namespaceParts = array_reverse(explode('\\', $contractNamespace));
+        $contractClassname = reset($namespaceParts);
+
+        $stub = str_replace('DummyContractNamespace', $contractNamespace, $stub);
+        $stub = str_replace('DummyContractClass', $contractClassname, $stub);
     }
 }

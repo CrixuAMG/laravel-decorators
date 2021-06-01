@@ -33,7 +33,7 @@ class DummyClass extends AbstractController
         return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
     }
 
-    public function delete(DummyModel $DummyModelVariable)
+    public function destroy(DummyModel $DummyModelVariable)
     {
         return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
     }

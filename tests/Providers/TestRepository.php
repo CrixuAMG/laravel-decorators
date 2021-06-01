@@ -110,7 +110,7 @@ class TestRepository extends AbstractRepository implements TestContract
      * @return mixed
      * @throws \Exception
      */
-    public function delete(Model $model)
+    public function destroy(Model $model)
     {
         return true;
     }

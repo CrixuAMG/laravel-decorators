@@ -47,9 +47,7 @@ class Decorator
     {
         $this->decorateContract(
             $contract,
-            \is_array($chain)
-                ? $chain
-                : [$chain],
+            (array)$chain,
             $model
         );
     }

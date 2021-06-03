@@ -98,6 +98,5 @@ class DecoratorTest extends TestCase
 
         $this->expectException(InterfaceNotImplementedException::class);
         app(TestContract::class);
-        $this->getExpectedException();
     }
 }

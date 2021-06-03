@@ -20,6 +20,7 @@ use PHPMD\Rule;
  * Class DecoratorServiceProvider
  *
  * @package CrixuAMG
+ *
  */
 class DecoratorServiceProvider extends ServiceProvider
 {

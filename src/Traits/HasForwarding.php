@@ -7,6 +7,7 @@ use CrixuAMG\Decorators\Decorator;
 use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 use CrixuAMG\Decorators\Exceptions\DecoratorsNotSetupException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use Illuminate\Contracts\Foundation\Application;
 use UnexpectedValueException;
 
 /**
@@ -68,10 +69,12 @@ trait HasForwarding
             $model     = $next['model'] ?? null;
         }
         if ($contract && $arguments) {
-            // If a match has been found, decorate it, then instantiate the newly constructed singleton
-            (new Decorator(app()))->decorate($contract, $arguments, $model);
+            $app = app();
 
-            $next = app()->make($contract);
+            // If a match has been found, decorate it, then instantiate the newly constructed singleton
+            (new Decorator($app))->decorate($contract, $arguments, $model);
+
+            $next = $app->make($contract);
         }
 
         return $next;

@@ -1,5 +1,5 @@
 vendor/
-target/
+test_coverage/
 node_modules/
 npm-debug.log
 

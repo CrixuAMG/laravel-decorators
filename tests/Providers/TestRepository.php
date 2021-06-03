@@ -14,19 +14,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class TestRepository extends AbstractRepository implements TestContract
 {
     /**
-     * @var TestModel
-     */
-    protected $model;
-
-    /**
-     * TestRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->model = new TestModel();
-    }
-
-    /**
      * Returns the index
      *
      * @return mixed
@@ -45,30 +32,7 @@ class TestRepository extends AbstractRepository implements TestContract
      */
     public function store(array $data)
     {
-        return new $this->model;
-    }
-
-    /**
-     * @param bool $paginate
-     * @param int  $itemsPerPage
-     *
-     * @return LengthAwarePaginator|Collection|static[]
-     */
-    public function simpleIndex(bool $paginate = false, int $itemsPerPage = null)
-    {
-        return new Collection();
-    }
-
-    /**
-     * @param array  $data
-     * @param string $createMethod
-     *
-     * @return Model
-     * @throws \Throwable
-     */
-    public function simpleStore(array $data, string $createMethod = 'create')
-    {
-        return new $this->model;
+        return new TestModel($data);
     }
 
     /**

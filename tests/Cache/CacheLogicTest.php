@@ -49,28 +49,36 @@ class CacheLogicTest extends TestCase
         $this->setNext($this->instance);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_can_send_data_and_it_returns_the_same(): void
     {
         $this->assertEquals(2, $this->forward('get', 2));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function when_the_same_method_is_called_twice_the_correct_value_is_returned(): void
     {
         $this->assertEquals(3, $this->forward('get', 3));
         $this->assertEquals(4, $this->forward('get', 4));
     }
 
-    /**
-     * @test
-     */
-    public function when_cache_parameters_are_not_defined_it_returns_the_cached_value()
+    /** @test */
+    public function when_cache_parameters_are_not_defined_it_returns_the_cached_value(): void
     {
+        $this->assertEquals(3, $this->forward('getWithoutCacheParameters', 3));
+        $this->assertNotEquals(4, $this->forward('getWithoutCacheParameters', 4));
+    }
+
+    /** @test */
+    public function result_is_returned_as_expected_after_disbling_cache(): void
+    {
+        $this->decorator->enableCacheInEnvironments(['some environment that does not implement cache']);
+
+        $this->assertEquals(3, $this->forward('getWithoutCacheParameters', 3));
+        $this->assertNotEquals(4, $this->forward('getWithoutCacheParameters', 4));
+
+        $this->decorator->enableCacheInEnvironments('some other environment that does not implement cache');
+
         $this->assertEquals(3, $this->forward('getWithoutCacheParameters', 3));
         $this->assertNotEquals(4, $this->forward('getWithoutCacheParameters', 4));
     }

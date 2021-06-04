@@ -22,6 +22,7 @@
                 <file>./src/DecoratorServiceProvider.php</file>
                 <file>./src/Traits/Resultable.php</file>
                 <file>./src/Traits/HasTransactions.php</file>
+                <file>./src/Repositories/AbstractRepository.php</file>
                 <directory suffix=".php">./src/Console/</directory>
                 <directory suffix=".php">./src/Exceptions/</directory>
                 <directory suffix=".php">./src/config/</directory>

@@ -20,7 +20,11 @@ class TestRepository extends AbstractRepository implements TestContract
      */
     public function index()
     {
-        return new Collection();
+        $this->setModel(TestModel::class);
+
+        return new Collection(
+            $this->getModelInstance(),
+        );
     }
 
     /**

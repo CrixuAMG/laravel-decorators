@@ -107,7 +107,7 @@ trait HasForwarding
      *
      * @return mixed
      */
-    protected function forward(string $method, ...$args)
+    public function forward(string $method, ...$args)
     {
         throw_unless(
             $this->next,

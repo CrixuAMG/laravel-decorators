@@ -109,32 +109,4 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     ) {
         throw new $exception($message, $code);
     }
-
-    /**
-     * @param string $namespace
-     *
-     * @throws \Throwable
-     */
-    protected function validateNamespace(string $namespace): void
-    {
-        throw_if(
-            method_exists($this, $namespace),
-            sprintf(
-                'Namespace %s exists as a method and cannot be used as an alias.',
-                $namespace
-            ),
-            \UnexpectedValueException::class,
-            422
-        );
-
-        throw_if(
-            isset($this->{$namespace}),
-            sprintf(
-                'Namespace %s already exists within the AbstractDecorator class and cannot be used as an alias.',
-                $namespace
-            ),
-            \UnexpectedValueException::class,
-            422
-        );
-    }
 }

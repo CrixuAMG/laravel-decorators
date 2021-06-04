@@ -11,6 +11,7 @@ use CrixuAMG\Decorators\Test\Providers\TestDecorator;
 use CrixuAMG\Decorators\Test\Providers\TestRepository;
 use CrixuAMG\Decorators\Test\TestCase;
 use Mockery\Mock;
+use UnexpectedValueException;
 
 /**
  * Class DecoratorTest
@@ -98,5 +99,22 @@ class DecoratorTest extends TestCase
 
         $this->expectException(InterfaceNotImplementedException::class);
         app(TestContract::class);
+    }
+
+    /**
+     * @test
+     * @depends it_can_decorate_repositories
+     * @depends it_can_decorate_caches
+     * @depends it_can_decorate_decorators
+     */
+    public function an_exception_is_thrown_when_a_method_is_not_callable(): void
+    {
+        $this->decorator->decorate(TestContract::class, [
+            TestRepository::class,
+            TestCache::class,
+        ]);
+
+        $this->expectException(UnexpectedValueException::class);
+        app(TestContract::class)->forward('someMethodThatDoesNotExist');
     }
 }

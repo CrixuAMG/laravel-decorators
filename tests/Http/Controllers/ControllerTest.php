@@ -8,6 +8,7 @@ use CrixuAMG\Decorators\Test\Http\Resources\TestResource;
 use CrixuAMG\Decorators\Test\Providers\TestDecorator;
 use CrixuAMG\Decorators\Test\Providers\TestModel;
 use CrixuAMG\Decorators\Test\TestCase;
+use Illuminate\Database\Eloquent\Collection;
 
 class ControllerTest extends TestCase
 {
@@ -54,6 +55,16 @@ class ControllerTest extends TestCase
         $this->assertInstanceOf(
             \Illuminate\Http\Resources\Json\AnonymousResourceCollection::class,
             (new $controller())->index()
+        );
+
+        $this->assertInstanceOf(
+            Collection::class,
+            (new $controller())->forwardWithCallback('index', fn ($data) => $data)
+        );
+
+        $this->assertInstanceOf(
+            Collection::class,
+            (new $controller())->forwardCachedCallback('index', fn ($data) => $data)
         );
     }
 

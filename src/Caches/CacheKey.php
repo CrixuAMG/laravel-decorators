@@ -73,11 +73,6 @@ class CacheKey
      */
     public static function getCacheKeyType($value): string
     {
-        // Make sure to preserve float values
-        if (\is_float($value)) {
-            return '%f';
-        }
-
         // Use it as an unsigned integer
         if (is_numeric($value)) {
             return '%u';

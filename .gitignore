@@ -24,3 +24,4 @@ Homestead.json
 .DS_Store
 
 .php_cs.cache
+.phpunit.result.cache

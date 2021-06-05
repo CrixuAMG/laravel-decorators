@@ -133,4 +133,34 @@ class ControllerTest extends TestCase
             (new $controller())->destroy(new TestModel())
         );
     }
+
+    /**
+     * @param  string  $controller
+     *
+     * @test
+     * @depends      the_application_can_be_setup
+     * @dataProvider controllerDataProvider
+     */
+    public function the_get_method_can_be_called(string $controller)
+    {
+        $this->assertEquals(
+            3,
+            (new $controller())->get(3)
+        );
+    }
+
+    /**
+     * @param  string  $controller
+     *
+     * @test
+     * @depends      the_application_can_be_setup
+     * @dataProvider controllerDataProvider
+     */
+    public function the_get_without_cache_parameters_method_can_be_called(string $controller)
+    {
+        $this->assertEquals(
+            3,
+            (new $controller())->getWithoutCacheParameters(3)
+        );
+    }
 }

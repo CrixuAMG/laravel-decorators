@@ -13,7 +13,7 @@ class TestDecorator extends AbstractDecorator implements TestContract
      */
     public function get(int $number): int
     {
-        return $this->forward(__FUNCTION__, $number);
+        return $this->forwardIfAllowed(__FUNCTION__, true, $number);
     }
 
     /**
@@ -23,6 +23,6 @@ class TestDecorator extends AbstractDecorator implements TestContract
      */
     public function getWithoutCacheParameters(int $number): int
     {
-        return $this->forward(__FUNCTION__, $number);
+        return $this->forwardIfAllowed(__FUNCTION__, true, $number);
     }
 }

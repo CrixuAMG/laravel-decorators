@@ -159,8 +159,8 @@ class ControllerTest extends TestCase
     public function the_get_without_cache_parameters_method_can_be_called(string $controller)
     {
         $this->assertEquals(
-            3,
-            (new $controller())->getWithoutCacheParameters(3)
+            5,
+            (new $controller())->getWithoutCacheParameters(5)
         );
     }
 }

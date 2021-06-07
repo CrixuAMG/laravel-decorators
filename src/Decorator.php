@@ -52,6 +52,15 @@ class Decorator
         );
     }
 
+    public function decorateIf(string $contract, $chain, string $model = null, $validator = null): void
+    {
+        if ($validator) {
+            dd($validator);
+        }
+
+        $this->decorate($contract, $chain, $model);
+    }
+
     /**
      * Registers a decorated instance of a class
      *

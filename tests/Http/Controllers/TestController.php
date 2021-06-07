@@ -17,13 +17,13 @@ class TestController extends AbstractController implements TestContract
     {
         $this->setup(
             [
-                'contract'  => TestContract::class,
-                'arguments' => [
+                '__contract'  => TestContract::class,
+                '__arguments' => [
                     TestRepository::class,
                     TestCache::class,
                     TestDecorator::class,
                 ],
-                'model'     => new TestModel(),
+                '__model'     => new TestModel(),
             ],
             TestResource::class
         );

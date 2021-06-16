@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -34,26 +33,26 @@ class CacheMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/cache.stub';
+        return __DIR__.'/stubs/cache.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param string $rootNamespace
+     * @param  string  $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Caches';
+        return $rootNamespace.'\Caches';
     }
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param string $stub
-     * @param string $name
+     * @param  string  $stub
+     * @param  string  $name
      *
      * @return string
      */
@@ -66,7 +65,7 @@ class CacheMakeCommand extends AbstractCommand
         $name = $this->getNameInput();
 
         // Fill the cache tags
-        $name = "'" . Str::snake(Str::plural(explode($this->type, str_replace('\\', '.', $name))[0])) . "'";
+        $name = "'".Str::snake(Str::plural(explode($this->type, str_replace('\\', '.', $name))[0]))."'";
 
         $name = str_replace(['._', "/_"], '.', $name);
 

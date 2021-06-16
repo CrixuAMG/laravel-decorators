@@ -34,27 +34,27 @@ class ControllerMakeCommand extends AbstractCommand
     protected function getStub()
     {
         return $this->option('request')
-            ? __DIR__ . '/stubs/controller_requests.stub'
-            : __DIR__ . '/stubs/controller.stub';
+            ? __DIR__.'/stubs/controller_requests.stub'
+            : __DIR__.'/stubs/controller.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param string $rootNamespace
+     * @param  string  $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Http\Controllers';
+        return $rootNamespace.'\Http\Controllers';
     }
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param string $stub
-     * @param string $name
+     * @param  string  $stub
+     * @param  string  $name
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class ControllerMakeCommand extends AbstractCommand
         $stub = parent::replaceClass($stub, $name);
 
         $module = $this->option('module')
-            ? $this->option('module') . "\\"
+            ? $this->option('module')."\\"
             : '';
         $model = $this->option('model');
 

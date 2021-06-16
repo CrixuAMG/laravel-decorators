@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Contracts\DefinitionContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     /**
      * AbstractDecorator constructor.
      *
-     * @param null $next
+     * @param  null  $next
      */
     public function __construct($next = null)
     {
@@ -36,9 +37,9 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param Model $model
+     * @param  Model  $model
      *
-     * @param array $relations
+     * @param  array  $relations
      *
      * @return mixed
      */
@@ -48,7 +49,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      *
      * @return mixed
      */
@@ -58,8 +59,8 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param Model $model
-     * @param array $data
+     * @param  Model  $model
+     * @param  array  $data
      *
      * @return mixed
      */
@@ -69,7 +70,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param Model $model
+     * @param  Model  $model
      *
      * @return mixed
      */
@@ -79,9 +80,18 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param string $method
-     * @param bool   $statement
-     * @param array  ...$args
+     * @return DefinitionContract
+     * @throws \Throwable
+     */
+    public function definition(): array
+    {
+        return $this->forward(__FUNCTION__);
+    }
+
+    /**
+     * @param  string  $method
+     * @param  bool  $statement
+     * @param  array  ...$args
      *
      * @return mixed
      * @throws \UnexpectedValueException
@@ -98,9 +108,9 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param string $exception
-     * @param string $message
-     * @param int    $code
+     * @param  string  $exception
+     * @param  string  $message
+     * @param  int  $code
      */
     protected function denyRequest(
         $exception = UnauthorizedException::class,

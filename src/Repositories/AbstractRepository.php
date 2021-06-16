@@ -3,6 +3,8 @@
 namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Contracts\DefinitionContract;
+use CrixuAMG\Decorators\Exceptions\DefinitionTraitNotSetOnModelException;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use CrixuAMG\Decorators\Traits\HasTransactions;
@@ -52,23 +54,6 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     }
 
     /**
-     * Update a model
-     *
-     * @param  Model  $model
-     * @param  array  $data
-     *
-     * @return mixed
-     */
-    public function update(Model $model, array $data)
-    {
-        // Update the model
-        $model->update($data);
-
-        // Return the model with loaded relations
-        return $this->show($model);
-    }
-
-    /**
      * Return a single model
      *
      * @param  Model  $model
@@ -101,6 +86,23 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     }
 
     /**
+     * Update a model
+     *
+     * @param  Model  $model
+     * @param  array  $data
+     *
+     * @return mixed
+     */
+    public function update(Model $model, array $data)
+    {
+        // Update the model
+        $model->update($data);
+
+        // Return the model with loaded relations
+        return $this->show($model);
+    }
+
+    /**
      * Delete a model
      *
      * @param  Model  $model
@@ -117,5 +119,18 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
         } finally {
             return $result;
         }
+    }
+
+    /**
+     * @return DefinitionContract
+     * @throws \Throwable
+     */
+    public function definition(): array
+    {
+        if (method_exists($this->getModelInstance(), 'definition')) {
+            return $this->getModelInstance()->definition();
+        }
+
+        throw new DefinitionTraitNotSetOnModelException();
     }
 }

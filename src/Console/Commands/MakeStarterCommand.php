@@ -15,8 +15,6 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class MakeStarterCommand extends Command
 {
-    private $generatedClasses = [];
-
     /**
      * The name and signature of the console command.
      *
@@ -29,6 +27,7 @@ class MakeStarterCommand extends Command
      * @var string
      */
     protected $description = 'Create all required classes for the given name';
+    private $generatedClasses = [];
 
     /**
      * Create a new command instance.
@@ -131,6 +130,68 @@ class MakeStarterCommand extends Command
         return trim($this->argument('name'));
     }
 
+    private function addToGenerated(string $command, string $className)
+    {
+        $classToGenerate = Str::after($command, 'make:');
+        if ($classToGenerate === $command) {
+            // Was decorator command
+            $classToGenerate = str_replace(['decorators:', 'make:'], '', $command);
+        }
+
+        $classesToRegister = [
+            'repository',
+            'cache',
+            'contract',
+            'decorator',
+            'model',
+        ];
+
+        if (!in_array($classToGenerate, $classesToRegister)) {
+            return;
+        }
+
+        $folder = Str::ucfirst(
+            Str::plural($classToGenerate)
+        );
+
+        $fullNamespace = 'App\\'.$folder.'\\'.$className;
+        $snakedClassname = Str::snake($this->getNameInput());
+
+        $key = '__arguments';
+        if ($folder === 'Contracts') {
+            $key = '__contract';
+        }
+        if ($folder === 'Models') {
+            $key = '__model';
+        }
+
+        $fullyQualifiedClassName = $folder === 'Models'
+            ? $fullNamespace
+            : $fullNamespace.Str::ucfirst($classToGenerate);
+
+        $this->addToGeneratedList($snakedClassname, $key, $fullyQualifiedClassName);
+    }
+
+    private function addToGeneratedList(string $className, string $key, $value)
+    {
+        $snakedModule = Str::snake($this->option('module'));
+        if ($snakedModule) {
+            if ($key === '__arguments') {
+                $this->generatedClasses[$snakedModule][$className][$key][] = $value;
+            } else {
+                $this->generatedClasses[$snakedModule][$className][$key] = $value;
+            }
+
+            return;
+        }
+
+        if ($key === '__arguments') {
+            $this->generatedClasses[$className][$key][] = $value;
+        } else {
+            $this->generatedClasses[$className][$key] = $value;
+        }
+    }
+
     /**
      * Create two request files for the model.
      *
@@ -188,7 +249,7 @@ class MakeStarterCommand extends Command
 
         $this->addToGenerated('decorators:decorator', $name);
 
-        Artisan::call('decorators:decorator ' . $name.'Decorator');
+        Artisan::call('decorators:decorator '.$name.'Decorator');
     }
 
     /**
@@ -226,6 +287,59 @@ class MakeStarterCommand extends Command
         $this->call('make:migration', [
             'name' => "create_{$table}_table",
         ]);
+    }
+
+    private function showConfigInfo()
+    {
+        $output = $this->convertGeneratedClassesToCode($this->generatedClasses);
+
+        $snakedModule = Str::snake($this->option('module'));
+        $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
+            ? PHP_EOL."Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
+            : '';
+
+        echo <<< CONFIG
+
+To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
+
+$output
+CONFIG;
+    }
+
+    private function convertGeneratedClassesToCode(array $array, int $depth = 0)
+    {
+        $output = '';
+        $indent = '';
+        $addClosingBracket = true;
+
+        if ($depth > 0) {
+            $indent = str_repeat("\t", $depth);
+        }
+
+        foreach ($array as $key => $value) {
+            if (is_string($key) && !$value) {
+                // Add start of array
+                $output .= "$indent'$key' => [".PHP_EOL;
+            } elseif (is_string($key) && is_array($value)) {
+                // Add a key and the corresponding array value
+                $output .= "$indent'$key' => [".PHP_EOL.$this->convertGeneratedClassesToCode($value, $depth + 1);
+            } elseif (is_string($key) && is_string($value)) {
+                // Add string to string values
+                $output .= "$indent'$key' => $value::class,".PHP_EOL;
+            } elseif (is_int($key) && is_string($value)) {
+                $value = str_replace('/', "\\", $value);
+
+                // Add only string values
+                $output .= "$indent $value::class,".PHP_EOL;
+                $addClosingBracket = false;
+            }
+        }
+
+        if ($addClosingBracket) {
+            $output .= "$indent],".PHP_EOL;
+        }
+
+        return $output;
     }
 
     /**
@@ -290,120 +404,5 @@ class MakeStarterCommand extends Command
                 'Create a new seeder class for the model.',
             ],
         ];
-    }
-
-    private function addToGenerated(string $command, string $className)
-    {
-        $classToGenerate = Str::after($command, 'make:');
-        if ($classToGenerate === $command) {
-            // Was decorator command
-            $classToGenerate = str_replace(['decorators:', 'make:'], '', $command);
-        }
-
-        $classesToRegister = [
-            'repository',
-            'cache',
-            'contract',
-            'decorator',
-            'model',
-        ];
-
-        if (!in_array($classToGenerate, $classesToRegister)) {
-            return;
-        }
-
-        $folder = Str::ucfirst(
-            Str::plural($classToGenerate)
-        );
-
-        $fullNamespace = 'App\\'.$folder.'\\'.$className;
-        $snakedClassname = Str::snake($this->getNameInput());
-
-        $key = '__arguments';
-        if ($folder === 'Contracts') {
-            $key = '__contract';
-        }
-        if ($folder === 'Models') {
-            $key = '__model';
-        }
-
-        $fullyQualifiedClassName = $folder === 'Models'
-            ? $fullNamespace
-            : $fullNamespace.Str::ucfirst($classToGenerate);
-
-        $this->addToGeneratedList($snakedClassname, $key, $fullyQualifiedClassName);
-    }
-
-    private function addToGeneratedList(string $className, string $key, $value)
-    {
-        $snakedModule = Str::snake($this->option('module'));
-        if ($snakedModule) {
-            if ($key === '__arguments') {
-                $this->generatedClasses[$snakedModule][$className][$key][] = $value;
-            } else {
-                $this->generatedClasses[$snakedModule][$className][$key] = $value;
-            }
-
-            return;
-        }
-
-        if ($key === '__arguments') {
-            $this->generatedClasses[$className][$key][] = $value;
-        } else {
-            $this->generatedClasses[$className][$key] = $value;
-        }
-    }
-
-    private function convertGeneratedClassesToCode(array $array, int $depth = 0)
-    {
-        $output = '';
-        $indent = '';
-        $addClosingBracket = true;
-
-        if ($depth > 0) {
-            $indent = str_repeat("\t", $depth);
-        }
-
-        foreach ($array as $key => $value) {
-            if (is_string($key) && !$value) {
-                // Add start of array
-                $output .= "$indent'$key' => [".PHP_EOL;
-            } elseif (is_string($key) && is_array($value)) {
-                // Add a key and the corresponding array value
-                $output .= "$indent'$key' => [".PHP_EOL.$this->convertGeneratedClassesToCode($value, $depth + 1);
-            } elseif (is_string($key) && is_string($value)) {
-                // Add string to string values
-                $output .= "$indent'$key' => $value::class,".PHP_EOL;
-            } elseif (is_int($key) && is_string($value)) {
-                $value =  str_replace('/', "\\", $value);
-
-                // Add only string values
-                $output .= "$indent $value::class,".PHP_EOL;
-                $addClosingBracket = false;
-            }
-        }
-
-        if ($addClosingBracket) {
-            $output .= "$indent],".PHP_EOL;
-        }
-
-        return $output;
-    }
-
-    private function showConfigInfo()
-    {
-        $output = $this->convertGeneratedClassesToCode($this->generatedClasses);
-
-        $snakedModule = Str::snake($this->option('module'));
-        $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
-            ? PHP_EOL."Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
-            : '';
-
-        echo <<< CONFIG
-
-To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
-
-$output
-CONFIG;
     }
 }

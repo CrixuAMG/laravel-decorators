@@ -2,9 +2,11 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
+use Closure;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
+use Throwable;
 
 /**
  * Class AbstractController
@@ -17,11 +19,11 @@ abstract class AbstractController
 
     /**
      * @param                   $next
-     * @param string|array|null $resourceClass
-     * @param string            ...$cacheTags
+     * @param  string|array|null  $resourceClass
+     * @param  string  ...$cacheTags
      *
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function setup($next, $resourceClass = null, string ...$cacheTags): void
     {
@@ -31,11 +33,11 @@ abstract class AbstractController
     }
 
     /**
-     * @param string $method
-     * @param mixed  ...$args
+     * @param  string  $method
+     * @param  mixed  ...$args
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function forwardCachedResourceful(string $method, ...$args)
     {
@@ -49,8 +51,8 @@ abstract class AbstractController
     }
 
     /**
-     * @param string $method
-     * @param mixed  ...$args
+     * @param  string  $method
+     * @param  mixed  ...$args
      *
      * @return mixed
      */
@@ -64,14 +66,14 @@ abstract class AbstractController
     }
 
     /**
-     * @param string   $method
-     * @param \Closure $callback
-     * @param mixed    ...$args
+     * @param  string  $method
+     * @param  Closure  $callback
+     * @param  mixed  ...$args
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function forwardCachedCallback(string $method, \Closure $callback, ...$args)
+    public function forwardCachedCallback(string $method, Closure $callback, ...$args)
     {
         // Forward the data and cache the result.
         return $this->cache(
@@ -86,14 +88,14 @@ abstract class AbstractController
     }
 
     /**
-     * @param string $method
-     * @param \Closure $callback
-     * @param mixed ...$args
+     * @param  string  $method
+     * @param  Closure  $callback
+     * @param  mixed  ...$args
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function forwardWithCallback(string $method, \Closure $callback, ...$args)
+    public function forwardWithCallback(string $method, Closure $callback, ...$args)
     {
         // Forward the data
         $result = $this->forward($method, ...$args);

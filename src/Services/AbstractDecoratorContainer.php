@@ -12,19 +12,19 @@ abstract class AbstractDecoratorContainer
     protected $model;
 
     /**
-     * @return Model
-     */
-    protected function getModelInstance()
-    {
-        return new $this->model;
-    }
-
-    /**
      * @param  string  $model
      * @return string
      */
     public function setModel(string $model): string
     {
         return $this->model = $model;
+    }
+
+    /**
+     * @return Model
+     */
+    protected function getModelInstance()
+    {
+        return new $this->model;
     }
 }

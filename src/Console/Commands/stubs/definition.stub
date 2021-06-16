@@ -1,0 +1,29 @@
+<?php
+
+namespace DummyNamespace;
+
+use CrixuAMG\Decorators\Definitions\AbstractDefinition;
+
+class TestDefinition extends AbstractDefinition
+{
+    public function sortableColumns(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public function filterableColumns(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public function queryableRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+}

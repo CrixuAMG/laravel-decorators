@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Caches;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
+use CrixuAMG\Decorators\Contracts\DefinitionContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasForwarding;
@@ -21,7 +22,7 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     /**
      * AbstractCache constructor.
      *
-     * @param null $next
+     * @param  null  $next
      */
     public function __construct($next = null)
     {
@@ -29,10 +30,10 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     }
 
     /**
-     * @throws Exception
+     * @return mixed
      * @throws \Throwable
      *
-     * @return mixed
+     * @throws Exception
      */
     public function index()
     {
@@ -40,13 +41,13 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     }
 
     /**
-     * @param Model $model
-     * @param mixed ...$relations
-     *
-     * @throws Exception
-     * @throws \Throwable
+     * @param  Model  $model
+     * @param  mixed  ...$relations
      *
      * @return mixed
+     * @throws \Throwable
+     *
+     * @throws Exception
      */
     public function show(Model $model, ...$relations)
     {
@@ -54,12 +55,12 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     }
 
     /**
-     * @param array $data
-     *
-     * @throws Exception
-     * @throws \Throwable
+     * @param  array  $data
      *
      * @return mixed
+     * @throws \Throwable
+     *
+     * @throws Exception
      */
     public function store(array $data)
     {
@@ -67,13 +68,13 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     }
 
     /**
-     * @param Model $model
-     * @param array $data
-     *
-     * @throws Exception
-     * @throws \Throwable
+     * @param  Model  $model
+     * @param  array  $data
      *
      * @return mixed
+     * @throws \Throwable
+     *
+     * @throws Exception
      */
     public function update(Model $model, array $data)
     {
@@ -82,15 +83,24 @@ abstract class AbstractCache extends AbstractDecoratorContainer implements Decor
     }
 
     /**
-     * @param Model $model
-     *
-     * @throws Exception
-     * @throws \Throwable
+     * @param  Model  $model
      *
      * @return mixed
+     * @throws \Throwable
+     *
+     * @throws Exception
      */
     public function destroy(Model $model)
     {
         return $this->flushAfterForward(__FUNCTION__, $model);
+    }
+
+    /**
+     * @return DefinitionContract
+     * @throws \Throwable
+     */
+    public function definition(): array
+    {
+        return $this->forwardCached(__FUNCTION__);
     }
 }

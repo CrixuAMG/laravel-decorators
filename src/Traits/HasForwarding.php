@@ -7,7 +7,6 @@ use CrixuAMG\Decorators\Decorator;
 use CrixuAMG\Decorators\Decorators\AbstractDecorator;
 use CrixuAMG\Decorators\Exceptions\DecoratorsNotSetupException;
 use CrixuAMG\Decorators\Repositories\AbstractRepository;
-use Illuminate\Contracts\Foundation\Application;
 use UnexpectedValueException;
 
 /**
@@ -23,7 +22,7 @@ trait HasForwarding
     public $next;
 
     /**
-     * @param mixed $next
+     * @param  mixed  $next
      *
      * @return mixed
      * @throws \Throwable
@@ -56,9 +55,9 @@ trait HasForwarding
      */
     private function getNext($next)
     {
-        $contract  = null;
+        $contract = null;
         $arguments = null;
-        $model     = null;
+        $model = null;
         $validator = null;
 
         if (\is_string($next)) {
@@ -66,9 +65,9 @@ trait HasForwarding
         }
 
         if (\is_array($next)) {
-            $contract  = $next['__contract'] ?? null;
+            $contract = $next['__contract'] ?? null;
             $arguments = $next['__arguments'] ?? null;
-            $model     = $next['__model'] ?? null;
+            $model = $next['__model'] ?? null;
             $validator = $next['__validator'] ?? null;
         }
 
@@ -106,8 +105,8 @@ trait HasForwarding
     }
 
     /**
-     * @param string $method
-     * @param array  ...$args
+     * @param  string  $method
+     * @param  array  ...$args
      *
      * @return mixed
      */
@@ -134,7 +133,7 @@ trait HasForwarding
     }
 
     /**
-     * @param string $method
+     * @param  string  $method
      *
      * @throws \UnexpectedValueException
      */

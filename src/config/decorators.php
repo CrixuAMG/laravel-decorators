@@ -20,9 +20,8 @@ return [
             '__resource',
             'page',
             'per_page',
-            'filters',
-            'order_column',
-            'order_direction',
+            'request',
+            'cursor',
         ],
         /**
          * Any tags placed in this array will be automatically resolved when building the cache tags
@@ -49,11 +48,10 @@ return [
         'default_index_method' => 'paginate',
 
         'query_params' => [
-            '__resource'      => '__resource',
-            'filters'         => 'filters',
-            'per_page'        => 'per_page',
-            'order_column'    => 'order_column',
-            'order_direction' => 'order_direction',
+            '__resource' => '__resource',
+            'filters'    => 'filters',
+            'per_page'   => 'per_page',
+            'request'    => 'request',
         ],
     ],
 
@@ -68,8 +66,9 @@ return [
      */
     'tree'          => [
         //        'users' => [
-        //            '__contract'  => UserContract::class,
-        //            '__arguments' => [
+        //            'enabled'  => true,
+        //            'contract'  => UserContract::class,
+        //            'arguments' => [
         //                UserRepository::class,
         //                UserCache::class,
         //                UserDecorator::class,

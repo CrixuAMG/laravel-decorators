@@ -48,10 +48,10 @@ class DecoratorsMakeCommand extends Command
         $className = $this->getNameInput();
 
         foreach ($commandsToExecute as $commandToExecute => $extension) {
-            $this->info('php artisan ' . $commandToExecute . ' ' . $className . $extension);
+            $this->info('php artisan '.$commandToExecute.' '.$className.$extension);
 
             Artisan::call($commandToExecute, [
-                'name' => $className . $extension,
+                'name' => $className.$extension,
             ]);
         }
     }

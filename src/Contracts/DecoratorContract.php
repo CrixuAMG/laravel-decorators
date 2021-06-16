@@ -17,32 +17,37 @@ interface DecoratorContract
     public function index();
 
     /**
-     * @param Model $model
-     * @param mixed ...$relations
+     * @param  Model  $model
+     * @param  mixed  ...$relations
      *
      * @return mixed
      */
     public function show(Model $model, ...$relations);
 
     /**
-     * @param array $data
+     * @param  array  $data
      *
      * @return mixed
      */
     public function store(array $data);
 
     /**
-     * @param Model $model
-     * @param array $data
+     * @param  Model  $model
+     * @param  array  $data
      *
      * @return mixed
      */
     public function update(Model $model, array $data);
 
     /**
-     * @param Model $model
+     * @param  Model  $model
      *
      * @return mixed
      */
     public function destroy(Model $model);
+
+    /**
+     * @return DefinitionContract|null
+     */
+    public function definition(): ?DefinitionContract;
 }

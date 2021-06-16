@@ -21,20 +21,6 @@ trait Resultable
 
     /**
      * @param  Builder  $query
-     * @param  array  $relations
-     * @return Builder
-     */
-    public function scopeWithRelations(Builder $query, array $relations = [])
-    {
-        if (!empty($relations)) {
-            $query->with($relations);
-        }
-
-        return $query;
-    }
-
-    /**
-     * @param  Builder  $query
      * @param  int  $perPage
      * @param  string|null  $column
      * @param  string  $direction
@@ -51,59 +37,137 @@ trait Resultable
         array $relations = [],
         bool $forceCount = false
     ) {
-        $result = null;
-
         $model = $query->getModel();
-        if (method_exists($model, 'handleFilter')) {
-            $query = $model->handleFilter($query);
-        }
+        $query = $model->handleFilter($query);
 
         if (request()->has('count') || $forceCount) {
-            $result = [
+            return [
                 'count' => $query->count(),
             ];
-        } else {
-            if (method_exists($model, 'handleSorting')) {
-                $query = $model->handleSorting($query, $column, $direction)
-                    ->select(
-                        sprintf(
-                            '%s.*',
-                            $model->getTable()
-                        )
-                    );
-            } else {
-                $order = $this->getOrderBy(
+        } elseif (method_exists($model, 'handleSorting')) {
+            $query = $model->handleSorting($query, $column, $direction)
+                ->select(
                     sprintf(
-                        '%s.%s',
-                        $model->getTable(),
-                        $column
-                            ?: $model->getKeyName()
-                    ),
-                    $direction
+                        '%s.*',
+                        $model->getTable()
+                    )
                 );
-                if ($order['column'] === $model->getKeyName()) {
-                    $order['column'] = sprintf(
-                        '%s.%s',
-                        $model->getTable(),
-                        $order['column']
-                    );
-                }
-                $query = $query->orderBy($order['column'], $order['direction']);
+        } else {
+            $order = $this->getOrderBy(
+                sprintf(
+                    '%s.%s',
+                    $model->getTable(),
+                    $column
+                        ?: $model->getKeyName()
+                ),
+                $direction
+            );
+            if ($order['column'] === $model->getKeyName()) {
+                $order['column'] = sprintf(
+                    '%s.%s',
+                    $model->getTable(),
+                    $order['column']
+                );
             }
+            $query = $query->orderBy($order['column'], $order['direction']);
+        }
 
-            $this->addRelationsToQuery($query, $relations);
+        $this->addRelationsToQuery($query, $relations);
 
-            $perPage = (int) $this->getPerPageFromRequest($perPage);
-            if ($perPage === 1) {
-                $result = $query->first() ?: abort(404);
-            } elseif ($perPage > 0) {
-                $result = $query->paginate($perPage);
-            } else {
-                $result = $query->get();
-            }
+        $perPage = (int) $this->getPerPageFromRequest($perPage);
+        if ($perPage === 1) {
+            $result = $query->first() ?: abort(404);
+        } elseif ($perPage > 0) {
+            $result = $query->paginate($perPage);
+        } else {
+            $result = $query->get();
         }
 
         return $result;
+    }
+
+    /**
+     * Get the column to order and the direction to order the data by
+     *
+     * @param  string  $orderColumn
+     * @param  string  $orderDirection
+     * @return array
+     */
+    protected function getOrderBy(string $orderColumn, string $orderDirection)
+    {
+        $configOrderColumn = ConfigResolver::get(
+            'query_params.order_column',
+            'order_column',
+            true
+        );
+        $configOrderDirection = ConfigResolver::get(
+            'query_params.order_direction',
+            'order_direction',
+            true
+        );
+        $baseOrderColumn = $orderColumn;
+        // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
+        $orderColumn = strtolower(request()->input($configOrderColumn) ?? $orderColumn ?? 'id');
+        $orderDirection = request()->input($configOrderDirection) ?? $orderDirection ?? 'ASC';
+
+        if (!$this->canBeOrderedByColumn($orderColumn)) {
+            $orderColumn = $baseOrderColumn ?: 'id';
+        }
+
+        return [
+            'column'    => $orderColumn,
+            'direction' => strtoupper($orderDirection),
+        ];
+    }
+
+    protected function canBeOrderedByColumn(string $column)
+    {
+        $orderableColumns = get_called_class()::orderableColumns();
+        return empty($orderableColumns) || in_array($column, $orderableColumns);
+    }
+
+    /**
+     * Add relations to the query
+     */
+    protected function addRelationsToQuery(Builder &$query, $relations)
+    {
+        if (empty($relations) && $relations !== false) {
+            $relations = $this->getRelationsFromModel();
+        }
+
+        if (!empty($relations)) {
+            $query = $query->with($relations);
+        }
+    }
+
+    /**
+     * Get default relations from class
+     */
+    protected function getRelationsFromModel()
+    {
+        return get_called_class()::defaultRelations();
+    }
+
+    /**
+     * Retrieves the amount of items requested per page
+     *
+     * @param  int  $maximum
+     *
+     * @return int
+     */
+    protected function getPerPageFromRequest(int $maximum = 25)
+    {
+        $perPage = request()->input(
+            ConfigResolver::get(
+                'query_params.per_page',
+                'per_page',
+                true
+            )
+        );
+
+        return (int) ($perPage > $maximum
+            ? $maximum
+            : $perPage);
     }
 
     /**
@@ -140,15 +204,6 @@ trait Resultable
         }
 
         return $query;
-    }
-
-    /**
-     * @param  string  $column
-     * @return string
-     */
-    public function getFilterMethod(string $column)
-    {
-        return Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
     }
 
     /**
@@ -190,99 +245,11 @@ trait Resultable
     }
 
     /**
-     * @return array
+     * @param  string  $column
+     * @return string
      */
-    public function filterableData(): array
+    public function getFilterMethod(string $column)
     {
-        return [];
-    }
-
-    /**
-     * Get the column to order and the direction to order the data by
-     *
-     * @param  string  $orderColumn
-     * @param  string  $orderDirection
-     * @return array
-     */
-    protected function getOrderBy(string $orderColumn, string $orderDirection)
-    {
-        $configOrderColumn = ConfigResolver::get(
-            'query_params.order_column',
-            'order_column',
-            true
-        );
-        $configOrderDirection = ConfigResolver::get(
-            'query_params.order_direction',
-            'order_direction',
-            true
-        );
-        $baseOrderColumn = $orderColumn;
-        // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
-        $orderColumn = strtolower(request()->input($configOrderColumn) ?? $orderColumn ?? 'id');
-        $orderDirection = request()->input($configOrderDirection) ?? $orderDirection ?? 'ASC';
-
-        if (!$this->canBeOrderedByColumn($orderColumn)) {
-            $orderColumn = $baseOrderColumn ?: 'id';
-        }
-
-        return [
-            'column'    => $orderColumn,
-            'direction' => strtoupper($orderDirection),
-        ];
-    }
-
-    /**
-     * Retrieves the amount of items requested per page
-     *
-     * @param  int  $maximum
-     *
-     * @return int
-     */
-    protected function getPerPageFromRequest(int $maximum = 25)
-    {
-        $perPage = request()->input(
-            ConfigResolver::get(
-                'query_params.per_page',
-                'per_page',
-                true
-            )
-        );
-
-        return (int) ($perPage > $maximum
-            ? $maximum
-            : $perPage);
-    }
-
-    /**
-     * Get default relations from class
-     */
-    protected function getRelationsFromModel()
-    {
-        return get_called_class()::defaultRelations();
-    }
-
-    /**
-     * Add relations to the query
-     */
-    protected function addRelationsToQuery(Builder &$query, $relations)
-    {
-        if (empty($relations) && $relations !== false) {
-            $relations = $this->getRelationsFromModel();
-        }
-
-        if (!empty($relations)) {
-            $query = $query->with($relations);
-        }
-    }
-
-    protected function canBeOrderedByColumn(string $column)
-    {
-        $orderableColumns = get_called_class()::orderableColumns();
-        return empty($orderableColumns) || in_array($column, $orderableColumns);
-    }
-
-    public static function orderableColumns(): array
-    {
-        return [];
+        return Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
     }
 }

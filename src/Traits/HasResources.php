@@ -19,19 +19,7 @@ trait HasResources
     protected $resource;
 
     /**
-     * @param mixed $resource
-     *
-     * @return mixed
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $data The data to check and make resourceful if possible
+     * @param  mixed  $data  The data to check and make resourceful if possible
      *
      * @return mixed
      */
@@ -64,8 +52,8 @@ trait HasResources
             $resource = null;
 
             if (isset($this->resource[$requestedResource])) {
-               $resource = $this->resource[$requestedResource];
-            } elseif(isset($this->resource['default'])) {
+                $resource = $this->resource[$requestedResource];
+            } elseif (isset($this->resource['default'])) {
                 $resource = $this->resource['default'];
             }
 
@@ -73,5 +61,17 @@ trait HasResources
         }
 
         return $resource;
+    }
+
+    /**
+     * @param  mixed  $resource
+     *
+     * @return mixed
+     */
+    public function setResource($resource)
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 }

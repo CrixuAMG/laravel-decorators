@@ -38,6 +38,15 @@ class Decorator
         $this->cacheEnabled = Cache::enabled();
     }
 
+    public function decorateIf(string $contract, $chain, string $model = null, $validator = null): void
+    {
+        if ($validator) {
+            dd($validator);
+        }
+
+        $this->decorate($contract, $chain, $model);
+    }
+
     /**
      * @param  string  $contract
      * @param  array  $chain
@@ -47,18 +56,9 @@ class Decorator
     {
         $this->decorateContract(
             $contract,
-            (array)$chain,
+            (array) $chain,
             $model
         );
-    }
-
-    public function decorateIf(string $contract, $chain, string $model = null, $validator = null): void
-    {
-        if ($validator) {
-            dd($validator);
-        }
-
-        $this->decorate($contract, $chain, $model);
     }
 
     /**

@@ -14,7 +14,6 @@ use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
 use Illuminate\Support\ServiceProvider;
-use PHPMD\Rule;
 
 /**
  * Class DecoratorServiceProvider
@@ -75,7 +74,7 @@ class DecoratorServiceProvider extends ServiceProvider
     private function registerConfiguration()
     {
         $this->publishes([
-            __DIR__ . '/config/decorators.php' => config_path('decorators.php'),
+            __DIR__.'/config/decorators.php' => config_path('decorators.php'),
         ]);
     }
 

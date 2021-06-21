@@ -17,7 +17,7 @@ This package is designed to allow developers (inluding myself of course!) to sta
 Put the following in your composer.json file:
 ```json
     "require": {
-        "crixuamg/laravel-decorators": "^2.0.0",
+        "crixuamg/laravel-decorators": "^6.0.0",
         // ...
     }
 ```
@@ -51,8 +51,8 @@ After publishing the config file, register your decorators as shown in the botto
     ```php
         'tree' => [
             'users'                => [
-                '__contract'  => App\Contracts\UserContract::class,
-                '__arguments' => [
+                'contract'  => App\Contracts\UserContract::class,
+                'arguments' => [
                     // First element is the deepest layer
                     App\Repositories\UserRepository::class,
                     App\Caches\UserCache::class,

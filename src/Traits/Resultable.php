@@ -210,9 +210,11 @@ trait Resultable
         $filters = (array) $filters;
 
         $validatedFilters = [];
-        foreach ($this->filterableColumns() as $column) {
-            if (!empty($filters[$column])) {
-                $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
+        if (method_exists($this, 'filterableColumns')) {
+            foreach ($this->filterableColumns() as $column) {
+                if (!empty($filters[$column])) {
+                    $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
+                }
             }
         }
 

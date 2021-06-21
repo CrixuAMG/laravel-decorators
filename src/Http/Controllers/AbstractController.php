@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators\Http\Controllers;
 
 use Closure;
 use CrixuAMG\Decorators\Traits\HasCaching;
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
 use Throwable;
@@ -15,20 +16,22 @@ use Throwable;
  */
 abstract class AbstractController
 {
-    use HasForwarding, HasCaching, HasResources;
+    use HasForwarding, HasCaching, HasResources, HasDefinitions;
 
     /**
      * @param                   $next
      * @param  string|array|null  $resourceClass
+     * @param  null  $definition
      * @param  string  ...$cacheTags
      *
      * @return void
      * @throws Throwable
      */
-    public function setup($next, $resourceClass = null, string ...$cacheTags): void
+    public function setup($next, $resourceClass = null, $definition = null, string ...$cacheTags): void
     {
         $this->setNext($next)
             ->setResource($resourceClass)
+            ->setDefinition($definition)
             ->setCacheTags(...$cacheTags);
     }
 
@@ -102,5 +105,13 @@ abstract class AbstractController
 
         // Return the result after calling the callback function
         return $callback($result);
+    }
+
+    /**
+     * @return array
+     */
+    public function definition(): array
+    {
+        return $this->forwardResourceful(__FUNCTION__);
     }
 }

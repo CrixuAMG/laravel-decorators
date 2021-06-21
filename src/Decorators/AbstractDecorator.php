@@ -3,11 +3,10 @@
 namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
-use CrixuAMG\Decorators\Contracts\DefinitionContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\UnauthorizedException;
 
 /**
  * Class AbstractDecorator
@@ -16,7 +15,7 @@ use Illuminate\Validation\UnauthorizedException;
  */
 abstract class AbstractDecorator extends AbstractDecoratorContainer implements DecoratorContract
 {
-    use HasForwarding;
+    use HasForwarding, HasDefinitions;
 
     /**
      * AbstractDecorator constructor.
@@ -80,43 +79,10 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @return DefinitionContract
-     * @throws \Throwable
+     * @return array
      */
     public function definition(): array
     {
         return $this->forward(__FUNCTION__);
-    }
-
-    /**
-     * @param  string  $method
-     * @param  bool  $statement
-     * @param  array  ...$args
-     *
-     * @return mixed
-     * @throws \UnexpectedValueException
-     * @throws \Illuminate\Validation\UnauthorizedException
-     */
-    protected function forwardIfAllowed(string $method, bool $statement, ...$args)
-    {
-        // Continue if the user is allowed
-        if ($statement) {
-            return $this->forward($method, ...$args);
-        }
-        // The user is not allowed to continue
-        $this->denyRequest();
-    }
-
-    /**
-     * @param  string  $exception
-     * @param  string  $message
-     * @param  int  $code
-     */
-    protected function denyRequest(
-        $exception = UnauthorizedException::class,
-        string $message = 'You are not allowed to perform this action.',
-        int $code = 403
-    ) {
-        throw new $exception($message, $code);
     }
 }

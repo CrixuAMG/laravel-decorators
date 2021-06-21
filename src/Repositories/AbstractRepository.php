@@ -7,6 +7,7 @@ use CrixuAMG\Decorators\Contracts\DefinitionContract;
 use CrixuAMG\Decorators\Exceptions\DefinitionTraitNotSetOnModelException;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Services\ConfigResolver;
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasTransactions;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class AbstractRepository extends AbstractDecoratorContainer implements DecoratorContract
 {
-    use HasTransactions;
+    use HasTransactions, HasDefinitions;
 
     /**
      * @var bool
@@ -127,8 +128,8 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function definition(): array
     {
-        if (method_exists($this->getModelInstance(), 'definition')) {
-            return $this->getModelInstance()->definition();
+        if (method_exists($this, 'definition')) {
+            return $this->definition();
         }
 
         throw new DefinitionTraitNotSetOnModelException();

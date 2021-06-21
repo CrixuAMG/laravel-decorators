@@ -3,7 +3,9 @@
 namespace CrixuAMG\Decorators\Console\Commands;
 
 use Artisan;
+use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,7 +22,7 @@ class MakeStarterCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:starter {--module=}';
+    protected $name = 'decorators:starter {--module=} {--definition}';
     /**
      * The console command description.
      *
@@ -55,6 +57,11 @@ class MakeStarterCommand extends Command
             'decorators:repository' => 'Repository',
             'decorators:cache'      => 'Cache',
         ];
+
+        if ($this->option('definition')) {
+            $commandsToExecute['decorators:definition'] = 'Definition';
+        }
+
         $module = $this->option('module');
 
         $className = $this->getNameInput();
@@ -144,6 +151,7 @@ class MakeStarterCommand extends Command
             'contract',
             'decorator',
             'model',
+            'definition',
         ];
 
         if (!in_array($classToGenerate, $classesToRegister)) {
@@ -157,12 +165,15 @@ class MakeStarterCommand extends Command
         $fullNamespace = 'App\\'.$folder.'\\'.$className;
         $snakedClassname = Str::snake($this->getNameInput());
 
-        $key = '__arguments';
+        $key = 'arguments';
         if ($folder === 'Contracts') {
-            $key = '__contract';
+            $key = 'contract';
         }
         if ($folder === 'Models') {
-            $key = '__model';
+            $key = 'model';
+        }
+        if ($folder === 'Definitions') {
+            $key = 'definition';
         }
 
         $fullyQualifiedClassName = $folder === 'Models'
@@ -176,7 +187,7 @@ class MakeStarterCommand extends Command
     {
         $snakedModule = Str::snake($this->option('module'));
         if ($snakedModule) {
-            if ($key === '__arguments') {
+            if ($key === 'arguments') {
                 $this->generatedClasses[$snakedModule][$className][$key][] = $value;
             } else {
                 $this->generatedClasses[$snakedModule][$className][$key] = $value;
@@ -185,7 +196,7 @@ class MakeStarterCommand extends Command
             return;
         }
 
-        if ($key === '__arguments') {
+        if ($key === 'arguments') {
             $this->generatedClasses[$className][$key][] = $value;
         } else {
             $this->generatedClasses[$className][$key] = $value;
@@ -291,7 +302,7 @@ class MakeStarterCommand extends Command
 
     private function showConfigInfo()
     {
-        $output = $this->convertGeneratedClassesToCode($this->generatedClasses);
+        $output = ConfigResolver::generateConfiguration($this->generatedClasses);
 
         $snakedModule = Str::snake($this->option('module'));
         $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
@@ -304,42 +315,6 @@ To enable the classes generated, simply add the array listed below to the tree a
 
 $output
 CONFIG;
-    }
-
-    private function convertGeneratedClassesToCode(array $array, int $depth = 0)
-    {
-        $output = '';
-        $indent = '';
-        $addClosingBracket = true;
-
-        if ($depth > 0) {
-            $indent = str_repeat("\t", $depth);
-        }
-
-        foreach ($array as $key => $value) {
-            if (is_string($key) && !$value) {
-                // Add start of array
-                $output .= "$indent'$key' => [".PHP_EOL;
-            } elseif (is_string($key) && is_array($value)) {
-                // Add a key and the corresponding array value
-                $output .= "$indent'$key' => [".PHP_EOL.$this->convertGeneratedClassesToCode($value, $depth + 1);
-            } elseif (is_string($key) && is_string($value)) {
-                // Add string to string values
-                $output .= "$indent'$key' => $value::class,".PHP_EOL;
-            } elseif (is_int($key) && is_string($value)) {
-                $value = str_replace('/', "\\", $value);
-
-                // Add only string values
-                $output .= "$indent $value::class,".PHP_EOL;
-                $addClosingBracket = false;
-            }
-        }
-
-        if ($addClosingBracket) {
-            $output .= "$indent],".PHP_EOL;
-        }
-
-        return $output;
     }
 
     /**
@@ -378,6 +353,12 @@ CONFIG;
                 'module',
                 InputOption::VALUE_REQUIRED,
                 'Put the generated files inside of a module folder.',
+            ],
+            [
+                'definition',
+                'definition',
+                InputOption::VALUE_NONE,
+                'Create a new definition file for the model.',
             ],
             [
                 'migration',

@@ -40,8 +40,9 @@ class Decorator
 
     public function decorateIf(string $contract, $chain, string $model = null, $validator = null): void
     {
-        if ($validator) {
-            dd($validator);
+        if ($validator && is_callable($validator)) {
+//            dd($validator);
+//            $validator();
         }
 
         $this->decorate($contract, $chain, $model);

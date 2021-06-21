@@ -7,13 +7,16 @@ use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ControllerMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\DefinitionMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
 use CrixuAMG\Decorators\Console\Commands\ObserverMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\Routing\Route;
 
 /**
  * Class DecoratorServiceProvider
@@ -33,6 +36,8 @@ class DecoratorServiceProvider extends ServiceProvider
 
         // Allow the user to get the config file
         $this->registerConfiguration();
+
+        $this->registerMacros();
     }
 
     /**
@@ -60,6 +65,8 @@ class DecoratorServiceProvider extends ServiceProvider
                 // decorators:observer
                 ScopeMakeCommand::class,
                 // decorators:scope
+                DefinitionMakeCommand::class,
+                // decorators:definition
                 DecoratorsMakeCommand::class,
                 // decorators:make
                 RuleMakeCommand::class,
@@ -90,5 +97,20 @@ class DecoratorServiceProvider extends ServiceProvider
                 return new Decorator($this->app);
             }
         );
+    }
+
+    private function registerMacros()
+    {
+        Builder::macro('joinIfNotJoined', function ($table, $column, $operator, $value, string $joinType = null) {
+            if (!collect($this->getQuery()->joins)->pluck('table')->contains($table)) {
+                if (!$joinType) {
+                    return $this->join($table, $column, $operator, $value);
+                } else if ($joinType === 'left') {
+                    return $this->leftJoin($table, $column, $operator, $value);
+                }
+            }
+
+            return $this;
+        });
     }
 }

@@ -47,7 +47,7 @@ interface DecoratorContract
     public function destroy(Model $model);
 
     /**
-     * @return DefinitionContract|null
+     * @return array
      */
-    public function definition(): ?DefinitionContract;
+    public function definition(): array;
 }

@@ -18,6 +18,7 @@ return [
          */
         'request_parameters'          => [
             '__resource',
+            'paginate',
             'page',
             'per_page',
             'request',
@@ -49,6 +50,7 @@ return [
 
         'query_params' => [
             '__resource' => '__resource',
+            'paginate'   => 'paginate',
             'filters'    => 'filters',
             'per_page'   => 'per_page',
             'request'    => 'request',

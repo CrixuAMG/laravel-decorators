@@ -7,6 +7,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
+/**
+ * Trait Resultable
+ * @package CrixuAMG\Decorators\Traits
+ */
 trait Resultable
 {
     /**
@@ -27,7 +31,7 @@ trait Resultable
      * @param  array  $relations
      * @param  bool  $forceCount
      *
-     * @return array|LengthAwarePaginator
+     * @return array|LengthAwarePaginator|Builder|\Illuminate\Database\Eloquent\Model|object
      */
     public function scopeResult(
         Builder $query,
@@ -38,52 +42,32 @@ trait Resultable
         bool $forceCount = false
     ) {
         $model = $query->getModel();
+        /** @var Resultable $model */
         $query = $model->handleFilter($query);
 
         if (request()->has('count') || $forceCount) {
-            return [
-                'count' => $query->count(),
-            ];
-        } elseif (method_exists($model, 'handleSorting')) {
-            $query = $model->handleSorting($query, $column, $direction)
-                ->select(
-                    sprintf(
-                        '%s.*',
-                        $model->getTable()
-                    )
-                );
-        } else {
-            $order = $this->getOrderBy(
-                sprintf(
-                    '%s.%s',
-                    $model->getTable(),
-                    $column
-                        ?: $model->getKeyName()
-                ),
-                $direction
-            );
-            if ($order['column'] === $model->getKeyName()) {
-                $order['column'] = sprintf(
-                    '%s.%s',
-                    $model->getTable(),
-                    $order['column']
-                );
-            }
-            $query = $query->orderBy($order['column'], $order['direction']);
+            return ['count' => $query->count()];
         }
 
         $this->addRelationsToQuery($query, $relations);
 
         $perPage = (int) $this->getPerPageFromRequest($perPage);
         if ($perPage === 1) {
-            $result = $query->first() ?: abort(404);
-        } elseif ($perPage > 0) {
-            $result = $query->paginate($perPage);
-        } else {
-            $result = $query->get();
+            return $query->first() ?: abort(404);
         }
 
-        return $result;
+        $this->applySorting($query, $column, $direction);
+
+        return $perPage > 0
+            ? $this->fetchPaginatedResult($query, $perPage)
+            : $query->get();
+    }
+
+    private function fetchPaginatedResult(Builder $query, int $perPage)
+    {
+        return request()->paginate === 'cursor'
+            ? $query->cursorPaginate($perPage)
+            : $query->paginate($perPage);
     }
 
     /**
@@ -120,10 +104,18 @@ trait Resultable
         ];
     }
 
+    /**
+     * @param  string  $column
+     * @return bool
+     */
     protected function canBeOrderedByColumn(string $column)
     {
-        $orderableColumns = get_called_class()::orderableColumns();
-        return empty($orderableColumns) || in_array($column, $orderableColumns);
+        if (method_exists(get_called_class(), 'sortableColumns')) {
+            $orderableColumns = get_called_class()::sortableColumns();
+            return empty($orderableColumns) || in_array($column, $orderableColumns);
+        }
+
+        return true;
     }
 
     /**
@@ -132,20 +124,12 @@ trait Resultable
     protected function addRelationsToQuery(Builder &$query, $relations)
     {
         if (empty($relations) && $relations !== false) {
-            $relations = $this->getRelationsFromModel();
+            $relations = get_called_class()::defaultRelations();
         }
 
         if (!empty($relations)) {
             $query = $query->with($relations);
         }
-    }
-
-    /**
-     * Get default relations from class
-     */
-    protected function getRelationsFromModel()
-    {
-        return get_called_class()::defaultRelations();
     }
 
     /**
@@ -175,7 +159,7 @@ trait Resultable
      *
      * @return Builder
      */
-    public function handleFilter(Builder $query): Builder
+    protected function handleFilter(Builder $query): Builder
     {
         $filters = $this->getFilters();
         $model = $query->getModel();
@@ -209,7 +193,7 @@ trait Resultable
     /**
      * @return array
      */
-    public function getFilters(): array
+    protected function getFilters(): array
     {
         $filters = request()->get(
             ConfigResolver::get('query_params.filters', 'filters', true)
@@ -226,7 +210,7 @@ trait Resultable
         $filters = (array) $filters;
 
         $validatedFilters = [];
-        foreach ($this->filterableData() as $column) {
+        foreach ($this->filterableColumns() as $column) {
             if (!empty($filters[$column])) {
                 $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
             }
@@ -248,8 +232,45 @@ trait Resultable
      * @param  string  $column
      * @return string
      */
-    public function getFilterMethod(string $column)
+    protected function getFilterMethod(string $column)
     {
         return Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
+    }
+
+    /**
+     * @param  Builder  $query
+     * @param  string  $column
+     * @param  string  $direction
+     */
+    protected function applySorting(Builder &$query, string $column, string $direction)
+    {
+        $model = $query->getModel();
+        if (method_exists($model, 'handleSorting')) {
+            $query = $model->handleSorting($query, $column, $direction)
+                ->select(
+                    sprintf(
+                        '%s.*',
+                        $model->getTable()
+                    )
+                );
+        } else {
+            $order = $this->getOrderBy(
+                sprintf(
+                    '%s.%s',
+                    $model->getTable(),
+                    $column
+                        ?: $model->getKeyName()
+                ),
+                $direction
+            );
+            if ($order['column'] === $model->getKeyName()) {
+                $order['column'] = sprintf(
+                    '%s.%s',
+                    $model->getTable(),
+                    $order['column']
+                );
+            }
+            $query = $query->orderBy($order['column'], $order['direction']);
+        }
     }
 }

@@ -2,24 +2,22 @@
 
 namespace CrixuAMG\Decorators\Test\Providers;
 
-use CrixuAMG\Decorators\Contracts\DecoratorContract;
-
 /**
  * Interface TestContract
  *
  * @package CrixuAMG\Decorators\Test\Providers
  */
-interface TestContract extends DecoratorContract
+interface TestContract
 {
     /**
-     * @param int $number
+     * @param  int  $number
      *
      * @return int
      */
     public function get(int $number): int;
 
     /**
-     * @param int $number
+     * @param  int  $number
      *
      * @return int
      */

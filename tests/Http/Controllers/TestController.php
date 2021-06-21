@@ -17,13 +17,13 @@ class TestController extends AbstractController implements TestContract
     {
         $this->setup(
             [
-                '__contract'  => TestContract::class,
-                '__arguments' => [
+                'contract'  => TestContract::class,
+                'arguments' => [
                     TestRepository::class,
                     TestCache::class,
                     TestDecorator::class,
                 ],
-                '__model'     => new TestModel(),
+                'model'     => new TestModel(),
             ],
             TestResource::class
         );
@@ -52,6 +52,11 @@ class TestController extends AbstractController implements TestContract
     public function destroy(Model $model)
     {
         return $this->forwardResourceful(__FUNCTION__, $model);
+    }
+
+    public function definition()
+    {
+        return $this->forwardResourceful(__FUNCTION__);
     }
 
     public function get(int $number): int

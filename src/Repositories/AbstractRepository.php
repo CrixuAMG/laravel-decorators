@@ -4,7 +4,6 @@ namespace CrixuAMG\Decorators\Repositories;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Contracts\DefinitionContract;
-use CrixuAMG\Decorators\Exceptions\DefinitionTraitNotSetOnModelException;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use CrixuAMG\Decorators\Traits\HasDefinitions;
@@ -128,10 +127,10 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function definition(): array
     {
-        if (method_exists($this, 'definition')) {
-            return $this->definition();
+        if (method_exists($this, 'getDefinition')) {
+            return $this->getDefinition();
         }
 
-        throw new DefinitionTraitNotSetOnModelException();
+        return [];
     }
 }

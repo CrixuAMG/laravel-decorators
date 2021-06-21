@@ -3,6 +3,7 @@
 namespace CrixuAMG\Decorators\Http\Controllers;
 
 use Closure;
+use CrixuAMG\Decorators\Http\Resource\DefinitionResource;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
@@ -110,8 +111,9 @@ abstract class AbstractController
     /**
      * @return array
      */
-    public function definition(): array
+    public function definition()
     {
-        return $this->forwardResourceful(__FUNCTION__);
+        return $this->setResource(DefinitionResource::class)
+            ->forwardResourceful(__FUNCTION__);
     }
 }

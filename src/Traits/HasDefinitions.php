@@ -46,7 +46,7 @@ trait HasDefinitions
     /**
      * @return array
      */
-    public function definition(): array
+    public function getDefinition(): array
     {
         return $this->getDefinitionInstance()->definition();
     }

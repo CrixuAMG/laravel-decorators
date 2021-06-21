@@ -30,7 +30,7 @@ trait HasResources
 
             if ($data instanceof LengthAwarePaginator || $data instanceof Collection) {
                 $data = $resource::collection($data);
-            } elseif ($data instanceof Model) {
+            } elseif ($data instanceof Model || is_array($data)) {
                 $data = new $resource($data);
             }
         }

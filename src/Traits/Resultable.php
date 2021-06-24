@@ -50,13 +50,12 @@ trait Resultable
         }
 
         $this->addRelationsToQuery($query, $relations);
+        $this->applySorting($query, $column, $direction);
 
         $perPage = (int) $this->getPerPageFromRequest($perPage);
         if ($perPage === 1) {
             return $query->first() ?: abort(404);
         }
-
-        $this->applySorting($query, $column, $direction);
 
         return $perPage > 0
             ? $this->fetchPaginatedResult($query, $perPage)

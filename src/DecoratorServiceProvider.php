@@ -105,7 +105,9 @@ class DecoratorServiceProvider extends ServiceProvider
             if (!collect($this->getQuery()->joins)->pluck('table')->contains($table)) {
                 if (!$joinType) {
                     return $this->join($table, $column, $operator, $value);
-                } else if ($joinType === 'left') {
+                }
+
+                if ($joinType === 'left') {
                     return $this->leftJoin($table, $column, $operator, $value);
                 }
             }

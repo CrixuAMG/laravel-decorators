@@ -32,7 +32,8 @@
         "barryvdh/laravel-ide-helper": "^2.10",
         "phpunit/phpunit": "^9.5",
         "orchestra/testbench": "^6.18",
-        "mockery/mockery": "^1.4"
+        "mockery/mockery": "^1.4",
+        "nunomaduro/phpinsights": "^2.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

@@ -16,7 +16,7 @@ use Exception;
 trait HasCaching
 {
     /**
-     * @var array
+     * @var string[]
      */
     protected $cacheTags;
     /**
@@ -28,7 +28,7 @@ trait HasCaching
      */
     protected $cacheTime;
     /**
-     * @var array
+     * @var string[]
      */
     protected $cacheParameters;
 

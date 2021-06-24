@@ -153,7 +153,7 @@ class Decorator
     {
         return $instance
             ? new $class($instance)
-            : new $class;
+            : new $class();
     }
 
     /**

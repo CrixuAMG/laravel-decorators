@@ -32,7 +32,7 @@ class ConfigResolver
                 $output .= "$indent'$key' => [".PHP_EOL.self::generateConfiguration($value, $depth + 1);
             } elseif (is_string($key) && is_string($value)) {
                 // Add string to string values
-                $output .= "$indent'$key' => $value::class,".PHP_EOL;
+                $output .= "${$indent}'${$key}' => ${$value}::class,".PHP_EOL;
             } elseif (is_int($key) && is_string($value)) {
                 $value = str_replace('/', "\\", $value);
 

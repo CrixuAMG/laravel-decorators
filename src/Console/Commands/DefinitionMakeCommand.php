@@ -62,8 +62,6 @@ class DefinitionMakeCommand extends AbstractCommand
 
         $stub = parent::replaceClass($stub, $name);
 
-        $name = $this->getNameInput();
-
         return str_replace(
             [
 

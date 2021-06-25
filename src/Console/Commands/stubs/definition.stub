@@ -4,7 +4,7 @@ namespace DummyNamespace;
 
 use CrixuAMG\Decorators\Definitions\AbstractDefinition;
 
-class TestDefinition extends AbstractDefinition
+class DummyClass extends AbstractDefinition
 {
     public function sortableColumns(): array
     {

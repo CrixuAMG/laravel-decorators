@@ -14,9 +14,8 @@ use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Symfony\Component\Routing\Route;
 
 /**
  * Class DecoratorServiceProvider
@@ -101,18 +100,9 @@ class DecoratorServiceProvider extends ServiceProvider
 
     private function registerMacros()
     {
-        Builder::macro('joinIfNotJoined', function ($table, $column, $operator, $value, string $joinType = null) {
-            if (!collect($this->getQuery()->joins)->pluck('table')->contains($table)) {
-                if (!$joinType) {
-                    return $this->join($table, $column, $operator, $value);
-                }
-
-                if ($joinType === 'left') {
-                    return $this->leftJoin($table, $column, $operator, $value);
-                }
-            }
-
-            return $this;
-        });
+        Route::macro('definition',
+            function (string $controller, string $routePath = 'definition', string $method = 'definition') {
+                return Route::get($routePath, [$controller, $method]);
+            });
     }
 }

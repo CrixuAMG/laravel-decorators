@@ -176,7 +176,7 @@ trait HasCaching
                 $this->resolveRequestTags()
             )
         ) {
-            $this->setCacheKey('');
+            $this->resetCacheKey();
         }
 
         $this->cacheTags = $cacheTags;
@@ -284,7 +284,7 @@ trait HasCaching
     protected function setCacheParameters(array $cacheParameters)
     {
         if ($this->getCacheParameters() !== $cacheParameters) {
-            $this->setCacheKey('');
+            $this->resetCacheKey();
         }
 
         $this->cacheParameters = $cacheParameters;
@@ -300,7 +300,7 @@ trait HasCaching
     protected function setCacheTime(int $cacheTime)
     {
         if ($this->getCacheTime() !== $cacheTime) {
-            $this->setCacheKey('');
+            $this->resetCacheKey();
         }
 
         $this->cacheTime = $cacheTime;
@@ -353,5 +353,10 @@ trait HasCaching
 
         // Flush the cache using the supplied arguments
         return cache()->tags(...$tags)->flush();
+    }
+
+    private function resetCacheKey()
+    {
+        $this->setCacheKey('');
     }
 }

@@ -8,6 +8,7 @@ use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
+use CrixuAMG\Decorators\Traits\SmartReturns;
 use Throwable;
 
 /**
@@ -17,7 +18,7 @@ use Throwable;
  */
 abstract class AbstractController
 {
-    use HasForwarding, HasCaching, HasResources, HasDefinitions;
+    use HasForwarding, HasCaching, HasResources, HasDefinitions, SmartReturns;
 
     /**
      * @param                   $next

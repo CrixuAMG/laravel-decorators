@@ -151,7 +151,7 @@ trait Resultable
                 'per_page',
                 true
             )
-        );
+        ) ?? config('decorators.pagination');
 
         return (int) ($perPage > $maximum
             ? $maximum

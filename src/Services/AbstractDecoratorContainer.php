@@ -2,10 +2,13 @@
 
 namespace CrixuAMG\Decorators\Services;
 
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class AbstractDecoratorContainer
 {
+    use HasDefinitions;
+
     /**
      * @var string
      */
@@ -25,6 +28,12 @@ abstract class AbstractDecoratorContainer
      */
     protected function getModelInstance()
     {
-        return new $this->model();
+        $model = new $this->model();
+
+        if (is_callable($this->model, 'getDefinition')) {
+            $model = $model->setDefinition($this->definition);
+        }
+
+        return $model;
     }
 }

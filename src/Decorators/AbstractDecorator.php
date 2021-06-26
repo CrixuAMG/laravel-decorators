@@ -4,7 +4,6 @@ namespace CrixuAMG\Decorators\Decorators;
 
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
-use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class AbstractDecorator extends AbstractDecoratorContainer implements DecoratorContract
 {
-    use HasForwarding, HasDefinitions;
+    use HasForwarding;
 
     /**
      * AbstractDecorator constructor.

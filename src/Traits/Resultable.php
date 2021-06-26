@@ -41,9 +41,7 @@ trait Resultable
         array $relations = [],
         bool $forceCount = false
     ) {
-        $model = $query->getModel();
-        /** @var Resultable $model */
-        $query = $model->handleFilter($query);
+        $this->applyFilters($query);
 
         if (request()->has('count') || $forceCount) {
             return ['count' => $query->count()];
@@ -109,20 +107,6 @@ trait Resultable
     }
 
     /**
-     * @param  string  $column
-     * @return bool
-     */
-    protected function canBeOrderedByColumn(string $column)
-    {
-        if (method_exists(get_called_class(), 'sortableColumns')) {
-            $orderableColumns = get_called_class()::sortableColumns();
-            return empty($orderableColumns) || in_array($column, $orderableColumns);
-        }
-
-        return true;
-    }
-
-    /**
      * Add relations to the query
      */
     protected function addRelationsToQuery(Builder &$query, $relations)
@@ -163,13 +147,12 @@ trait Resultable
      *
      * @return Builder
      */
-    protected function handleFilter(Builder $query): Builder
+    protected function applyFilters(Builder &$query): Builder
     {
         $filters = $this->getFilters();
-        $model = $query->getModel();
 
         if (!empty($filters)) {
-            $modelTable = $model->getTable();
+            $modelTable = $this->getTable();
 
             foreach ($filters as $column => $filter) {
                 if (stripos($column, $modelTable) === 0) {
@@ -178,9 +161,9 @@ trait Resultable
 
                 $filterMethod = $this->getFilterMethod($column);
 
-                if (method_exists($model, $filterMethod)) {
+                if (method_exists($this, $filterMethod)) {
                     // For custom handleUserIdFilter
-                    $query = $model->$filterMethod($query, $filter);
+                    $query = $this->$filterMethod($query, $filter);
                 } else {
                     if (!is_array($filter)) {
                         $query->where($column, $filter);
@@ -214,15 +197,34 @@ trait Resultable
         $filters = (array) $filters;
 
         $validatedFilters = [];
-        if (method_exists($this, 'filterableColumns')) {
+
+        if (method_exists($this->definition, 'filterableColumns')) {
             foreach ($this->filterableColumns() as $column) {
                 if (!empty($filters[$column])) {
                     $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
                 }
             }
+        } else {
+            foreach ($filters as $column => $filter) {
+                $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
+            }
         }
 
         return $validatedFilters;
+    }
+
+    /**
+     * @param  string  $column
+     * @return bool
+     */
+    protected function canBeOrderedByColumn(string $column)
+    {
+        if (method_exists(get_called_class(), 'sortableColumns')) {
+            $orderableColumns = get_called_class()::sortableColumns();
+            return empty($orderableColumns) || in_array($column, $orderableColumns);
+        }
+
+        return true;
     }
 
     /**

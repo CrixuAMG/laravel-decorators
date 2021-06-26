@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class AbstractRepository extends AbstractDecoratorContainer implements DecoratorContract
 {
-    use HasTransactions, HasDefinitions;
+    use HasTransactions;
 
     /**
      * @var bool
@@ -127,8 +127,10 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function definition(): array
     {
-        if (method_exists($this, 'getDefinition')) {
-            return $this->getDefinition();
+        if (!empty($this->model) && method_exists($this->model, 'getDefinition')) {
+            /** @var HasDefinitions $model */
+            $model = $this->getModelInstance();
+            return $model->getDefinition();
         }
 
         return [];

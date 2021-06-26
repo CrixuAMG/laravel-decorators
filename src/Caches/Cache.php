@@ -24,6 +24,14 @@ class Cache
     }
 
     /**
+     * @return bool
+     */
+    public static function disable():bool
+    {
+        return self::enabled(false);
+    }
+
+    /**
      * @param  int|null  $time
      *
      * @return int

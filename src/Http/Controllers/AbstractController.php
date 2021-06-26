@@ -4,8 +4,8 @@ namespace CrixuAMG\Decorators\Http\Controllers;
 
 use Closure;
 use CrixuAMG\Decorators\Http\Resource\DefinitionResource;
+use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use CrixuAMG\Decorators\Traits\HasCaching;
-use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Traits\HasResources;
 use CrixuAMG\Decorators\Traits\SmartReturns;
@@ -16,9 +16,9 @@ use Throwable;
  *
  * @package CrixuAMG\Decorators\Http\Controllers
  */
-abstract class AbstractController
+abstract class AbstractController extends AbstractDecoratorContainer
 {
-    use HasForwarding, HasCaching, HasResources, HasDefinitions, SmartReturns;
+    use HasForwarding, HasCaching, HasResources, SmartReturns;
 
     /**
      * @param                   $next

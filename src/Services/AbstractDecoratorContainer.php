@@ -26,7 +26,7 @@ abstract class AbstractDecoratorContainer
     /**
      * @return Model
      */
-    protected function getModelInstance()
+    protected function getModel()
     {
         $model = new $this->model();
 

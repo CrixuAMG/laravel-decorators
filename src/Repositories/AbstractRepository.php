@@ -32,11 +32,11 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function index()
     {
-        $method = method_exists($this->getModelInstance(), 'scopeResult')
+        $method = method_exists($this->getModel(), 'scopeResult')
             ? 'result'
             : ConfigResolver::get('default_index_method', 'paginate', true);
 
-        return $this->getModelInstance()->$method();
+        return $this->getModel()->$method();
     }
 
     /**
@@ -48,7 +48,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
      */
     public function store(array $data)
     {
-        $newModelInstance = $this->getModelInstance()->create($data);
+        $newModelInstance = $this->getModel()->create($data);
 
         return $this->show($newModelInstance);
     }
@@ -129,7 +129,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     {
         if (!empty($this->model) && method_exists($this->model, 'getDefinition')) {
             /** @var HasDefinitions $model */
-            $model = $this->getModelInstance();
+            $model = $this->getModel();
             return $model->getDefinition();
         }
 

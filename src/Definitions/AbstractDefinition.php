@@ -6,10 +6,10 @@ use CrixuAMG\Decorators\Contracts\DefinitionContract;
 
 abstract class AbstractDefinition implements DefinitionContract
 {
-    public $definitionKey = 'definition';
-    public $sortableKey = 'sortable';
-    public $filterableKey = 'filterable';
-    public $relationsKey = 'relations';
+    protected $definitionKey = 'definition';
+    protected $sortableKey = 'sortable';
+    protected $filterableKey = 'filterable';
+    protected $relationsKey = 'relations';
 
     public function definition(): array
     {

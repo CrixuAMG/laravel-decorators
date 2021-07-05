@@ -40,7 +40,7 @@ class ControllerTest extends TestCase
     {
         $this->controller = app(TestController::class);
 
-        $this->assertInstanceOf(TestDecorator::class, $this->controller->next);
+        $this->assertInstanceOf(TestDecorator::class, $this->controller->getNext());
     }
 
     /**

@@ -85,7 +85,6 @@ class Decorator
      */
     private function processChain(string $contract, array $chain, string $model = null)
     {
-        // Create a variable that will hold the instance
         $instance = null;
 
         foreach ($chain as $class) {
@@ -101,15 +100,14 @@ class Decorator
             $this->assertClassImplementsContract($contract, $class);
 
             // Decorate the instance with the class
+            /** @var AbstractDecoratorContainer $instance */
             $instance = $this->getDecoratedInstance($class, $instance);
 
             if ($model) {
-                /** @var AbstractDecoratorContainer $instance */
                 $instance->setModel($model);
             }
         }
 
-        // Return the instance
         return $instance;
     }
 

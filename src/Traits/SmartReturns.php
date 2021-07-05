@@ -10,7 +10,7 @@ trait SmartReturns
 {
     /**
      * @param  mixed  ...$arguments
-     * @return false
+     * @return mixed
      */
     public function smartReturn(...$arguments)
     {
@@ -24,7 +24,7 @@ trait SmartReturns
     /**
      * @param  array  $smartArguments
      * @param  callable  $normalResponse
-     * @return false
+     * @return mixed
      */
     public function smartReturnOr(array $smartArguments, callable $normalResponse)
     {

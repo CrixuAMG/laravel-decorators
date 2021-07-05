@@ -19,7 +19,7 @@ trait HasForwarding
     /**
      * @var AbstractCache|AbstractRepository
      */
-    public $next;
+    protected $next;
 
     /**
      * @param  mixed  $next
@@ -32,7 +32,7 @@ trait HasForwarding
         // Do this only if next is supplied by the developer.
         if ($next) {
             if (!\is_object($next)) {
-                $next = $this->getNext($next);
+                $next = $this->formatNextAndRegister($next);
             }
 
             if (\is_object($next)) {
@@ -48,12 +48,20 @@ trait HasForwarding
     }
 
     /**
+     * @return AbstractCache|AbstractRepository
+     */
+    public function getNext()
+    {
+        return $this->next;
+    }
+
+    /**
      * @param $next
      *
      * @return mixed
      * @throws \Throwable
      */
-    private function getNext($next)
+    private function formatNextAndRegister($next)
     {
         $contract = null;
         $arguments = null;

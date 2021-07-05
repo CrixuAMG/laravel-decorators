@@ -15,7 +15,7 @@ class BaseException extends Exception
      *
      * @return JsonResponse
      */
-    public function render($request): JsonResponse
+    public function render(): JsonResponse
     {
         $message = $this->getMessage();
         $code = $this->getCode() ?? 500;

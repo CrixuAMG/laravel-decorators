@@ -100,9 +100,11 @@ class DecoratorServiceProvider extends ServiceProvider
 
     private function registerMacros()
     {
-        Route::macro('definition',
+        Route::macro(
+            'definition',
             function (string $controller, string $routePath = 'definition', string $method = 'definition') {
                 return Route::get($routePath, [$controller, $method]);
-            });
+            }
+        );
     }
 }

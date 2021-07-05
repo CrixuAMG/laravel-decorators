@@ -130,12 +130,12 @@ trait Resultable
     protected function getPerPageFromRequest(int $maximum = 25)
     {
         $perPage = request()->input(
-            ConfigResolver::get(
-                'query_params.per_page',
-                'per_page',
-                true
-            )
-        ) ?? config('decorators.pagination');
+                ConfigResolver::get(
+                    'query_params.per_page',
+                    'per_page',
+                    true
+                )
+            ) ?? config('decorators.pagination');
 
         return (int) ($perPage > $maximum
             ? $maximum
@@ -199,7 +199,7 @@ trait Resultable
         $validatedFilters = [];
 
         if (method_exists($this->definition, 'filterableColumns')) {
-            foreach ($this->filterableColumns() as $column) {
+            foreach ($this->getDefinitionInstance()->filterableColumns() as $column) {
                 if (!empty($filters[$column])) {
                     $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
                 }
@@ -219,8 +219,8 @@ trait Resultable
      */
     protected function canBeOrderedByColumn(string $column)
     {
-        if (method_exists(get_called_class(), 'sortableColumns')) {
-            $orderableColumns = get_called_class()::sortableColumns();
+        if (method_exists($this->definition, 'sortableColumns')) {
+            $orderableColumns = $this->getDefinitionInstance()->sortableColumns();
             return empty($orderableColumns) || in_array($column, $orderableColumns);
         }
 

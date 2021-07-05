@@ -30,7 +30,7 @@ abstract class AbstractDecoratorContainer
     {
         $model = new $this->model();
 
-        if (is_callable($this->model, 'getDefinition')) {
+        if (is_callable($model, 'setDefinition')) {
             $model = $model->setDefinition($this->definition);
         }
 

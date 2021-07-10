@@ -306,12 +306,12 @@ class MakeStarterCommand extends Command
 
         $snakedModule = Str::snake($this->option('module'));
         $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
-            ? PHP_EOL."Note: Add the inner array to the decorators.tree.${$snakedModule} array if it already exists"
+            ? PHP_EOL."Note: Add the inner array to the decorators.tree.{$snakedModule} array if it already exists"
             : '';
 
         echo <<< CONFIG
 
-To enable the classes generated, simply add the array listed below to the tree array in your decorators.php ${$moduleText}
+To enable the classes generated, simply add the array listed below to the tree array in your decorators.php {$moduleText}
 
 $output
 CONFIG;

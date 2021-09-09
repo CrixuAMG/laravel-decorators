@@ -5,7 +5,6 @@ namespace CrixuAMG\Decorators\Console\Commands;
 use Artisan;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -54,13 +53,16 @@ class MakeStarterCommand extends Command
             'make:factory'          => 'Factory',
             'decorators:controller' => 'Controller',
             'decorators:contract'   => 'Contract',
-            'decorators:repository' => 'Repository',
-            'decorators:cache'      => 'Cache',
         ];
 
         if ($this->option('definition')) {
             $commandsToExecute['decorators:definition'] = 'Definition';
         }
+
+        $commandsToExecute = array_merge($commandsToExecute, [
+            'decorators:repository' => 'Repository',
+            'decorators:cache'      => 'Cache',
+        ]);
 
         $module = $this->option('module');
 

@@ -2,9 +2,9 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Artisan;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,8 +49,6 @@ class MakeStarterCommand extends Command
     {
         $commandsToExecute = [
             'make:model'            => '',
-            'make:resource'         => 'Resource',
-            'make:factory'          => 'Factory',
             'decorators:controller' => 'Controller',
             'decorators:contract'   => 'Contract',
         ];
@@ -65,9 +63,7 @@ class MakeStarterCommand extends Command
         ]);
 
         $module = $this->option('module');
-
         $className = $this->getNameInput();
-        $classNameTemp = null;
 
         foreach ($commandsToExecute as $commandToExecute => $type) {
             $classNameTemp = $className;
@@ -79,6 +75,7 @@ class MakeStarterCommand extends Command
 
             if ($commandToExecute === 'make:model') {
                 $className = config('nextlevel.model_namespace').$className;
+                $append = ' --factory --resource';
             }
             if ($commandToExecute === 'decorators:controller') {
                 $className = 'Api\\'.$className;
@@ -308,12 +305,12 @@ class MakeStarterCommand extends Command
 
         $snakedModule = Str::snake($this->option('module'));
         $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
-            ? PHP_EOL."Note: Add the inner array to the decorators.tree.{$snakedModule} array if it already exists"
+            ? PHP_EOL."Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
             : '';
 
         echo <<< CONFIG
 
-To enable the classes generated, simply add the array listed below to the tree array in your decorators.php {$moduleText}
+To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
 
 $output
 CONFIG;
@@ -337,7 +334,7 @@ CONFIG;
 
     /**
      * Get the console command options.
-     *
+
      * @return array
      */
     protected function getOptions()

@@ -200,7 +200,7 @@ trait Resultable
 
         if (method_exists($this->definition, 'filterableColumns')) {
             foreach ($this->getDefinitionInstance()->filterableColumns() as $column) {
-                if (!empty($filters[$column])) {
+                if (array_key_exists($column, $filters)) {
                     $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
                 }
             }

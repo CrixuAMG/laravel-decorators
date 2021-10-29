@@ -3,7 +3,6 @@
 namespace CrixuAMG\Decorators\Traits;
 
 use CrixuAMG\Decorators\Contracts\DefinitionContract;
-use CrixuAMG\Decorators\Definitions\BaseDefinition;
 
 /**
  * Trait HasDefinitions
@@ -14,7 +13,7 @@ trait HasDefinitions
     /**
      * @var string
      */
-    protected $definition = BaseDefinition::class;
+    protected $definition = null;
 
     /**
      * @param  null  $definition

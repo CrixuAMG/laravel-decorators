@@ -38,27 +38,35 @@ class Decorator
         $this->cacheEnabled = Cache::enabled();
     }
 
-    public function decorateIf(string $contract, $chain, string $model = null, $validator = null): void
+    /**
+     * @param  string  $contract
+     * @param $chain
+     * @param  string|null  $model
+     * @param  string|null  $definition
+     * @param  null  $validator
+     */
+    public function decorateIf(string $contract, $chain, string $model = null, string $definition = null, $validator = null): void
     {
-        if ($validator && is_callable($validator)) {
-//            dd($validator);
-//            $validator();
+        if ($validator && class_exists($validator)) {
+            new $validator(request());
         }
 
-        $this->decorate($contract, $chain, $model);
+        $this->decorate($contract, $chain, $model, $definition);
     }
 
     /**
      * @param  string  $contract
      * @param  array  $chain
      * @param  string|null  $model
+     * @param  string|null  $definition
      */
-    public function decorate(string $contract, $chain, string $model = null): void
+    public function decorate(string $contract, $chain, string $model = null, string $definition = null): void
     {
         $this->decorateContract(
             $contract,
             (array) $chain,
-            $model
+            $model,
+            $definition
         );
     }
 
@@ -68,11 +76,12 @@ class Decorator
      * @param  string  $contract
      * @param  array  $chain
      * @param  string|null  $model
+     * @param  string|null  $definition
      */
-    private function decorateContract(string $contract, array $chain, string $model = null): void
+    private function decorateContract(string $contract, array $chain, string $model = null, string $definition = null): void
     {
-        $this->app->singleton($contract, function () use ($contract, $chain, $model) {
-            return Decorator::processChain($contract, $chain, $model);
+        $this->app->singleton($contract, function () use ($contract, $chain, $model, $definition) {
+            return Decorator::processChain($contract, $chain, $model, $definition);
         });
     }
 
@@ -80,10 +89,11 @@ class Decorator
      * @param  string  $contract
      * @param  array  $chain
      * @param  string|null  $model
+     * @param  string|null  $definition
      * @return mixed
      * @throws \Throwable
      */
-    private function processChain(string $contract, array $chain, string $model = null)
+    private function processChain(string $contract, array $chain, string $model = null, string $definition = null)
     {
         $instance = null;
 
@@ -105,6 +115,10 @@ class Decorator
 
             if ($model) {
                 $instance->setModel($model);
+            }
+
+            if ($definition) {
+                $instance->setDefinition($definition);
             }
         }
 

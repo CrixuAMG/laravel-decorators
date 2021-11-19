@@ -66,6 +66,7 @@ trait HasForwarding
         $contract = null;
         $arguments = null;
         $model = null;
+        $definition = null;
         $validator = null;
 
         if (\is_string($next)) {
@@ -76,6 +77,7 @@ trait HasForwarding
             $contract = $next['contract'] ?? null;
             $arguments = $next['arguments'] ?? null;
             $model = $next['model'] ?? null;
+            $definition = $next['definition'] ?? null;
             $validator = $next['validator'] ?? null;
         }
 
@@ -84,7 +86,7 @@ trait HasForwarding
 
             // If a match has been found, decorate it, then instantiate the newly constructed singleton
             (new Decorator($app))
-                ->decorateIf($contract, $arguments, $model, $validator);
+                ->decorateIf($contract, $arguments, $model, $definition, $validator);
 
             $next = $app->make($contract);
         }

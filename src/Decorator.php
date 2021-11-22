@@ -48,7 +48,12 @@ class Decorator
     public function decorateIf(string $contract, $chain, string $model = null, string $definition = null, $validator = null): void
     {
         if ($validator && class_exists($validator)) {
-            new $validator(request());
+            $validator = new $validator();
+
+            abort_unless(
+                $validator->validate(),
+                $validator->getResponseCode()
+            );
         }
 
         $this->decorate($contract, $chain, $model, $definition);

@@ -31,6 +31,10 @@ trait HasCaching
      * @var string[]
      */
     protected $cacheParameters;
+    /**
+     * @var boolean
+     */
+    protected $flushEntireCache = false;
 
     /**
      * @param  string  $method
@@ -43,12 +47,13 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
+        $result = $this->forward($method, ...$args);
+
         // Get the amount of seconds the data should be cached
         $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
-            // Forward the data and return the response
-            return $this->forward($method, ...$args);
+            return $result;
         }
 
         // Generate a new cache key if none is set
@@ -57,12 +62,7 @@ trait HasCaching
         }
 
         // Forward the data and cache the result.
-        return $this->cache(
-            function () use ($method, $args) {
-                // Forward the data and cache in the response
-                return $this->forward($method, ...$args);
-            }
-        );
+        return $this->cache(fn() => $result);
     }
 
     /**
@@ -201,9 +201,8 @@ trait HasCaching
                     array_shift($tagParts);
                     if ($user) {
                         $user = optional($user);
-                        $value = $user;
                         foreach ($tagParts as $tagPart) {
-                            $tags[] = $value->{$tagPart};
+                            $tags[] = $user->{$tagPart};
                         }
                     }
                 } else {
@@ -337,18 +336,17 @@ trait HasCaching
     protected function flushCache(...$tags): ?bool
     {
         // If the cache driver does not support tagging, flush the cache
-        if (!CacheDriver::implementsTags()) {
+        if (
+            !CacheDriver::implementsTags() ||
+            $this->flushEntireCache ||
+            (\count($tags) === 1 && reset($tags) === true)
+        ) {
             return cache()->flush();
         }
 
         if (empty($tags)) {
             // No tags have been provided, empty the tags that are attached to the current cache class
             return cache()->tags($this->getCacheTags())->flush();
-        }
-
-        if (\count($tags) === 1 && reset($tags) === true) {
-            // Empty the entire cache
-            return cache()->flush();
         }
 
         // Flush the cache using the supplied arguments

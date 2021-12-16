@@ -12,7 +12,7 @@ class ControllerMakeCommand extends AbstractCommand
      *
      * @var string
      */
-    protected $name = 'decorators:controller';
+    protected $name = 'decorators:controller {--module=}';
     /**
      * The console command description.
      *

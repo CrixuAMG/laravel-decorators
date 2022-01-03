@@ -28,6 +28,9 @@ class MakeStarterCommand extends Command
      * @var string
      */
     protected $description = 'Create all required classes for the given name';
+    /**
+     * @var string
+     */
     private $generatedClasses = [];
 
     /**
@@ -50,6 +53,7 @@ class MakeStarterCommand extends Command
         $commandsToExecute = [
             'make:model'            => '',
             'decorators:controller' => 'Controller',
+            'decorators:resource'   => 'Resource',
             'decorators:contract'   => 'Contract',
         ];
 
@@ -74,8 +78,8 @@ class MakeStarterCommand extends Command
             }
 
             if ($commandToExecute === 'make:model') {
-                $className = config('nextlevel.model_namespace').$className;
-                $append = ' --factory --resource';
+                $className = config('decorators.model_namespace').$className;
+                $append = ' --factory';
             }
             if ($commandToExecute === 'decorators:controller') {
                 $className = 'Api\\'.$className;
@@ -334,7 +338,6 @@ CONFIG;
 
     /**
      * Get the console command options.
-
      * @return array
      */
     protected function getOptions()

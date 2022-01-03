@@ -16,15 +16,7 @@ return [
         /**
          * The parameters that can be retrieved from the request for the cache key
          */
-        'request_parameters'          => [
-            '__resource',
-            '__smart',
-            'paginate',
-            'page',
-            'per_page',
-            'request',
-            'cursor',
-        ],
+        'request_cache_exceptions'    => [],
         /**
          * Any tags placed in this array will be automatically resolved when building the cache tags
          */
@@ -51,7 +43,7 @@ return [
 
         'query_params' => [
             '__resource' => '__resource',
-            '__smart'   => '__smart',
+            '__smart'    => '__smart',
             'paginate'   => 'paginate',
             'filters'    => 'filters',
             'per_page'   => 'per_page',

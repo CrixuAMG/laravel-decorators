@@ -105,7 +105,7 @@ class CacheKey
      */
     private static function getDataFromRequest(): string
     {
-        $data = request()->only((array) config('decorators.cache.request_parameters'));
+        $data = request()->except((array) config('decorators.cache.request_cache_exceptions'));
         $string = '';
 
         foreach ($data as $name => $value) {

@@ -117,6 +117,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
             $result = $model->delete() ?? false;
         } catch (Exception $exception) {
             $result = false;
+            throw $exception;
         } finally {
             return $result;
         }

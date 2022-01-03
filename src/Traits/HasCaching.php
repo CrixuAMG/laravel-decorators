@@ -120,10 +120,10 @@ trait HasCaching
         ];
 
         // If request parameters are defined, use them to generate a more unique key based on request values
-        $configRequestParameters = (array) config('decorators.cache.request_parameters');
+        $configRequestParameters = (array) config('decorators.cache.request_cache_exceptions');
         if (!empty($configRequestParameters)) {
             $cacheKeyTemplate .= '.%s';
-            $cacheKeyParameters[] = json_encode(request()->only($configRequestParameters));
+            $cacheKeyParameters[] = json_encode(request()->except($configRequestParameters));
         }
 
         // Get the custom parameters
@@ -331,7 +331,6 @@ trait HasCaching
      *
      * @return bool|null
      * @throws Exception
-     *
      */
     protected function flushCache(...$tags): ?bool
     {
@@ -353,7 +352,10 @@ trait HasCaching
         return cache()->tags(...$tags)->flush();
     }
 
-    private function resetCacheKey()
+    /**
+     *
+     */
+    private function resetCacheKey(): void
     {
         $this->setCacheKey('');
     }

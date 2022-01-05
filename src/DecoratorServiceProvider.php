@@ -44,34 +44,32 @@ class DecoratorServiceProvider extends ServiceProvider
      */
     private function registerCommands()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                CacheMakeCommand::class,
-                // decorators:cache
-                ContractMakeCommand::class,
-                // decorators:contract
-                RepositoryMakeCommand::class,
-                // decorators:repository
-                DecoratorMakeCommand::class,
-                // decorators:decorator
-                ControllerMakeCommand::class,
-                // decorators:controller
-                MakeStarterCommand::class,
-                // decorators:starter
-                TraitMakeCommand::class,
-                // decorators:trait
-                ObserverMakeCommand::class,
-                // decorators:observer
-                ScopeMakeCommand::class,
-                // decorators:scope
-                DefinitionMakeCommand::class,
-                // decorators:definition
-                DecoratorsMakeCommand::class,
-                // decorators:make
-                RuleMakeCommand::class,
-                // decorators:rule
-            ]);
-        }
+        $this->commands([
+            // decorators:cache
+            CacheMakeCommand::class,
+            // decorators:contract
+            ContractMakeCommand::class,
+            // decorators:repository
+            RepositoryMakeCommand::class,
+            // decorators:decorator
+            DecoratorMakeCommand::class,
+            // decorators:controller
+            ControllerMakeCommand::class,
+            // decorators:starter
+            MakeStarterCommand::class,
+            // decorators:trait
+            TraitMakeCommand::class,
+            // decorators:observer
+            ObserverMakeCommand::class,
+            // decorators:scope
+            ScopeMakeCommand::class,
+            // decorators:definition
+            DefinitionMakeCommand::class,
+            // decorators:make
+            DecoratorsMakeCommand::class,
+            // decorators:rule
+            RuleMakeCommand::class,
+        ]);
     }
 
     /**

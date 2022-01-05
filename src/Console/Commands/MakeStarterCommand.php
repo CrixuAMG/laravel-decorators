@@ -53,7 +53,7 @@ class MakeStarterCommand extends Command
         $commandsToExecute = [
             'make:model'            => '',
             'decorators:controller' => 'Controller',
-            'decorators:resource'   => 'Resource',
+            'make:resource'         => 'Resource',
             'decorators:contract'   => 'Contract',
         ];
 
@@ -74,7 +74,7 @@ class MakeStarterCommand extends Command
             $append = '';
 
             if ($module) {
-                $className = $module.'\\'.$className;
+                $className = $module.'/'.$className;
             }
 
             if ($commandToExecute === 'make:model') {
@@ -82,7 +82,7 @@ class MakeStarterCommand extends Command
                 $append = ' --factory';
             }
             if ($commandToExecute === 'decorators:controller') {
-                $className = 'Api\\'.$className;
+                $className = 'Api/'.$className;
                 $append = ' --module='.$module.' --model='.$classNameTemp;
 
                 if ($this->option('request')) {
@@ -95,8 +95,6 @@ class MakeStarterCommand extends Command
             $command = $commandToExecute.' '.$className.$type.$append;
 
             $this->info('php artisan '.$command);
-
-            $command = str_replace("\\", '/', $command);
 
             Artisan::call($command);
 
@@ -165,7 +163,7 @@ class MakeStarterCommand extends Command
             Str::plural($classToGenerate)
         );
 
-        $fullNamespace = 'App\\'.$folder.'\\'.$className;
+        $fullNamespace = 'App/'.$folder.'/'.$className;
         $snakedClassname = Str::snake($this->getNameInput());
 
         $key = 'arguments';
@@ -224,14 +222,14 @@ class MakeStarterCommand extends Command
         ];
 
         if ($module) {
-            $name = $module.'\\'.$name;
+            $name = $module.'/'.$name;
         }
 
         foreach ($nameExtensions as $nameExtension) {
-            $this->info('php artisan make:request '.$name.'\\'.$nameExtension.'Request');
+            $this->info('php artisan make:request '.$name.'/'.$nameExtension.'Request');
 
             Artisan::call('make:request', [
-                'name' => $name.'\\'.$nameExtension.'Request',
+                'name' => $name.'/'.$nameExtension.'Request',
             ]);
         }
 

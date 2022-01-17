@@ -44,7 +44,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     public function index()
     {
         $method = $this->getIndexMethod();
-        return $this->getModel()->$model();
+        return $this->getModel()->$method();
     }
 
     /**

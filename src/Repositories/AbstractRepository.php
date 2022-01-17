@@ -26,18 +26,25 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     protected $refreshModelBeforeLoadingRelations;
 
     /**
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed|string
+     */
+    protected function getIndexMethod()
+    {
+        $model = $this->getModel();
+        return method_exists($model, 'scopeResult')
+            ? 'result'
+            : ConfigResolver::get('default_index_method', 'paginate', true);
+    }
+
+    /**
      * Returns the index
      *
      * @return mixed
      */
     public function index()
     {
-        $model = $this->getModel();
-        $method = method_exists($model, 'scopeResult')
-            ? 'result'
-            : ConfigResolver::get('default_index_method', 'paginate', true);
-
-        return $model->$method();
+        $method = $this->getIndexMethod();
+        return $this->getModel()->$model();
     }
 
     /**
@@ -117,7 +124,6 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
             $result = $model->delete() ?? false;
         } catch (Exception $exception) {
             $result = false;
-            throw $exception;
         } finally {
             return $result;
         }

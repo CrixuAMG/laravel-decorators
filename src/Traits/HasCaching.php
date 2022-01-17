@@ -329,17 +329,18 @@ trait HasCaching
     /**
      * @param  array  $tags  Only used if the cache driver utilizes tags
      *
-     * @return bool|null
+     * @return bool|null|void
      * @throws Exception
      */
-    protected function flushCache(...$tags): ?bool
+    protected function flushCache(...$tags)
     {
+        // Deprecated
+        if (\count($tags) === 1 && reset($tags) === true) {
+            return cache()->flush();
+        }
+
         // If the cache driver does not support tagging, flush the cache
-        if (
-            !CacheDriver::implementsTags() ||
-            $this->flushEntireCache ||
-            (\count($tags) === 1 && reset($tags) === true)
-        ) {
+        if (!CacheDriver::implementsTags() || $this->flushEntireCache) {
             return cache()->flush();
         }
 

@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
 use CrixuAMG\Decorators\Services\ConfigResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,7 +45,7 @@ trait Resultable
         $this->applyFilters($query);
 
         if (request()->has('count') || $forceCount) {
-            return ['count' => $query->count()];
+            return CountResponse::setCount($query->count());
         }
 
         $this->addRelationsToQuery($query, $relations);
@@ -127,7 +128,7 @@ trait Resultable
      *
      * @return int
      */
-    protected function getPerPageFromRequest(int $maximum = 25)
+    protected function getPerPageFromRequest(int $maximum = 25): int
     {
         $perPage = request()->input(
                 ConfigResolver::get(
@@ -217,7 +218,7 @@ trait Resultable
      * @param  string  $column
      * @return bool
      */
-    protected function canBeOrderedByColumn(string $column)
+    protected function canBeOrderedByColumn(string $column): bool
     {
         if (method_exists($this->definition, 'sortableColumns')) {
             $orderableColumns = $this->getDefinitionInstance()->sortableColumns();
@@ -240,7 +241,7 @@ trait Resultable
      * @param  string  $column
      * @return string
      */
-    protected function getFilterMethod(string $column)
+    protected function getFilterMethod(string $column): string
     {
         return Str::camel('handle '.\str_replace('.', ' ', $column).'Filter');
     }

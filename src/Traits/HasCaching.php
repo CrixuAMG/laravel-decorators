@@ -346,7 +346,7 @@ trait HasCaching
 
         if (empty($tags)) {
             // No tags have been provided, empty the tags that are attached to the current cache class
-            return cache()->tags($this->getCacheTags())->flush();
+            $tags = $this->getCacheTags();
         }
 
         // Flush the cache using the supplied arguments

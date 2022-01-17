@@ -26,9 +26,9 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     protected $refreshModelBeforeLoadingRelations;
 
     /**
-     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed|string
+     * @return string
      */
-    protected function getIndexMethod()
+    protected function getIndexMethod(): string
     {
         $model = $this->getModel();
         return method_exists($model, 'scopeResult')

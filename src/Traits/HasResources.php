@@ -25,8 +25,8 @@ trait HasResources
      */
     public function resourceful($data)
     {
-        if (request()->filled('count') && isset($data['count'])) {
-            return $data;
+        if (method_exists($data, 'toResponse')) {
+            return $data->toArray();
         }
 
         if ($this->resource) {

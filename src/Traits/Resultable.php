@@ -94,13 +94,13 @@ trait Resultable
         );
         $baseOrderColumn = $orderColumn;
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
-        $orderColumn = strtolower(request()->input($configOrderColumn) ?? $orderColumn ?? 'id');
+        $orderColumn = request()->input($configOrderColumn) ?? $orderColumn ?? 'id';
         $orderDirection = request()->input($configOrderDirection) ?? $orderDirection ?? 'ASC';
 
         if (!$this->canBeOrderedByColumn($orderColumn)) {
             $orderColumn = $baseOrderColumn ?: 'id';
         }
-
+        
         return [
             'column'    => $orderColumn,
             'direction' => strtoupper($orderDirection),

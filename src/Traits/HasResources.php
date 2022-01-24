@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -25,7 +26,7 @@ trait HasResources
      */
     public function resourceful($data)
     {
-        if (method_exists($data, 'toResponse')) {
+        if ($data instanceof CountResponse) {
             return $data->toResponse();
         }
 

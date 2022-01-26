@@ -2,8 +2,10 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use CrixuAMG\Decorators\Services\AdditionalResourceData;
 use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -37,6 +39,12 @@ trait HasResources
                 $data = $resource::collection($data);
             } elseif ($data instanceof Model || is_array($data)) {
                 $data = new $resource($data);
+            }
+
+            if ($data instanceof JsonResource && !empty(AdditionalResourceData::getData())) {
+                $data->additional([
+                    "response" => AdditionalResourceData::getData(),
+                ]);
             }
         }
 

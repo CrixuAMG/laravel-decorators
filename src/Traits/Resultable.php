@@ -2,8 +2,9 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
-use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
+use CrixuAMG\Decorators\Services\AdditionalResourceData;
 use CrixuAMG\Decorators\Services\ConfigResolver;
+use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -100,7 +101,7 @@ trait Resultable
         if (!$this->canBeOrderedByColumn($orderColumn)) {
             $orderColumn = $baseOrderColumn ?: 'id';
         }
-        
+
         return [
             'column'    => $orderColumn,
             'direction' => strtoupper($orderDirection),
@@ -115,6 +116,8 @@ trait Resultable
         if (empty($relations) && $relations !== false) {
             $relations = get_called_class()::defaultRelations();
         }
+
+        AdditionalResourceData::appendData('relations', $relations);
 
         if (!empty($relations)) {
             $query = $query->with($relations);
@@ -156,6 +159,8 @@ trait Resultable
             $modelTable = $this->getTable();
 
             foreach ($filters as $column => $filter) {
+                AdditionalResourceData::appendData('filters', ['column' => $column, 'filter' => $filter]);
+
                 if (stripos($column, $modelTable) === 0) {
                     $column = str_replace(['.', $modelTable], '', $column);
                 }
@@ -255,6 +260,8 @@ trait Resultable
     {
         $model = $query->getModel();
         if (method_exists($model, 'handleSorting')) {
+            AdditionalResourceData::addData('sorting', ['column' => $column, 'direction' => $direction]);
+
             $query = $model->handleSorting($query, $column, $direction)
                 ->select(
                     sprintf(
@@ -279,6 +286,9 @@ trait Resultable
                     $order['column']
                 );
             }
+
+            AdditionalResourceData::appendData('sorting', $order);
+
             $query = $query->orderBy($order['column'], $order['direction']);
         }
     }

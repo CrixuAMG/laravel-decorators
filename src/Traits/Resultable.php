@@ -117,9 +117,9 @@ trait Resultable
             $relations = get_called_class()::defaultRelations();
         }
 
-        AdditionalResourceData::appendData('relations', $relations);
-
         if (!empty($relations)) {
+            AdditionalResourceData::appendData('relations', $relations);
+
             $query = $query->with($relations);
         }
     }

@@ -14,8 +14,7 @@ use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Console\StubPublishCommand;
+use CrixuAMG\Decorators\Console\Commands\PublishStubsCommand;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -73,7 +72,7 @@ class DecoratorServiceProvider extends ServiceProvider
             RuleMakeCommand::class,
 
             // decorators:stubs
-            StubPublishCommand::class,
+            PublishStubsCommand::class,
         ]);
     }
 

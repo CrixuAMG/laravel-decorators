@@ -27,7 +27,7 @@ class PublishStubsCommand extends Command
         }
 
         $files = [
-            __DIR__.'../../stubs/model.stub' => $stubsPath.'/model.stub',
+            __DIR__.'/../../stubs/model.stub' => $stubsPath.'/model.stub',
         ];
 
         foreach ($files as $from => $to) {

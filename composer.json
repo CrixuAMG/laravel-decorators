@@ -57,5 +57,10 @@
                 "CrixuAMG\\Decorators\\DecoratorServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

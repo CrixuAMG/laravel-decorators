@@ -35,8 +35,6 @@ class ConfigResolver
                 // Add string to string values
                 $output .= sprintf("%s'%s' => %s::class,%s", $indent, $key, $value, PHP_EOL);
             } elseif (is_int($key) && is_string($value)) {
-                $value = str_replace('/', "\\", $value);
-
                 // Add only string values
                 $output .= sprintf("%s %s::class,%s", $indent, $value, PHP_EOL);
                 $addClosingBracket = false;
@@ -47,6 +45,6 @@ class ConfigResolver
             $output .= sprintf("%s],%s", $indent, PHP_EOL);
         }
 
-        return $output;
+        return str_replace('/', "\\", $output);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Test\Providers;
 
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TestModel extends Model
 {
+    use HasDefinitions;
+
     /**
      * @var array
      */

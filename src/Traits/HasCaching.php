@@ -349,6 +349,10 @@ trait HasCaching
             $tags = $this->getCacheTags();
         }
 
+        if (empty($tags)) {
+            return cache()->flush();
+        }
+
         // Flush the cache using the supplied arguments
         return cache()->tags(...$tags)->flush();
     }

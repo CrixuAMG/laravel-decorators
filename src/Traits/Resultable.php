@@ -117,6 +117,13 @@ trait Resultable
             $relations = get_called_class()::defaultRelations();
         }
 
+        if (method_exists($this->definition, 'requestedRelations')) {
+            $relations = array_merge(
+                $relations,
+                $this->getDefinitionInstance()->requestedRelations()
+            );
+        }
+
         if (!empty($relations)) {
             AdditionalResourceData::appendData('relations', $relations);
 
@@ -212,7 +219,7 @@ trait Resultable
             }
         } else {
             foreach ($filters as $column => $filter) {
-                $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
+                $validatedFilters[$this->getFilterSelectColumn($column)] = $filter;
             }
         }
 

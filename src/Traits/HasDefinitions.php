@@ -37,7 +37,7 @@ trait HasDefinitions
     /**
      * @return DefinitionContract
      */
-    private function getDefinitionInstance(): DefinitionContract
+    protected function getDefinitionInstance(): DefinitionContract
     {
         return new $this->definition();
     }

@@ -78,16 +78,24 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
             $model = $model->fresh();
         }
 
-        if (!empty($relations)) {
-            // Load only specified relations
-            $model->load(...$relations);
-        } elseif (method_exists($class, 'showRelations')) {
-            // If the method showRelations exists, call it to load in relations before returning the model
-            $model->load((array) $class::showRelations());
-        } elseif (method_exists($class, 'defaultRelations')) {
-            // If the method defaultRelations exists, call it to load in relations before returning the model
-            $model->load((array) $class::defaultRelations());
+        if (empty($relations)) {
+            if (method_exists($class, 'showRelations')) {
+                // If the method showRelations exists, call it to load in relations before returning the model
+                $relations = (array) $class::showRelations();
+            } elseif (method_exists($class, 'defaultRelations')) {
+                // If the method defaultRelations exists, call it to load in relations before returning the model
+                $relations = (array) $class::defaultRelations();
+            }
         }
+
+        if (isset($this->definition) && method_exists($this->definition, 'requestedRelations')) {
+            $relations = array_merge(
+                $relations,
+                $this->getDefinitionInstance()->requestedRelations()
+            );
+        }
+
+        $model->load($relations);
 
         // Return the model
         return $model;

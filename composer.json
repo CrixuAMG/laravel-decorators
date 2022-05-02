@@ -17,13 +17,13 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/contracts": "^8.0",
-        "illuminate/console": "^8.0",
-        "illuminate/database": "^8.0",
-        "illuminate/http": "^8.0",
-        "illuminate/validation": "^8.0",
-        "illuminate/pagination": "^8.0",
-        "illuminate/support": "^8.0"
+        "illuminate/contracts": "^9.0",
+        "illuminate/console": "^9.0",
+        "illuminate/database": "^9.0",
+        "illuminate/http": "^9.0",
+        "illuminate/validation": "^9.0",
+        "illuminate/pagination": "^9.0",
+        "illuminate/support": "^9.0"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.10",
@@ -31,7 +31,7 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "barryvdh/laravel-ide-helper": "^2.10",
         "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^6.18",
+        "orchestra/testbench": "^7.4",
         "mockery/mockery": "^1.4",
         "nunomaduro/phpinsights": "^2.0"
     },

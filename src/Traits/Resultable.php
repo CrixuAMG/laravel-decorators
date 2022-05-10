@@ -117,7 +117,7 @@ trait Resultable
             $relations = get_called_class()::defaultRelations();
         }
 
-        if (method_exists($this->definition, 'requestedRelations')) {
+        if (!empty($this->definition) && !empty($this->definition) && method_exists($this->definition, 'requestedRelations')) {
             $relations = array_merge(
                 $relations,
                 $this->getDefinitionInstance()->requestedRelations()
@@ -211,7 +211,7 @@ trait Resultable
 
         $validatedFilters = [];
 
-        if (method_exists($this->definition, 'filterableColumns')) {
+        if (!empty($this->definition) && method_exists($this->definition, 'filterableColumns')) {
             foreach ($this->getDefinitionInstance()->filterableColumns() as $column) {
                 if (array_key_exists($column, $filters)) {
                     $validatedFilters[$this->getFilterSelectColumn($column)] = $filters[$column];
@@ -232,7 +232,7 @@ trait Resultable
      */
     protected function canBeOrderedByColumn(string $column): bool
     {
-        if (method_exists($this->definition, 'sortableColumns')) {
+        if (!empty($this->definition) && method_exists($this->definition, 'sortableColumns')) {
             $orderableColumns = $this->getDefinitionInstance()->sortableColumns();
             return empty($orderableColumns) || in_array($column, $orderableColumns);
         }

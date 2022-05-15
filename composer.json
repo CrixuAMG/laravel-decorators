@@ -16,14 +16,14 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "illuminate/contracts": "^9.0",
-        "illuminate/console": "^9.0",
-        "illuminate/database": "^9.0",
-        "illuminate/http": "^9.0",
-        "illuminate/validation": "^9.0",
-        "illuminate/pagination": "^9.0",
-        "illuminate/support": "^9.0"
+        "php": "^8.0|^8.1",
+        "illuminate/contracts": "9.*",
+        "illuminate/console": "9.*",
+        "illuminate/database": "9.*",
+        "illuminate/http": "9.*",
+        "illuminate/validation": "9.*",
+        "illuminate/pagination": "9.*",
+        "illuminate/support": "9.*"
     },
     "require-dev": {
         "phpmd/phpmd": "^2.10",

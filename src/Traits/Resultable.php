@@ -67,7 +67,7 @@ trait Resultable
      * @param  int  $perPage
      * @return \Illuminate\Contracts\Pagination\CursorPaginator|LengthAwarePaginator
      */
-    private function fetchPaginatedResult(Builder $query, int $perPage)
+    protected function fetchPaginatedResult(Builder $query, int $perPage)
     {
         return request()->paginate === 'cursor'
             ? $query->cursorPaginate($perPage)

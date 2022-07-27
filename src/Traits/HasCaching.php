@@ -47,13 +47,11 @@ trait HasCaching
      */
     protected function forwardCached(string $method, ...$args)
     {
-        $result = $this->forward($method, ...$args);
-
         // Get the amount of seconds the data should be cached
         $cacheTime = $this->getCacheTime();
         if (!$cacheTime || !Cache::enabled()) {
             // No cache time, don't continue
-            return $result;
+            return $this->forward($method, ...$args);
         }
 
         // Generate a new cache key if none is set
@@ -62,7 +60,7 @@ trait HasCaching
         }
 
         // Forward the data and cache the result.
-        return $this->cache(fn() => $result);
+        return $this->cache(fn() => $this->forward($method, ...$args));
     }
 
     /**

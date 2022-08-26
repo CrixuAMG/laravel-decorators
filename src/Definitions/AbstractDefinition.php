@@ -24,11 +24,14 @@ abstract class AbstractDefinition implements DefinitionContract
 
     public function requestedRelations(): array
     {
-        $requestedRelations = explode(', ', request()->relations ?? '');
+        $requestedRelations = explode('|', request()->relations ?? '');
         $validatedRelations = [];
 
         foreach ($requestedRelations as $requestedRelation) {
-            if (in_array($requestedRelation, $this->queryableRelations())) {
+            $requestedRelationParts = explode(':', trim($requestedRelation));
+            $relation = reset($requestedRelationParts);
+
+            if (in_array($relation, $this->queryableRelations())) {
                 $validatedRelations[] = $requestedRelation;
             }
         }

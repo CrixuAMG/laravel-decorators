@@ -39,6 +39,14 @@ class DummyClass extends AbstractController
 
     public function destroy(DummyModel $DummyModelVariable, DeleteRequest $request)
     {
-        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable, $request->validated());
+        return $this->forwardWithCallback(
+            __FUNCTION__,
+            function ($result) {
+                return $result
+                    ? response()->json([], 204)
+                    : response()->json(['message' => __('DummyModel could not be deleted')], 500);
+            },
+            $DummyModelVariable
+        );
     }
 }

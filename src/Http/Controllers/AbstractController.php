@@ -33,7 +33,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $this->setNext($next)
             ->setResource($resourceClass)
-            ->setDefinition($definition ?? config(sprintf('%s.definition', is_array($next) ? \Arr::get($next, 'decorator', null) : $next), null))
+            ->setDefinition($definition ?? config(sprintf('%s.definition', is_array($next) ? \Arr::get($next, 'definition', null) : $next), null))
             ->setCacheTags(...$cacheTags);
     }
 

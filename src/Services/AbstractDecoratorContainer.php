@@ -18,9 +18,11 @@ abstract class AbstractDecoratorContainer
      * @param  string  $model
      * @return string
      */
-    public function setModel(string $model): string
+    public function setModel(string $model)
     {
-        return $this->model = $model;
+        $this->model = $model;
+        
+        return $this;
     }
 
     /**

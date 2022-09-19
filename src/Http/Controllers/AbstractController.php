@@ -31,9 +31,14 @@ abstract class AbstractController extends AbstractDecoratorContainer
      */
     public function setup($next, $resourceClass = null, $definition = null, string ...$cacheTags): void
     {
+        $definition = $definition ??
+            (is_array($next) || $next instanceof Collection)
+                ? \Arr::get($next, 'definition', null)
+                : config(sprintf('%s.definition', $next), null);
+
         $this->setNext($next)
             ->setResource($resourceClass)
-            ->setDefinition($definition ?? config(sprintf('%s.definition', is_array($next) ? \Arr::get($next, 'definition', null) : $next), null))
+            ->setDefinition($definition)
             ->setCacheTags(...$cacheTags);
     }
 

@@ -117,7 +117,7 @@ trait Resultable
             $relations = get_called_class()::defaultRelations();
         }
 
-        if (!empty($this->definition) && !empty($this->definition) && method_exists($this->definition, 'requestedRelations')) {
+        if (!empty($this->definition) && method_exists($this->definition, 'requestedRelations')) {
             $relations = array_merge(
                 $relations,
                 $this->getDefinitionInstance()->requestedRelations()

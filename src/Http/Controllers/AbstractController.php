@@ -34,7 +34,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
         $definition = $definition ??
             (is_array($next) || $next instanceof Collection)
                 ? \Arr::get($next, 'definition', null)
-                : config(sprintf('%s.definition', $next), null);
+                : config(sprintf('decorators.tree.%s.definition', $next), null);
 
         $this->setNext($next)
             ->setResource($resourceClass)

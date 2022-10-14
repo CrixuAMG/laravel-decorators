@@ -40,12 +40,10 @@ trait HasResources
             } elseif ($data instanceof Model || is_array($data)) {
                 $data = new $resource($data);
             }
+        }
 
-            if ($data instanceof JsonResource && !empty(AdditionalResourceData::getData())) {
-                $data->additional([
-                    "response" => AdditionalResourceData::getData(),
-                ]);
-            }
+        if ($data instanceof JsonResource ) {
+            $data->additional(["response" => AdditionalResourceData::getData()]);
         }
 
         return $data;

@@ -10,11 +10,12 @@ use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DefinitionMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
 use CrixuAMG\Decorators\Console\Commands\ObserverMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\PublishStubsCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RuleMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ScopeMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\TraitMakeCommand;
-use CrixuAMG\Decorators\Console\Commands\PublishStubsCommand;
+use CrixuAMG\Decorators\Http\Resource\DefinitionResource;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -104,8 +105,16 @@ class DecoratorServiceProvider extends ServiceProvider
     {
         Route::macro(
             'definition',
-            function (string $controller, string $routePath = 'definition', string $method = 'definition') {
-                return Route::get($routePath, [$controller, $method]);
+            function (string $routePath, string $configPathOrDefinition) {
+                return Route::get($routePath, function () use ($configPathOrDefinition) {
+                    $configPathOrDefinition = class_exists($configPathOrDefinition)
+                        ? $configPathOrDefinition
+                        : config(sprintf("decorators.tree.%s.definition", $configPathOrDefinition));
+
+                    return class_exists($configPathOrDefinition)
+                        ? new DefinitionResource(new $configPathOrDefinition)
+                        : abort(500);
+                });
             }
         );
     }

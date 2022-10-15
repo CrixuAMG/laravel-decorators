@@ -3,13 +3,19 @@
 namespace CrixuAMG\Decorators\Definitions;
 
 use CrixuAMG\Decorators\Contracts\DefinitionContract;
+use Illuminate\Contracts\Support\Arrayable;
 
-abstract class AbstractDefinition implements DefinitionContract
+abstract class AbstractDefinition implements DefinitionContract, Arrayable
 {
     protected $definitionKey = 'definition';
     protected $sortableKey = 'sortable';
     protected $filterableKey = 'filterable';
     protected $relationsKey = 'relations';
+
+    public function toArray()
+    {
+        return $this->definition();
+    }
 
     public function definition(): array
     {

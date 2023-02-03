@@ -15,7 +15,9 @@ class ModuleRouteMacroRegistrar
                 $routes = $name;
             }
 
-            Route::group([...$options], function () use ($routes) {
+            Route::group([
+                ...$options,
+            ], function () use ($routes) {
                 if (is_callable($routes)) {
                     $routes();
                 } else {

@@ -26,7 +26,7 @@ class ModuleRouteMacroRegistrar
                 } else {
                     $fullRoutePath = sprintf('%s/routes/module/%s.php', base_path(), $routes);
 
-                    include_once $fullRoutePath;
+                    include $fullRoutePath;
                 }
             });
         });

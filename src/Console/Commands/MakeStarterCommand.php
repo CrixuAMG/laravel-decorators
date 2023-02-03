@@ -320,7 +320,8 @@ class MakeStarterCommand extends Command
     {
         $output = ConfigResolver::generateConfiguration($this->generatedClasses);
 
-        $snakedModule = Str::snake($this->option('module'));
+        $module = $this->option('module');
+        $snakedModule = Str::snake($module);
         $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
             ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
             : '';
@@ -330,6 +331,13 @@ class MakeStarterCommand extends Command
 To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
 
 $output
+
+Register the route module by putting the following in your routes/api.php: 
+
+Route::module('$snakedModule', [
+    'namespace' => '$module',
+]);
+
 CONFIG;
     }
 

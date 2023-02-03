@@ -4,12 +4,25 @@ namespace CrixuAMG\Decorators\Traits;
 
 /**
  * Trait SmartReturns
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait SmartReturns
 {
     /**
-     * @param  mixed  ...$arguments
+     * @param array    $smartArguments
+     * @param callable $normalResponse
+     *
+     * @return mixed
+     */
+    public function smartReturnOr(array $smartArguments, callable $normalResponse)
+    {
+        return $this->smartReturn(...$smartArguments) ?: $normalResponse();
+    }
+
+    /**
+     * @param mixed ...$arguments
+     *
      * @return mixed
      */
     public function smartReturn(...$arguments)
@@ -19,15 +32,5 @@ trait SmartReturns
         return $method && is_callable(get_called_class(), $method)
             ? $this->$method(...$arguments)
             : false;
-    }
-
-    /**
-     * @param  array  $smartArguments
-     * @param  callable  $normalResponse
-     * @return mixed
-     */
-    public function smartReturnOr(array $smartArguments, callable $normalResponse)
-    {
-        return $this->smartReturn(...$smartArguments) ?: $normalResponse();
     }
 }

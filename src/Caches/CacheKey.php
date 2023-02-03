@@ -12,7 +12,7 @@ use CrixuAMG\Decorators\Exceptions\ValueCannotBeStringifiedException;
 class CacheKey
 {
     /**
-     * @param  mixed  ...$data
+     * @param mixed ...$data
      *
      * @return string
      * @throws ValueCannotBeStringifiedException
@@ -83,8 +83,8 @@ class CacheKey
     }
 
     /**
-     * @param  string  $format
-     * @param  array  $parameters
+     * @param string $format
+     * @param array  $parameters
      *
      * @return string
      */
@@ -105,7 +105,7 @@ class CacheKey
      */
     private static function getDataFromRequest(): string
     {
-        $data = request()->except((array) config('decorators.cache.request_cache_exceptions'));
+        $data = request()->except((array)config('decorators.cache.request_cache_exceptions'));
         $string = '';
 
         foreach ($data as $name => $value) {

@@ -28,7 +28,7 @@ class RuleMakeCommand extends AbstractCommand
 
     public function handle()
     {
-        Artisan::call("make:rule ".$this->option('module').'/'.$this->getNameInput());
+        Artisan::call("make:rule " . $this->option('module') . '/' . $this->getNameInput());
     }
 
     /**

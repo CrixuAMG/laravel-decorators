@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use Closure;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -12,12 +13,12 @@ use Illuminate\Support\Facades\DB;
 trait HasTransactions
 {
     /**
-     * @param  \Closure  $callback  The callback to execute in the transaction
-     * @param  int  $attempts  The amount of attempts
+     * @param Closure $callback The callback to execute in the transaction
+     * @param int      $attempts The amount of attempts
      *
      * @return mixed
      */
-    public function transaction(\Closure $callback, int $attempts = 1)
+    public function transaction(Closure $callback, int $attempts = 1)
     {
         return DB::transaction($callback, $attempts);
     }

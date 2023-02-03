@@ -2,10 +2,10 @@
 
 namespace CrixuAMG\Decorators\Decorators;
 
+use Illuminate\Database\Eloquent\Model;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Contracts\DecoratorContract;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
-use CrixuAMG\Decorators\Traits\HasForwarding;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AbstractDecorator
@@ -19,7 +19,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     /**
      * AbstractDecorator constructor.
      *
-     * @param  null  $next
+     * @param null $next
      */
     public function __construct($next = null)
     {
@@ -35,9 +35,9 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param  Model  $model
+     * @param Model $model
      *
-     * @param  array  $relations
+     * @param array $relations
      *
      * @return mixed
      */
@@ -47,7 +47,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param  array  $data
+     * @param array $data
      *
      * @return mixed
      */
@@ -57,8 +57,8 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param  Model  $model
-     * @param  array  $data
+     * @param Model $model
+     * @param array $data
      *
      * @return mixed
      */
@@ -68,7 +68,7 @@ abstract class AbstractDecorator extends AbstractDecoratorContainer implements D
     }
 
     /**
-     * @param  Model  $model
+     * @param Model $model
      *
      * @return mixed
      */

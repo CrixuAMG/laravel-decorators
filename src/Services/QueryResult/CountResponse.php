@@ -18,7 +18,7 @@ class CountResponse
     }
 
     /**
-     * @param  mixed  $count
+     * @param mixed $count
      */
     public static function setCount($count): self
     {

@@ -2,8 +2,8 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Class DecoratorMakeCommand
@@ -38,19 +38,19 @@ class DecoratorMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/decorator.stub';
+        return __DIR__ . '/stubs/decorator.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param  string  $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Decorators';
+        return $rootNamespace . '\Decorators';
     }
 
     /**
@@ -71,8 +71,8 @@ class DecoratorMakeCommand extends AbstractCommand
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

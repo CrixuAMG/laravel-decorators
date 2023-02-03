@@ -2,7 +2,6 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class DefinitionMakeCommand extends AbstractCommand
@@ -33,26 +32,26 @@ class DefinitionMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/definition.stub';
+        return __DIR__ . '/stubs/definition.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param  string  $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Definitions';
+        return $rootNamespace . '\Definitions';
     }
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

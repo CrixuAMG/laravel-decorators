@@ -2,10 +2,12 @@
 
 namespace CrixuAMG\Decorators;
 
+use Throwable;
 use CrixuAMG\Decorators\Caches\Cache;
-use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
-use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
 use Illuminate\Contracts\Foundation\Application;
+use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
+use CrixuAMG\Decorators\Exceptions\InterfaceNotImplementedException;
+use function is_array;
 
 /**
  * Class Decorator
@@ -30,7 +32,7 @@ class Decorator
     /**
      * Decorator constructor.
      *
-     * @param  Application  $app
+     * @param Application $app
      */
     public function __construct(Application $app)
     {
@@ -39,11 +41,11 @@ class Decorator
     }
 
     /**
-     * @param  string  $contract
-     * @param $chain
-     * @param  string|null  $model
-     * @param  string|null  $definition
-     * @param  null  $validator
+     * @param string      $contract
+     * @param             $chain
+     * @param string|null $model
+     * @param string|null $definition
+     * @param null        $validator
      */
     public function decorateIf(string $contract, $chain, string $model = null, string $definition = null, $validator = null): void
     {
@@ -60,16 +62,16 @@ class Decorator
     }
 
     /**
-     * @param  string  $contract
-     * @param  array  $chain
-     * @param  string|null  $model
-     * @param  string|null  $definition
+     * @param string      $contract
+     * @param array       $chain
+     * @param string|null $model
+     * @param string|null $definition
      */
     public function decorate(string $contract, $chain, string $model = null, string $definition = null): void
     {
         $this->decorateContract(
             $contract,
-            (array) $chain,
+            (array)$chain,
             $model,
             $definition
         );
@@ -78,10 +80,10 @@ class Decorator
     /**
      * Registers a decorated instance of a class
      *
-     * @param  string  $contract
-     * @param  array  $chain
-     * @param  string|null  $model
-     * @param  string|null  $definition
+     * @param string      $contract
+     * @param array       $chain
+     * @param string|null $model
+     * @param string|null $definition
      */
     private function decorateContract(string $contract, array $chain, string $model = null, string $definition = null): void
     {
@@ -91,12 +93,13 @@ class Decorator
     }
 
     /**
-     * @param  string  $contract
-     * @param  array  $chain
-     * @param  string|null  $model
-     * @param  string|null  $definition
+     * @param string      $contract
+     * @param array       $chain
+     * @param string|null $model
+     * @param string|null $definition
+     *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function processChain(string $contract, array $chain, string $model = null, string $definition = null)
     {
@@ -139,10 +142,10 @@ class Decorator
     }
 
     /**
-     * @param  string  $contract
+     * @param string $contract
      * @param        $class
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function assertClassImplementsContract(string $contract, $class): void
     {
@@ -161,8 +164,8 @@ class Decorator
     }
 
     /**
-     * @param  string  $class
-     * @param  null  $instance
+     * @param string $class
+     * @param null   $instance
      *
      * @return mixed
      */
@@ -178,8 +181,8 @@ class Decorator
      */
     public function enableCacheInEnvironments($environments): void
     {
-        $this->cacheExceptions = \is_array($environments)
+        $this->cacheExceptions = is_array($environments)
             ? $environments
-            : (array) $environments;
+            : (array)$environments;
     }
 }

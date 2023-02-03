@@ -32,26 +32,26 @@ class RepositoryMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/repository.stub';
+        return __DIR__ . '/stubs/repository.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param  string  $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Repositories';
+        return $rootNamespace . '\Repositories';
     }
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

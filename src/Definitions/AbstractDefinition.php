@@ -2,8 +2,8 @@
 
 namespace CrixuAMG\Decorators\Definitions;
 
-use CrixuAMG\Decorators\Contracts\DefinitionContract;
 use Illuminate\Contracts\Support\Arrayable;
+use CrixuAMG\Decorators\Contracts\DefinitionContract;
 
 abstract class AbstractDefinition implements DefinitionContract, Arrayable
 {

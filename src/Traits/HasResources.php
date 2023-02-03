@@ -2,12 +2,12 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\JsonResource;
 use CrixuAMG\Decorators\Services\AdditionalResourceData;
 use CrixuAMG\Decorators\Services\QueryResult\CountResponse;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 /**
  * Trait HasResources
@@ -22,7 +22,7 @@ trait HasResources
     protected $resource;
 
     /**
-     * @param  mixed  $data  The data to check and make resourceful if possible
+     * @param mixed $data The data to check and make resourceful if possible
      *
      * @return mixed
      */
@@ -37,12 +37,12 @@ trait HasResources
 
             if ($data instanceof LengthAwarePaginator || $data instanceof Collection) {
                 $data = $resource::collection($data);
-            } elseif ($data instanceof Model || is_array($data)) {
+            } else if ($data instanceof Model || is_array($data)) {
                 $data = new $resource($data);
             }
         }
 
-        if ($data instanceof JsonResource ) {
+        if ($data instanceof JsonResource) {
             $data->additional(["response" => AdditionalResourceData::getData()]);
         }
 
@@ -64,7 +64,7 @@ trait HasResources
 
             if (isset($this->resource[$requestedResource])) {
                 $resource = $this->resource[$requestedResource];
-            } elseif (isset($this->resource['default'])) {
+            } else if (isset($this->resource['default'])) {
                 $resource = $this->resource['default'];
             }
 
@@ -75,7 +75,7 @@ trait HasResources
     }
 
     /**
-     * @param  mixed  $resource
+     * @param mixed $resource
      *
      * @return mixed
      */

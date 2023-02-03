@@ -2,8 +2,8 @@
 
 namespace CrixuAMG\Decorators\Services;
 
-use CrixuAMG\Decorators\Traits\HasDefinitions;
 use Illuminate\Database\Eloquent\Model;
+use CrixuAMG\Decorators\Traits\HasDefinitions;
 
 abstract class AbstractDecoratorContainer
 {
@@ -13,17 +13,6 @@ abstract class AbstractDecoratorContainer
      * @var string
      */
     protected $model;
-
-    /**
-     * @param  string  $model
-     * @return string
-     */
-    public function setModel(string $model)
-    {
-        $this->model = $model;
-        
-        return $this;
-    }
 
     /**
      * @return Model
@@ -37,5 +26,17 @@ abstract class AbstractDecoratorContainer
         }
 
         return $model;
+    }
+
+    /**
+     * @param string $model
+     *
+     * @return string
+     */
+    public function setModel(string $model)
+    {
+        $this->model = $model;
+
+        return $this;
     }
 }

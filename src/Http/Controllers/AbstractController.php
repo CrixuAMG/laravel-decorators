@@ -2,14 +2,15 @@
 
 namespace CrixuAMG\Decorators\Http\Controllers;
 
+use Arr;
 use Closure;
+use Throwable;
+use CrixuAMG\Decorators\Traits\HasCaching;
+use CrixuAMG\Decorators\Traits\SmartReturns;
+use CrixuAMG\Decorators\Traits\HasResources;
+use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Http\Resource\DefinitionResource;
 use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
-use CrixuAMG\Decorators\Traits\HasCaching;
-use CrixuAMG\Decorators\Traits\HasForwarding;
-use CrixuAMG\Decorators\Traits\HasResources;
-use CrixuAMG\Decorators\Traits\SmartReturns;
-use Throwable;
 
 /**
  * Class AbstractController
@@ -22,9 +23,9 @@ abstract class AbstractController extends AbstractDecoratorContainer
 
     /**
      * @param                   $next
-     * @param  string|array|null  $resourceClass
-     * @param  null  $definition
-     * @param  string  ...$cacheTags
+     * @param string|array|null $resourceClass
+     * @param null              $definition
+     * @param string            ...$cacheTags
      *
      * @return void
      * @throws Throwable
@@ -33,8 +34,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $definition = $definition ??
             (is_array($next) || $next instanceof Collection)
-                ? \Arr::get($next, 'definition', null)
-                : config(sprintf('decorators.tree.%s.definition', $next), null);
+            ? Arr::get($next, 'definition', null)
+            : config(sprintf('decorators.tree.%s.definition', $next), null);
 
         $this->setNext($next)
             ->setResource($resourceClass)
@@ -43,8 +44,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
     }
 
     /**
-     * @param  string  $method
-     * @param  mixed  ...$args
+     * @param string $method
+     * @param mixed  ...$args
      *
      * @return mixed
      * @throws Throwable
@@ -61,8 +62,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
     }
 
     /**
-     * @param  string  $method
-     * @param  mixed  ...$args
+     * @param string $method
+     * @param mixed  ...$args
      *
      * @return mixed
      */
@@ -76,9 +77,9 @@ abstract class AbstractController extends AbstractDecoratorContainer
     }
 
     /**
-     * @param  string  $method
-     * @param  Closure  $callback
-     * @param  mixed  ...$args
+     * @param string  $method
+     * @param Closure $callback
+     * @param mixed   ...$args
      *
      * @return mixed
      * @throws Throwable
@@ -98,9 +99,9 @@ abstract class AbstractController extends AbstractDecoratorContainer
     }
 
     /**
-     * @param  string  $method
-     * @param  Closure  $callback
-     * @param  mixed  ...$args
+     * @param string  $method
+     * @param Closure $callback
+     * @param mixed   ...$args
      *
      * @return mixed
      * @throws Throwable

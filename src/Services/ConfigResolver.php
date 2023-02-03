@@ -27,14 +27,14 @@ class ConfigResolver
             if (is_string($key) && !$value) {
                 // Add start of array
                 $output .= sprintf("%s'%s' => [%s", $indent, $key, PHP_EOL);
-            } elseif (is_string($key) && is_array($value)) {
+            } else if (is_string($key) && is_array($value)) {
                 // Add a key and the corresponding array value
                 $output .= sprintf("%s'%s' => [%s%s", $indent, $key, PHP_EOL,
                     self::generateConfiguration($value, $depth + 1));
-            } elseif (is_string($key) && is_string($value)) {
+            } else if (is_string($key) && is_string($value)) {
                 // Add string to string values
                 $output .= sprintf("%s'%s' => %s::class,%s", $indent, $key, $value, PHP_EOL);
-            } elseif (is_int($key) && is_string($value)) {
+            } else if (is_int($key) && is_string($value)) {
                 // Add only string values
                 $output .= sprintf("%s %s::class,%s", $indent, $value, PHP_EOL);
                 $addClosingBracket = false;

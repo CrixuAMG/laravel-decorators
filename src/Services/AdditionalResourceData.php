@@ -15,14 +15,14 @@ class AdditionalResourceData
     /**
      * @return array
      */
-    public static function getData():array
+    public static function getData(): array
     {
         return self::$data ?: [];
     }
 
     /**
-     * @param  string  $key
-     * @param $value
+     * @param string $key
+     * @param        $value
      */
     public static function addData(string $key, $value): void
     {
@@ -34,8 +34,8 @@ class AdditionalResourceData
     }
 
     /**
-     * @param  string  $key
-     * @param $value
+     * @param string $key
+     * @param        $value
      */
     public static function appendData(string $key, $value): void
     {

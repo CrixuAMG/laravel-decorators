@@ -2,12 +2,12 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
-use CrixuAMG\Decorators\Services\ConfigResolver;
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
-use Symfony\Component\Console\Input\InputArgument;
+use CrixuAMG\Decorators\Services\ConfigResolver;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Class FullMakeCommand
@@ -50,6 +50,7 @@ class MakeStarterCommand extends Command
      */
     public function handle()
     {
+        $module = $this->option('module');
         $commandsToExecute = [
             'make:model'            => '',
             'decorators:controller' => 'Controller',
@@ -61,12 +62,15 @@ class MakeStarterCommand extends Command
             $commandsToExecute['decorators:definition'] = 'Definition';
         }
 
+        if ($module) {
+            $commandsToExecute['decorators:route-file'] = $module;
+        }
+
         $commandsToExecute = array_merge($commandsToExecute, [
             'decorators:repository' => 'Repository',
             'decorators:cache'      => 'Cache',
         ]);
 
-        $module = $this->option('module');
         $className = $this->getNameInput();
 
         foreach ($commandsToExecute as $commandToExecute => $type) {
@@ -74,27 +78,32 @@ class MakeStarterCommand extends Command
             $append = '';
 
             if ($module) {
-                $className = $module.'/'.$className;
+                $className = $module . '/' . $className;
             }
 
             if ($commandToExecute === 'make:model') {
-                $className = config('decorators.model_namespace').$className;
+                $className = config('decorators.model_namespace') . $className;
                 $append = ' --factory';
             }
             if ($commandToExecute === 'decorators:controller') {
-                $className = 'Api/'.$className;
-                $append = ' --module='.$module.' --model='.$classNameTemp;
+                $className = 'Api/' . $className;
+                $append = ' --module=' . $module . ' --model=' . $classNameTemp;
 
                 if ($this->option('request')) {
                     $append .= ' --request';
                 }
             }
+            if ($commandToExecute === 'decorators:route-file') {
+                $className = $module;
+                $type = null;
+                $append = null;
+            }
 
             $this->addToGenerated($commandToExecute, $className);
 
-            $command = $commandToExecute.' '.$className.$type.$append;
+            $command = $commandToExecute . ' ' . $className . $type . $append;
 
-            $this->info('php artisan '.$command);
+            $this->info('php artisan ' . $command);
 
             Artisan::call($command);
 
@@ -143,7 +152,10 @@ class MakeStarterCommand extends Command
         $classToGenerate = Str::after($command, 'make:');
         if ($classToGenerate === $command) {
             // Was decorator command
-            $classToGenerate = str_replace(['decorators:', 'make:'], '', $command);
+            $classToGenerate = str_replace([
+                'decorators:',
+                'make:',
+            ], '', $command);
         }
 
         $classesToRegister = [
@@ -163,7 +175,7 @@ class MakeStarterCommand extends Command
             Str::plural($classToGenerate)
         );
 
-        $fullNamespace = 'App/'.$folder.'/'.$className;
+        $fullNamespace = 'App/' . $folder . '/' . $className;
         $snakedClassname = Str::snake($this->getNameInput());
 
         $key = 'arguments';
@@ -179,7 +191,7 @@ class MakeStarterCommand extends Command
 
         $fullyQualifiedClassName = $folder === 'Models'
             ? $fullNamespace
-            : $fullNamespace.Str::ucfirst($classToGenerate);
+            : $fullNamespace . Str::ucfirst($classToGenerate);
 
         $this->addToGeneratedList($snakedClassname, $key, $fullyQualifiedClassName);
     }
@@ -207,7 +219,8 @@ class MakeStarterCommand extends Command
     /**
      * Create two request files for the model.
      *
-     * @param  string|null  $module
+     * @param string|null $module
+     *
      * @return void
      */
     protected function createRequests(string $module = null)
@@ -222,31 +235,32 @@ class MakeStarterCommand extends Command
         ];
 
         if ($module) {
-            $name = $module.'/'.$name;
+            $name = $module . '/' . $name;
         }
 
         foreach ($nameExtensions as $nameExtension) {
-            $this->info('php artisan make:request '.$name.'/'.$nameExtension.'Request');
+            $this->info('php artisan make:request ' . $name . '/' . $nameExtension . 'Request');
 
             Artisan::call('make:request', [
-                'name' => $name.'/'.$nameExtension.'Request',
+                'name' => $name . '/' . $nameExtension . 'Request',
             ]);
         }
 
         // Create a policy
-        $this->info('php artisan make:policy '.$name.'Policy');
+        $this->info('php artisan make:policy ' . $name . 'Policy');
 
         $this->addToGenerated('make:policy', $name);
 
         Artisan::call('make:policy', [
-            'name' => $name.'Policy',
+            'name' => $name . 'Policy',
         ]);
     }
 
     /**
      * Create a new decorator class for the model.
      *
-     * @param  string|null  $module
+     * @param string|null $module
+     *
      * @return void
      */
     private function createDecorator(string $module = null)
@@ -254,20 +268,21 @@ class MakeStarterCommand extends Command
         $name = $this->getNameInput();
 
         if ($module) {
-            $name = $module.'/'.$name;
+            $name = $module . '/' . $name;
         }
 
-        $this->info('php artisan decorators:decorator '.$name.'Decorator');
+        $this->info('php artisan decorators:decorator ' . $name . 'Decorator');
 
         $this->addToGenerated('decorators:decorator', $name);
 
-        Artisan::call('decorators:decorator '.$name.'Decorator');
+        Artisan::call('decorators:decorator ' . $name . 'Decorator');
     }
 
     /**
      * Create a new seeder class for the model.
      *
-     * @param  string|null  $module
+     * @param string|null $module
+     *
      * @return void
      */
     private function createSeeder(string $module = null)
@@ -275,13 +290,13 @@ class MakeStarterCommand extends Command
         $name = $this->getNameInput();
 
         if ($module) {
-            $name = $module.'/'.$name;
+            $name = $module . '/' . $name;
         }
 
-        $this->info('php artisan make:seeder '.$name.'Seeder');
+        $this->info('php artisan make:seeder ' . $name . 'Seeder');
 
         Artisan::call('make:seeder', [
-            'name' => $name.'Seeder',
+            'name' => $name . 'Seeder',
         ]);
     }
 
@@ -306,8 +321,8 @@ class MakeStarterCommand extends Command
         $output = ConfigResolver::generateConfiguration($this->generatedClasses);
 
         $snakedModule = Str::snake($this->option('module'));
-        $moduleText = !empty($snakedModule) && config('decorators.tree.'.$snakedModule)
-            ? PHP_EOL."Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
+        $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
+            ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
             : '';
 
         echo <<< CONFIG
@@ -336,6 +351,7 @@ CONFIG;
 
     /**
      * Get the console command options.
+     *
      * @return array
      */
     protected function getOptions()

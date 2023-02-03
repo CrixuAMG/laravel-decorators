@@ -2,11 +2,15 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
-use CrixuAMG\Decorators\Caches\Cache;
-use CrixuAMG\Decorators\Caches\CacheDriver;
-use CrixuAMG\Decorators\Caches\CacheKey;
-use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
+use Closure;
 use Exception;
+use Throwable;
+use CrixuAMG\Decorators\Caches\Cache;
+use CrixuAMG\Decorators\Caches\CacheKey;
+use CrixuAMG\Decorators\Caches\CacheDriver;
+use CrixuAMG\Decorators\Exceptions\InvalidCacheDataException;
+use function count;
+use function is_array;
 
 /**
  * Trait HasCaching
@@ -37,11 +41,11 @@ trait HasCaching
     protected $flushEntireCache = false;
 
     /**
-     * @param  string  $method
-     * @param  array  ...$args
+     * @param string $method
+     * @param array  ...$args
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      *
      * @throws Exception
      */
@@ -80,7 +84,7 @@ trait HasCaching
     }
 
     /**
-     * @param  mixed  $cacheKey
+     * @param mixed $cacheKey
      *
      * @return mixed
      */
@@ -92,11 +96,11 @@ trait HasCaching
     }
 
     /**
-     * @param  string  $method
-     * @param  array  ...$args
+     * @param string $method
+     * @param array  ...$args
      *
      * @return mixed|string
-     * @throws \Throwable
+     * @throws Throwable
      *
      */
     private function generateCacheKey(string $method, ...$args)
@@ -118,7 +122,7 @@ trait HasCaching
         ];
 
         // If request parameters are defined, use them to generate a more unique key based on request values
-        $configRequestParameters = (array) config('decorators.cache.request_cache_exceptions');
+        $configRequestParameters = (array)config('decorators.cache.request_cache_exceptions');
         if (!empty($configRequestParameters)) {
             $cacheKeyTemplate .= '.%s';
             $cacheKeyParameters[] = json_encode(request()->except($configRequestParameters));
@@ -129,7 +133,7 @@ trait HasCaching
         if ($parameters) {
             // There are parameters, build upon the template and parameter set
             foreach ($parameters as $key => $value) {
-                if (\is_array($value)) {
+                if (is_array($value)) {
                     // If the value is an array, convert it to a JSON string
                     $value = json_encode($value);
                 }
@@ -149,28 +153,28 @@ trait HasCaching
     protected function getCacheTags(): array
     {
         return array_merge(
-            (array) $this->cacheTags,
-            (array) config('decorators.cache.default_tags'),
+            (array)$this->cacheTags,
+            (array)config('decorators.cache.default_tags'),
             $this->resolveRequestTags()
         );
     }
 
     /**
-     * @param  string|string[]  ...$cacheTags
+     * @param string|string[] ...$cacheTags
      *
      * @return mixed
      */
     protected function setCacheTags(...$cacheTags)
     {
         // If the first element is an array, and there is only one element, set it as the tags array
-        if (\count($cacheTags) === 1 && \is_array(reset($cacheTags))) {
+        if (count($cacheTags) === 1 && is_array(reset($cacheTags))) {
             $cacheTags = reset($cacheTags);
         }
 
         if (
             $this->getCacheTags() !== array_merge(
                 $cacheTags,
-                (array) config('decorators.cache.default_tags'),
+                (array)config('decorators.cache.default_tags'),
                 $this->resolveRequestTags()
             )
         ) {
@@ -188,7 +192,7 @@ trait HasCaching
     protected function resolveRequestTags(): array
     {
         $tags = [];
-        $configResolvedTags = (array) config('decorators.cache.request_resolved_parameters');
+        $configResolvedTags = (array)config('decorators.cache.request_resolved_parameters');
         if (!empty($configResolvedTags)) {
             foreach ($configResolvedTags as $configResolvedTag) {
                 $tag = null;
@@ -221,15 +225,15 @@ trait HasCaching
      */
     private function getCacheParameters(): array
     {
-        return (array) $this->cacheParameters;
+        return (array)$this->cacheParameters;
     }
 
     /**
-     * @param  \Closure  $callback
+     * @param Closure $callback
      *
      * @return mixed
      */
-    protected function cache(\Closure $callback)
+    protected function cache(Closure $callback)
     {
         $cacheTags = null;
         $implementsTags = CacheDriver::implementsTags();
@@ -274,7 +278,15 @@ trait HasCaching
     }
 
     /**
-     * @param  array  $cacheParameters
+     *
+     */
+    private function resetCacheKey(): void
+    {
+        $this->setCacheKey('');
+    }
+
+    /**
+     * @param array $cacheParameters
      *
      * @return mixed
      */
@@ -290,7 +302,7 @@ trait HasCaching
     }
 
     /**
-     * @param  int  $cacheTime
+     * @param int $cacheTime
      *
      * @return mixed
      */
@@ -306,8 +318,8 @@ trait HasCaching
     }
 
     /**
-     * @param  string  $method
-     * @param  mixed  ...$args
+     * @param string $method
+     * @param mixed  ...$args
      *
      * @return mixed
      * @throws Exception
@@ -325,7 +337,7 @@ trait HasCaching
     }
 
     /**
-     * @param  array  $tags  Only used if the cache driver utilizes tags
+     * @param array $tags Only used if the cache driver utilizes tags
      *
      * @return bool|null|void
      * @throws Exception
@@ -333,7 +345,7 @@ trait HasCaching
     protected function flushCache(...$tags)
     {
         // Deprecated
-        if (\count($tags) === 1 && reset($tags) === true) {
+        if (count($tags) === 1 && reset($tags) === true) {
             return cache()->flush();
         }
 
@@ -353,13 +365,5 @@ trait HasCaching
 
         // Flush the cache using the supplied arguments
         return cache()->tags(...$tags)->flush();
-    }
-
-    /**
-     *
-     */
-    private function resetCacheKey(): void
-    {
-        $this->setCacheKey('');
     }
 }

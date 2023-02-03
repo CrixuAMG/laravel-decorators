@@ -3,15 +3,15 @@
 namespace CrixuAMG\Decorators\Exceptions;
 
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class BaseException extends Exception
 {
     /**
      * Render the exception into an HTTP response.
      *
-     * @param  Request
+     * @param Request
      *
      * @return JsonResponse
      */

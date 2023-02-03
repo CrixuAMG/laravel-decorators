@@ -32,26 +32,26 @@ class ContractMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/contract.stub';
+        return __DIR__ . '/stubs/contract.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param  string  $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Contracts';
+        return $rootNamespace . '\Contracts';
     }
 
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

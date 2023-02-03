@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 class CacheDriver
 {
     /**
-     * @param  string|null  $driver
+     * @param string|null $driver
      *
      * @return bool
      */

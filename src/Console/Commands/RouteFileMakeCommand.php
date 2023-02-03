@@ -2,30 +2,25 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class ObserverMakeCommand extends GeneratorCommand
+class RouteFileMakeCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'decorators:observer';
+    protected $name = 'decorators:route-file';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new observer';
-    /**
-     * The type of class being generated.
-     *
-     * @var string
-     */
-    protected $type = 'Observer';
+    protected $description = 'Create a new route-file';
 
     /**
      * Get the stub file for the generator.
@@ -34,34 +29,7 @@ class ObserverMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/observer.stub';
-    }
-
-    /**
-     * Get the default namespace for the class.
-     *
-     * @param string $rootNamespace
-     *
-     * @return string
-     */
-    protected function getDefaultNamespace($rootNamespace)
-    {
-        return $rootNamespace . '\Observers';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getNameInput()
-    {
-        $name = trim($this->argument('name'));
-
-        // Check if the string is set, and if not, set it
-        if (stripos($name, $this->type) === false) {
-            $name .= $this->type;
-        }
-
-        return $name;
+        return __DIR__ . '/stubs/route.stub';
     }
 
     /**
@@ -77,12 +45,32 @@ class ObserverMakeCommand extends GeneratorCommand
         $stub = parent::replaceClass($stub, $name);
 
         return str_replace([
-            'RootNamespace\\',
-            'dummy:command',
+            'DummyModule',
         ], [
-            $this->rootNamespace(),
-            $this->option('command'),
+            $this->getNameInput(),
         ], $stub);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNameInput()
+    {
+        return trim($this->argument('name'));
+    }
+
+    /**
+     * Get the destination class path.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getPath($name)
+    {
+        $name = Str::replaceFirst($this->rootNamespace(), '', $name);
+
+        return $this->laravel['path.base'] . '/routes/module/' . Str::snake(str_replace('\\', '/', $name)) . '.php';
     }
 
     /**

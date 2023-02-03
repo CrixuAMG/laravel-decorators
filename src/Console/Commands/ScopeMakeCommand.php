@@ -3,8 +3,8 @@
 namespace CrixuAMG\Decorators\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 class ScopeMakeCommand extends GeneratorCommand
 {
@@ -34,19 +34,19 @@ class ScopeMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/scope.stub';
+        return __DIR__ . '/stubs/scope.stub';
     }
 
     /**
      * Get the default namespace for the class.
      *
-     * @param  string  $rootNamespace
+     * @param string $rootNamespace
      *
      * @return string
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Scopes';
+        return $rootNamespace . '\Scopes';
     }
 
     /**
@@ -67,8 +67,8 @@ class ScopeMakeCommand extends GeneratorCommand
     /**
      * Replace the class name for the given stub.
      *
-     * @param  string  $stub
-     * @param  string  $name
+     * @param string $stub
+     * @param string $name
      *
      * @return string
      */

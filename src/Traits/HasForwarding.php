@@ -2,12 +2,19 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
-use CrixuAMG\Decorators\Caches\AbstractCache;
-use CrixuAMG\Decorators\Decorator;
-use CrixuAMG\Decorators\Decorators\AbstractDecorator;
-use CrixuAMG\Decorators\Exceptions\DecoratorsNotSetupException;
-use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use Throwable;
 use UnexpectedValueException;
+use CrixuAMG\Decorators\Decorator;
+use CrixuAMG\Decorators\Caches\AbstractCache;
+use CrixuAMG\Decorators\Decorators\AbstractDecorator;
+use CrixuAMG\Decorators\Repositories\AbstractRepository;
+use CrixuAMG\Decorators\Exceptions\DecoratorsNotSetupException;
+use function in_array;
+use function is_array;
+use function get_class;
+use function is_string;
+use function is_object;
+use function is_callable;
 
 /**
  * Trait HasForwarding
@@ -22,20 +29,28 @@ trait HasForwarding
     protected $next;
 
     /**
-     * @param  mixed  $next
+     * @return AbstractCache|AbstractRepository
+     */
+    public function getNext()
+    {
+        return $this->next;
+    }
+
+    /**
+     * @param mixed $next
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function setNext($next = null)
     {
         // Do this only if next is supplied by the developer.
         if ($next) {
-            if (!\is_object($next)) {
+            if (!is_object($next)) {
                 $next = $this->formatNextAndRegister($next);
             }
 
-            if (\is_object($next)) {
+            if (is_object($next)) {
                 // Validate the next class
                 $this->validateNextClass($next);
 
@@ -48,18 +63,10 @@ trait HasForwarding
     }
 
     /**
-     * @return AbstractCache|AbstractRepository
-     */
-    public function getNext()
-    {
-        return $this->next;
-    }
-
-    /**
      * @param $next
      *
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function formatNextAndRegister($next)
     {
@@ -69,11 +76,11 @@ trait HasForwarding
         $definition = null;
         $validator = null;
 
-        if (\is_string($next)) {
-            $next = config(sprintf('decorators.tree.%s', $next));;
+        if (is_string($next)) {
+            $next = config(sprintf('decorators.tree.%s', $next));
         }
 
-        if (\is_array($next)) {
+        if (is_array($next)) {
             $contract = $next['contract'] ?? null;
             $arguments = $next['arguments'] ?? null;
             $model = $next['model'] ?? null;
@@ -97,7 +104,7 @@ trait HasForwarding
     /**
      * @param $next
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     private function validateNextClass($next): void
     {
@@ -108,16 +115,16 @@ trait HasForwarding
         ];
 
         throw_unless(
-            \in_array(get_parent_class($next), $allowedNextClasses, true),
-            \UnexpectedValueException::class,
-            sprintf('Class %s does not implement any allowed parent classes.', \get_class($next)),
+            in_array(get_parent_class($next), $allowedNextClasses, true),
+            UnexpectedValueException::class,
+            sprintf('Class %s does not implement any allowed parent classes.', get_class($next)),
             500
         );
     }
 
     /**
-     * @param  string  $method
-     * @param  array  ...$args
+     * @param string $method
+     * @param array  ...$args
      *
      * @return mixed
      */
@@ -131,7 +138,7 @@ trait HasForwarding
         );
 
         // Verify the method exists on the next iteration and that it is callable
-        if (method_exists($this->next, $method) && \is_callable([
+        if (method_exists($this->next, $method) && is_callable([
                 $this->next,
                 $method,
             ])) {
@@ -144,9 +151,9 @@ trait HasForwarding
     }
 
     /**
-     * @param  string  $method
+     * @param string $method
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     private function throwMethodNotCallable(string $method): void
     {

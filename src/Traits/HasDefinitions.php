@@ -6,6 +6,7 @@ use CrixuAMG\Decorators\Contracts\DefinitionContract;
 
 /**
  * Trait HasDefinitions
+ *
  * @package CrixuAMG\Decorators\Traits
  */
 trait HasDefinitions
@@ -16,7 +17,16 @@ trait HasDefinitions
     protected $definition = null;
 
     /**
-     * @param  null  $definition
+     * @return array
+     */
+    public function getDefinition(): array
+    {
+        return $this->getDefinitionInstance()->definition();
+    }
+
+    /**
+     * @param null $definition
+     *
      * @return $this
      */
     public function setDefinition($definition = null)
@@ -40,14 +50,6 @@ trait HasDefinitions
     protected function getDefinitionInstance(): DefinitionContract
     {
         return new $this->definition();
-    }
-
-    /**
-     * @return array
-     */
-    public function getDefinition(): array
-    {
-        return $this->getDefinitionInstance()->definition();
     }
 
     /**

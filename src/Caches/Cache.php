@@ -10,7 +10,15 @@ namespace CrixuAMG\Decorators\Caches;
 class Cache
 {
     /**
-     * @param  bool|null  $enabled
+     * @return bool
+     */
+    public static function disable(): bool
+    {
+        return self::enabled(false);
+    }
+
+    /**
+     * @param bool|null $enabled
      *
      * @return bool
      */
@@ -20,19 +28,11 @@ class Cache
             config(['decorators.cache.enabled' => $enabled]);
         }
 
-        return (bool) config('decorators.cache.enabled');
+        return (bool)config('decorators.cache.enabled');
     }
 
     /**
-     * @return bool
-     */
-    public static function disable():bool
-    {
-        return self::enabled(false);
-    }
-
-    /**
-     * @param  int|null  $time
+     * @param int|null $time
      *
      * @return int
      */
@@ -42,7 +42,7 @@ class Cache
             config(['decorators.cache.seconds' => $time]);
         }
 
-        return (int) config('decorators.cache.seconds');
+        return (int)config('decorators.cache.seconds');
     }
 
     /**
@@ -56,7 +56,7 @@ class Cache
     }
 
     /**
-     * @param  bool|null  $force
+     * @param bool|null $force
      *
      * @return bool
      */
@@ -66,6 +66,6 @@ class Cache
             config(['decorators.cache.enable_forced_tags' => $force]);
         }
 
-        return (bool) config('decorators.cache.enable_forced_tags');
+        return (bool)config('decorators.cache.enable_forced_tags');
     }
 }

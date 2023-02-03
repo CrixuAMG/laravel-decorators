@@ -9,7 +9,10 @@ class ModuleRouteMacroRegistrar
 {
     public static function register()
     {
-        Route::macro('module', function (string $name, Closure|string|array $routes, array $options = []) {
+        Route::macro('module', function (string $name, Closure|string|array $routes = null, array $options = []) {
+            if (func_num_args() === 1) {
+                $routes = $name;
+            }
             if (func_num_args() === 2 && is_array($routes)) {
                 $options = $routes;
                 $routes = $name;

@@ -21,7 +21,7 @@ class ModuleRouteMacroRegistrar
             Route::group([
                 ...$options,
             ], function () use ($routes) {
-                if (is_callable($routes)) {
+                if (!is_string($routes) && is_callable($routes)) {
                     $routes();
                 } else {
                     $fullRoutePath = sprintf('%s/routes/module/%s.php', base_path(), $routes);

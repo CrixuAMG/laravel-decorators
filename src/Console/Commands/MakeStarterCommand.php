@@ -325,6 +325,14 @@ class MakeStarterCommand extends Command
         $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
             ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
             : '';
+        
+        $moduleRouteText = $module ? <<< MODULE
+Register the route module by putting the following in your routes/api.php: 
+
+Route::module('$snakedModule', [
+    'namespace' => '$module',
+]);
+MODULE : '';
 
         echo <<< CONFIG
 
@@ -332,11 +340,7 @@ To enable the classes generated, simply add the array listed below to the tree a
 
 $output
 
-Register the route module by putting the following in your routes/api.php: 
-
-Route::module('$snakedModule', [
-    'namespace' => '$module',
-]);
+$moduleRouteText
 
 CONFIG;
     }

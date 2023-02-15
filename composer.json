@@ -1,66 +1,66 @@
 {
-    "name": "crixuamg/laravel-decorators",
-    "description": "",
-    "license": "MIT",
-    "type": "library",
-    "keywords": [
-        "crixuamg",
-        "laravel",
-        "decorator",
-        "pattern"
-    ],
-    "authors": [
-        {
-            "name": "Christian Kaal",
-            "email": "christiankaal@gmail.com"
-        }
-    ],
-    "require": {
-        "php": "^8.0|^8.1",
-        "illuminate/contracts": "8.*|9.*",
-        "illuminate/console": "8.*|9.*",
-        "illuminate/database": "8.*|9.*",
-        "illuminate/http": "8.*|9.*",
-        "illuminate/validation": "8.*|9.*",
-        "illuminate/pagination": "8.*|9.*",
-        "illuminate/support": "8.*|9.*"
-    },
-    "require-dev": {
-        "phpmd/phpmd": "^2.10",
-        "squizlabs/php_codesniffer": "^3.6",
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "barryvdh/laravel-ide-helper": "^2.10",
-        "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^7.4",
-        "mockery/mockery": "^1.4",
-        "nunomaduro/phpinsights": "^2.0"
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "CrixuAMG\\Decorators\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "CrixuAMG\\Decorators\\Test\\": "tests"
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit",
-        "php-cs-fixer": "php-cs-fixer fix --rules=@PSR2"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "CrixuAMG\\Decorators\\DecoratorServiceProvider"
-            ]
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
+  "name": "crixuamg/laravel-decorators",
+  "description": "",
+  "license": "MIT",
+  "type": "library",
+  "keywords": [
+    "crixuamg",
+    "laravel",
+    "decorator",
+    "pattern"
+  ],
+  "authors": [
+    {
+      "name": "Christian Kaal",
+      "email": "christiankaal@gmail.com"
     }
+  ],
+  "require": {
+    "php": "*",
+    "illuminate/contracts": "*",
+    "illuminate/console": "*",
+    "illuminate/database": "*",
+    "illuminate/http": "*",
+    "illuminate/validation": "*",
+    "illuminate/pagination": "*",
+    "illuminate/support": "*"
+  },
+  "require-dev": {
+    "phpmd/phpmd": "^2.13",
+    "squizlabs/php_codesniffer": "^3.7",
+    "friendsofphp/php-cs-fixer": "^3.14",
+    "barryvdh/laravel-ide-helper": "^2.13",
+    "phpunit/phpunit": "^9.6",
+    "orchestra/testbench": "^7.22",
+    "mockery/mockery": "^1.5",
+    "nunomaduro/phpinsights": "^2.7"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "CrixuAMG\\Decorators\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CrixuAMG\\Decorators\\Test\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "php-cs-fixer": "php-cs-fixer fix --rules=@PSR2"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CrixuAMG\\Decorators\\DecoratorServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
 }

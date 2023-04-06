@@ -10,9 +10,6 @@
 [Customization](#customization)<br>
 [Commands](#commands)<br>
 
-## About
-This package is designed to allow developers (inluding myself of course!) to start developing complex applications more easily. By using this design pattern I saved more than a couple of hours on projects, both personal and professional.
-
 ## Installation
 Put the following in your composer.json file:
 ```json
@@ -23,9 +20,6 @@ Put the following in your composer.json file:
 ```
 
 ## Usage
-Decorators can be registered in two ways.
-
-1) Config based \
 After publishing the config file, register your decorators as shown in the bottom of the file. Then extend the AbstractController in a controller and call `$this->setup()` in the `__construct()` using the key created in the config file.
 
     Example:\
@@ -65,24 +59,6 @@ After publishing the config file, register your decorators as shown in the botto
    When hitting the route linked to the index method the application will go through the UserDecorator, UserCache and UserRepository. Then it will go back through the same classes, passing the returned data and performing the required actions, like caching and firing events.
    After everything has been processed the data will be returned using the resource as stated in the `__construct`.
 
-
-2) ServiceProvider based\
-Run `php artisan make:provider RepositoryServiceProvider`.
-Then, within the newly created provider register any set of class that you want to use the decorator pattern with.
-Example:
-```php
-    use CrixuAMG\Decorators\Decorator;
-
-    public function register()
-    {
-        $decorator = new Decorator($this->app);
-
-        $decorator->decorate(UserContract::class, [
-            UserRepository::class,
-            UserCache::class,
-        ]);
-    }
-```
 
 ## Customization
 You can set an `enabled` flag within the `config/decorators.php` file.

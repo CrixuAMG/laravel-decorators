@@ -5,6 +5,7 @@ namespace CrixuAMG\Decorators\Http\Controllers;
 use Arr;
 use Closure;
 use Throwable;
+use CrixuAMG\Decorators\Caches\Cache;
 use CrixuAMG\Decorators\Traits\HasCaching;
 use CrixuAMG\Decorators\Traits\SmartReturns;
 use CrixuAMG\Decorators\Traits\HasResources;
@@ -55,6 +56,9 @@ abstract class AbstractController extends AbstractDecoratorContainer
         // Forward the data and cache the result.
         return $this->cache(
             function () use ($method, $args) {
+                // TODO: test
+                Cache::disable();
+
                 // Forward the data and return the result resourcefully
                 return $this->forwardResourceful($method, ...$args);
             }

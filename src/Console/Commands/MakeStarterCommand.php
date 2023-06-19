@@ -390,6 +390,12 @@ CONFIG;
                 'Create a new definition file for the model.',
             ],
             [
+                'web',
+                'web',
+                InputOption::VALUE_NONE,
+                'Register controller in the Web namespace instead of Api.',
+            ],
+            [
                 'migration',
                 'm',
                 InputOption::VALUE_NONE,

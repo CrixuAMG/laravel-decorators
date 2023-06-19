@@ -21,7 +21,7 @@ class MakeStarterCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:starter {--module=} {--definition}';
+    protected $name = 'decorators:starter {--module=} {--definition} {--web}';
     /**
      * The console command description.
      *
@@ -86,7 +86,8 @@ class MakeStarterCommand extends Command
                 $append = ' --factory';
             }
             if ($commandToExecute === 'decorators:controller') {
-                $className = 'Api/' . $className;
+                $controllerNamespace = $this->option('web') ? 'Web' : 'Api';
+                $className = $controllerNamespace.'/' . $className;
                 $append = ' --module=' . $module . ' --model=' . $classNameTemp;
 
                 if ($this->option('request')) {

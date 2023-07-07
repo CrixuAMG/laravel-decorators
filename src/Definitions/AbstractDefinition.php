@@ -47,4 +47,11 @@ abstract class AbstractDefinition implements DefinitionContract, Arrayable
 
         return $validatedRelations;
     }
+
+    public function scopes(): array
+    {
+        return [
+            //
+        ];
+    }
 }

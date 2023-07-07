@@ -8,5 +8,7 @@ interface DefinitionContract
 
     public function filterableColumns(): array;
 
+    public function scopes(): array;
+
     public function queryableRelations(): array;
 }

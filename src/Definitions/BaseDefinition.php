@@ -18,6 +18,13 @@ class BaseDefinition extends AbstractDefinition
         ];
     }
 
+    public function scopes(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public function queryableRelations(): array
     {
         return [

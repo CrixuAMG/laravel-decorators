@@ -12,6 +12,8 @@ abstract class AbstractDefinition implements DefinitionContract, Arrayable
     protected $filterableKey = 'filterable';
     protected $relationsKey = 'relations';
 
+    protected $scopesKey = 'scopes';
+
     public function toArray()
     {
         return $this->definition();
@@ -23,6 +25,7 @@ abstract class AbstractDefinition implements DefinitionContract, Arrayable
             $this->definitionKey => [
                 $this->sortableKey   => $this->sortableColumns(),
                 $this->filterableKey => $this->filterableColumns(),
+                $this->scopesKey     => $this->scopes(),
                 $this->relationsKey  => $this->queryableRelations(),
             ],
         ];

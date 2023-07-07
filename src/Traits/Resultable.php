@@ -20,12 +20,12 @@ use function str_replace;
 trait Resultable
 {
     /**
-     * @param Builder     $query
-     * @param int         $perPage
+     * @param Builder $query
+     * @param int $perPage
      * @param string|null $column
-     * @param string      $direction
-     * @param array       $relations
-     * @param bool        $forceCount
+     * @param string $direction
+     * @param array $relations
+     * @param bool $forceCount
      *
      * @return array|LengthAwarePaginator|Builder|Model|object
      */
@@ -35,10 +35,10 @@ trait Resultable
         string  $column = 'id',
         string  $direction = 'DESC',
         array   $relations = [],
-        bool    $forceCount = false
-    )
-    {
+        bool    $forceCount = false,
+    ) {
         $this->applyFilters($query);
+        $this->applyScopes($query);
 
         if (request()->has('count') || $forceCount) {
             return CountResponse::setCount($query->count());
@@ -57,10 +57,24 @@ trait Resultable
             : $query->get();
     }
 
+    public function applyScopes(Builder &$query)
+    {
+        $scopes = $this->scopes();
+
+        foreach ($scopes as $identifier => $instance) {
+            AdditionalResourceData::appendData('scopes', [
+                'scope' => $identifier,
+            ]);
+
+            $query->withGlobalScope($identifier, $instance);
+        }
+    }
+
     /**
      * @param Builder $query
      *
      * @return Builder
+     * @deprecated filters will be deleted in 2024, move to using scopes instead
      */
     protected function applyFilters(Builder &$query): Builder
     {
@@ -106,7 +120,7 @@ trait Resultable
     protected function getFilters(): array
     {
         $filters = request()->get(
-            ConfigResolver::get('query_params.filters', 'filters', true)
+            ConfigResolver::get('query_params.filters', 'filters', true),
         );
 
         if (empty($filters)) {
@@ -134,6 +148,41 @@ trait Resultable
         }
 
         return $validatedFilters;
+    }
+
+    /**
+     * @return array
+     */
+    protected function scopes(): array
+    {
+        $scopes = request()->get(
+            ConfigResolver::get('query_params.scopes', 'scope', true),
+        );
+
+        if (empty($scopes)) {
+            return [];
+        }
+
+        if (is_string($scopes)) {
+            $scopes = json_decode($scopes, true);
+        }
+
+        $scopes = (array)$scopes;
+        $validatedScopes = [];
+        $parseScope = fn($scope) => explode(':', $scope);
+
+        if (!empty($this->definition) && method_exists($this->definition, 'scopes')) {
+            $allowedScopes = $this->getDefinitionInstance()->scopes();
+            foreach ($scopes as $scope) {
+                [$scopeName] = $parseScope($scope);
+
+                if (array_key_exists($scopeName, $allowedScopes)) {
+                    $validatedScopes[$scopeName] = $allowedScopes[$scopeName]();
+                }
+            }
+        }
+
+        return $validatedScopes;
     }
 
     /**
@@ -168,7 +217,7 @@ trait Resultable
         if (!empty($this->definition) && method_exists($this->definition, 'requestedRelations')) {
             $relations = array_merge(
                 $relations,
-                $this->getDefinitionInstance()->requestedRelations()
+                $this->getDefinitionInstance()->requestedRelations(),
             );
         }
 
@@ -191,8 +240,8 @@ trait Resultable
 
     /**
      * @param Builder $query
-     * @param string  $column
-     * @param string  $direction
+     * @param string $column
+     * @param string $direction
      */
     protected function applySorting(Builder &$query, string $column, string $direction)
     {
@@ -207,8 +256,8 @@ trait Resultable
                 ->select(
                     sprintf(
                         '%s.*',
-                        $model->getTable()
-                    )
+                        $model->getTable(),
+                    ),
                 );
         } else {
             $order = $this->getOrderBy(
@@ -216,15 +265,15 @@ trait Resultable
                     '%s.%s',
                     $model->getTable(),
                     $column
-                        ?: $model->getKeyName()
+                        ?: $model->getKeyName(),
                 ),
-                $direction
+                $direction,
             );
             if ($order['column'] === $model->getKeyName()) {
                 $order['column'] = sprintf(
                     '%s.%s',
                     $model->getTable(),
-                    $order['column']
+                    $order['column'],
                 );
             }
 
@@ -247,12 +296,12 @@ trait Resultable
         $configOrderColumn = ConfigResolver::get(
             'query_params.order_column',
             'order_column',
-            true
+            true,
         );
         $configOrderDirection = ConfigResolver::get(
             'query_params.order_direction',
             'order_direction',
-            true
+            true,
         );
         $baseOrderColumn = $orderColumn;
         // Make sure that when 'id' (or any other column) is selected/provided, that the column is not ambiguous!
@@ -297,8 +346,8 @@ trait Resultable
             ConfigResolver::get(
                 'query_params.per_page',
                 'per_page',
-                true
-            )
+                true,
+            ),
         ) ?? config('decorators.pagination');
 
         return (int)($perPage > $maximum
@@ -308,7 +357,7 @@ trait Resultable
 
     /**
      * @param Builder $query
-     * @param int     $perPage
+     * @param int $perPage
      *
      * @return CursorPaginator|LengthAwarePaginator
      */

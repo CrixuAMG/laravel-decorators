@@ -163,11 +163,7 @@ trait Resultable
             return [];
         }
 
-        if (is_string($scopes)) {
-            $scopes = json_decode($scopes, true);
-        }
-
-        $scopes = (array)$scopes;
+        $scopes = explode('|', (string)$scopes);
         $validatedScopes = [];
         $parseScope = fn($scope) => explode(':', $scope);
 

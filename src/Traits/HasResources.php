@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Traits;
 
+use Inertia\Inertia;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,6 +21,8 @@ trait HasResources
      * @var
      */
     protected $resource;
+    protected $redirect;
+    protected $inertia;
 
     /**
      * @param mixed $data The data to check and make resourceful if possible
@@ -30,6 +33,14 @@ trait HasResources
     {
         if ($data instanceof CountResponse) {
             return $data->toResponse();
+        }
+
+        if (is_callable($this->inertia) && class_exists(Inertia::class)) {
+            return Inertia::render(...call_user_func($this->inertia, $data));
+        }
+
+        if (is_callable($this->redirect)) {
+            return call_user_func($this->redirect, $data);
         }
 
         if ($this->resource) {
@@ -82,6 +93,20 @@ trait HasResources
     public function setResource($resource)
     {
         $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function withRedirect(callable $callback)
+    {
+        $this->redirect = $callback;
+
+        return $this;
+    }
+
+    public function inertia(callable $callback)
+    {
+        $this->inertia = $callback;
 
         return $this;
     }

@@ -135,7 +135,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
         } catch (Exception $exception) {
             $result = false;
         } finally {
-            return $result;
+            return $result ?? false;
         }
     }
 

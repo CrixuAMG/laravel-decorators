@@ -93,7 +93,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
         if (isset($this->definition) && method_exists($this->definition, 'requestedRelations')) {
             $relations = array_merge(
                 $relations,
-                $this->getDefinitionInstance()->requestedRelations()
+                $this->getDefinitionInstance()->requestedRelations(),
             );
         }
 
@@ -132,10 +132,10 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     {
         try {
             $result = $model->delete() ?? false;
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $result = false;
         } finally {
-            return $result ?? false;
+            return $result;
         }
     }
 

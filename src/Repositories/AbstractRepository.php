@@ -4,6 +4,7 @@ namespace CrixuAMG\Decorators\Repositories;
 
 use Exception;
 use Throwable;
+use LogicException;
 use Illuminate\Database\Eloquent\Model;
 use CrixuAMG\Decorators\Traits\HasDefinitions;
 use CrixuAMG\Decorators\Traits\HasTransactions;
@@ -132,8 +133,10 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
     {
         try {
             $result = $model->delete() ?? false;
-        } catch (Throwable $exception) {
+        } catch (LogicException $exception) {
             $result = false;
+
+            \Log::error($exception);
         } finally {
             return $result;
         }

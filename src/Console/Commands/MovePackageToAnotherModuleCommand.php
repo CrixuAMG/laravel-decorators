@@ -5,6 +5,7 @@ namespace CrixuAMG\Decorators\Console\Commands;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 
 class MovePackageToAnotherModuleCommand extends Command
 {
@@ -13,7 +14,7 @@ class MovePackageToAnotherModuleCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:move --model --from --to';
+    protected $name = 'decorators:move {model} --from --to';
     /**
      * The console command description.
      *
@@ -23,7 +24,7 @@ class MovePackageToAnotherModuleCommand extends Command
 
     public function handle()
     {
-        $model = $this->option('model');
+        $model = $this->argument('model');
         $fromModule = $this->option('from');
         $toModule = $this->option('to');
 
@@ -118,7 +119,7 @@ class MovePackageToAnotherModuleCommand extends Command
                 file_put_contents($to,
                     Str::of(file_get_contents($from))->replaceFirst(
                         "App\\{$file['path']}\\{$fromModule}",
-                        "App\\{$file['path']}\\{$toModule}"
+                        "App\\{$file['path']}\\{$toModule}",
                     ),
                 );
 
@@ -147,7 +148,7 @@ class MovePackageToAnotherModuleCommand extends Command
 
     private function getFilePath(array $file)
     {
-        $model = $this->option('model');
+        $model = $this->argument('model');
         $fromModule = $this->option('from');
         $toModule = $this->option('to');
         $ext = '.php';
@@ -169,6 +170,17 @@ class MovePackageToAnotherModuleCommand extends Command
         return (string)Str::of($path)->remove(base_path() . '/');
     }
 
+    protected function getArguments()
+    {
+        return [
+            [
+                'model',
+                InputArgument::REQUIRED,
+                'Model name.',
+            ],
+        ];
+    }
+
     /**
      * Get the console command options.
      *
@@ -182,12 +194,6 @@ class MovePackageToAnotherModuleCommand extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'The terminal command that should be assigned.',
-            ],
-            [
-                'model',
-                'model',
-                InputOption::VALUE_REQUIRED,
-                'Model name.',
             ],
             [
                 'from',

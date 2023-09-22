@@ -21,6 +21,7 @@ use CrixuAMG\Decorators\Console\Commands\ControllerMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DefinitionMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RepositoryMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\MovePackageToAnotherModuleCommand;
 
 /**
  * Class DecoratorServiceProvider
@@ -99,6 +100,9 @@ class DecoratorServiceProvider extends ServiceProvider
             RuleMakeCommand::class,
             // decorators:route-file
             RouteFileMakeCommand::class,
+
+            // decorators:move
+            MovePackageToAnotherModuleCommand::class,
 
             // decorators:stubs
             PublishStubsCommand::class,

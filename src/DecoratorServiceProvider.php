@@ -15,6 +15,7 @@ use CrixuAMG\Decorators\Console\Commands\MakeStarterCommand;
 use CrixuAMG\Decorators\Console\Commands\ContractMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ObserverMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\PublishStubsCommand;
+use CrixuAMG\Decorators\Console\Commands\FullMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RouteFileMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\ControllerMakeCommand;
@@ -86,6 +87,8 @@ class DecoratorServiceProvider extends ServiceProvider
             ControllerMakeCommand::class,
             // decorators:starter
             MakeStarterCommand::class,
+            // decorators:full
+            FullMakeCommand::class,
             // decorators:trait
             TraitMakeCommand::class,
             // decorators:observer

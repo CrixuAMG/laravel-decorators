@@ -41,20 +41,25 @@ class Decorator
     }
 
     /**
-     * @param string      $contract
+     * @param string $contract
      * @param             $chain
      * @param string|null $model
      * @param string|null $definition
-     * @param null        $validator
+     * @param null $validator
      */
-    public function decorateIf(string $contract, $chain, string $model = null, string $definition = null, $validator = null): void
-    {
+    public function decorateIf(
+        string $contract,
+               $chain,
+        string $model = null,
+        string $definition = null,
+               $validator = null,
+    ): void {
         if ($validator && class_exists($validator)) {
             $validator = new $validator();
 
             abort_unless(
                 $validator->validate(),
-                $validator->getResponseCode()
+                $validator->getResponseCode(),
             );
         }
 
@@ -62,8 +67,8 @@ class Decorator
     }
 
     /**
-     * @param string      $contract
-     * @param array       $chain
+     * @param string $contract
+     * @param array $chain
      * @param string|null $model
      * @param string|null $definition
      */
@@ -73,28 +78,32 @@ class Decorator
             $contract,
             (array)$chain,
             $model,
-            $definition
+            $definition,
         );
     }
 
     /**
      * Registers a decorated instance of a class
      *
-     * @param string      $contract
-     * @param array       $chain
+     * @param string $contract
+     * @param array $chain
      * @param string|null $model
      * @param string|null $definition
      */
-    private function decorateContract(string $contract, array $chain, string $model = null, string $definition = null): void
-    {
+    private function decorateContract(
+        string $contract,
+        array  $chain,
+        string $model = null,
+        string $definition = null,
+    ): void {
         $this->app->singleton($contract, function () use ($contract, $chain, $model, $definition) {
             return Decorator::processChain($contract, $chain, $model, $definition);
         });
     }
 
     /**
-     * @param string      $contract
-     * @param array       $chain
+     * @param string $contract
+     * @param array $chain
      * @param string|null $model
      * @param string|null $definition
      *
@@ -157,15 +166,15 @@ class Decorator
             sprintf(
                 'Contract %s is not implemented on %s',
                 $contract,
-                $class
+                $class,
             ),
-            422
+            422,
         );
     }
 
     /**
      * @param string $class
-     * @param null   $instance
+     * @param null $instance
      *
      * @return mixed
      */

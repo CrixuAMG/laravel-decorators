@@ -14,7 +14,7 @@ trait HasTransactions
 {
     /**
      * @param Closure $callback The callback to execute in the transaction
-     * @param int      $attempts The amount of attempts
+     * @param int $attempts The amount of attempts
      *
      * @return mixed
      */

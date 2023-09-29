@@ -87,7 +87,7 @@ class MakeStarterCommand extends Command
             }
             if ($commandToExecute === 'decorators:controller') {
                 $controllerNamespace = $this->option('web') ? 'Web' : 'Api';
-                $className = $controllerNamespace.'/' . $className;
+                $className = $controllerNamespace . '/' . $className;
                 $append = ' --module=' . $module . ' --model=' . $classNameTemp;
 
                 if ($this->option('request')) {
@@ -176,7 +176,7 @@ class MakeStarterCommand extends Command
         }
 
         $folder = Str::ucfirst(
-            Str::plural($classToGenerate)
+            Str::plural($classToGenerate),
         );
 
         $fullNamespace = 'App/' . $folder . '/' . $className;
@@ -336,7 +336,7 @@ Register the route module by putting the following in your routes/api.php:
 Route::module('$snakedModule', [
     'namespace' => '$module',
 ]);
-MODULE : '';
+MODULE: '';
 
         echo <<< CONFIG
 

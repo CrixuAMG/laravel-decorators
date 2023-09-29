@@ -38,7 +38,7 @@ class CacheKey
             }
 
             throw new ValueCannotBeStringifiedException(
-                __('Value cannot be stringified.')
+                __('Value cannot be stringified.'),
             );
         }
 
@@ -84,7 +84,7 @@ class CacheKey
 
     /**
      * @param string $format
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return string
      */

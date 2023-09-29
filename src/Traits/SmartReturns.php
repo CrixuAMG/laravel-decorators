@@ -10,7 +10,7 @@ namespace CrixuAMG\Decorators\Traits;
 trait SmartReturns
 {
     /**
-     * @param array    $smartArguments
+     * @param array $smartArguments
      * @param callable $normalResponse
      *
      * @return mixed

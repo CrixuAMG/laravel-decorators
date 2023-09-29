@@ -25,8 +25,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
     /**
      * @param                   $next
      * @param string|array|null $resourceClass
-     * @param null              $definition
-     * @param string            ...$cacheTags
+     * @param null $definition
+     * @param string ...$cacheTags
      *
      * @return void
      * @throws Throwable
@@ -46,7 +46,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
 
     /**
      * @param string $method
-     * @param mixed  ...$args
+     * @param mixed ...$args
      *
      * @return mixed
      * @throws Throwable
@@ -61,13 +61,13 @@ abstract class AbstractController extends AbstractDecoratorContainer
 
                 // Forward the data and return the result resourcefully
                 return $this->forwardResourceful($method, ...$args);
-            }
+            },
         );
     }
 
     /**
      * @param string $method
-     * @param mixed  ...$args
+     * @param mixed ...$args
      *
      * @return mixed
      */
@@ -81,9 +81,9 @@ abstract class AbstractController extends AbstractDecoratorContainer
     }
 
     /**
-     * @param string  $method
+     * @param string $method
      * @param Closure $callback
-     * @param mixed   ...$args
+     * @param mixed ...$args
      *
      * @return mixed
      * @throws Throwable
@@ -98,14 +98,14 @@ abstract class AbstractController extends AbstractDecoratorContainer
 
                 // Return the result after calling the callback function
                 return $callback($result);
-            }
+            },
         );
     }
 
     /**
-     * @param string  $method
+     * @param string $method
      * @param Closure $callback
-     * @param mixed   ...$args
+     * @param mixed ...$args
      *
      * @return mixed
      * @throws Throwable

@@ -29,7 +29,10 @@ class ConfigResolver
                 $output .= sprintf("%s'%s' => [%s", $indent, $key, PHP_EOL);
             } else if (is_string($key) && is_array($value)) {
                 // Add a key and the corresponding array value
-                $output .= sprintf("%s'%s' => [%s%s", $indent, $key, PHP_EOL,
+                $output .= sprintf("%s'%s' => [%s%s",
+                    $indent,
+                    $key,
+                    PHP_EOL,
                     self::generateConfiguration($value, $depth + 1));
             } else if (is_string($key) && is_string($value)) {
                 // Add string to string values

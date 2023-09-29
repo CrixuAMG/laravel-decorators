@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Repositories;
 
+use Log;
 use Exception;
 use Throwable;
 use LogicException;
@@ -136,7 +137,7 @@ abstract class AbstractRepository extends AbstractDecoratorContainer implements 
         } catch (LogicException $exception) {
             $result = false;
 
-            \Log::error($exception);
+            Log::error($exception);
         } finally {
             return $result;
         }

@@ -57,19 +57,6 @@ trait Resultable
             : $query->get();
     }
 
-    public function applyScopes(Builder &$query)
-    {
-        $scopes = $this->scopes();
-
-        foreach ($scopes as $identifier => $instance) {
-            AdditionalResourceData::appendData('scopes', [
-                'scope' => $identifier,
-            ]);
-
-            $query->withGlobalScope($identifier, $instance);
-        }
-    }
-
     /**
      * @param Builder $query
      *
@@ -151,6 +138,39 @@ trait Resultable
     }
 
     /**
+     * @param string $column
+     *
+     * @return string
+     */
+    protected function getFilterSelectColumn(string $column): string
+    {
+        return sprintf('%s.%s', $this->getTable(), $column);
+    }
+
+    /**
+     * @param string $column
+     *
+     * @return string
+     */
+    protected function getFilterMethod(string $column): string
+    {
+        return Str::camel('handle ' . str_replace('.', ' ', $column) . 'Filter');
+    }
+
+    public function applyScopes(Builder &$query)
+    {
+        $scopes = $this->scopes();
+
+        foreach ($scopes as $identifier => $instance) {
+            AdditionalResourceData::appendData('scopes', [
+                'scope' => $identifier,
+            ]);
+
+            $query->withGlobalScope($identifier, $instance);
+        }
+    }
+
+    /**
      * @return array
      */
     protected function scopes(): array
@@ -179,26 +199,6 @@ trait Resultable
         }
 
         return $validatedScopes;
-    }
-
-    /**
-     * @param string $column
-     *
-     * @return string
-     */
-    protected function getFilterSelectColumn(string $column): string
-    {
-        return sprintf('%s.%s', $this->getTable(), $column);
-    }
-
-    /**
-     * @param string $column
-     *
-     * @return string
-     */
-    protected function getFilterMethod(string $column): string
-    {
-        return Str::camel('handle ' . str_replace('.', ' ', $column) . 'Filter');
     }
 
     /**

@@ -31,6 +31,13 @@ abstract class AbstractDefinition implements DefinitionContract, Arrayable
         ];
     }
 
+    public function scopes(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public function requestedRelations(): array
     {
         $requestedRelations = explode('|', request()->relations ?? '');
@@ -46,12 +53,5 @@ abstract class AbstractDefinition implements DefinitionContract, Arrayable
         }
 
         return $validatedRelations;
-    }
-
-    public function scopes(): array
-    {
-        return [
-            //
-        ];
     }
 }

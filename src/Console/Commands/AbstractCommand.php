@@ -46,7 +46,7 @@ abstract class AbstractCommand extends GeneratorCommand
         $contractNamespace = str_replace(
             Str::plural($this->type),
             'Contracts',
-            str_replace($this->type, 'Contract', $name)
+            str_replace($this->type, 'Contract', $name),
         );
         $namespaceParts = array_reverse(explode('\\', $contractNamespace));
         $contractClassname = reset($namespaceParts);

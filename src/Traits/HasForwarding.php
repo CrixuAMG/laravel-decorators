@@ -118,13 +118,13 @@ trait HasForwarding
             in_array(get_parent_class($next), $allowedNextClasses, true),
             UnexpectedValueException::class,
             sprintf('Class %s does not implement any allowed parent classes.', get_class($next)),
-            500
+            500,
         );
     }
 
     /**
      * @param string $method
-     * @param array  ...$args
+     * @param array ...$args
      *
      * @return mixed
      */
@@ -134,7 +134,7 @@ trait HasForwarding
             $this->next,
             DecoratorsNotSetupException::class,
             'Decorators where not correctly setup.',
-            500
+            500,
         );
 
         // Verify the method exists on the next iteration and that it is callable

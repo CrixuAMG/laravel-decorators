@@ -42,7 +42,7 @@ trait HasCaching
 
     /**
      * @param string $method
-     * @param array  ...$args
+     * @param array ...$args
      *
      * @return mixed
      * @throws Throwable
@@ -97,7 +97,7 @@ trait HasCaching
 
     /**
      * @param string $method
-     * @param array  ...$args
+     * @param array ...$args
      *
      * @return mixed|string
      * @throws Throwable
@@ -155,7 +155,7 @@ trait HasCaching
         return array_merge(
             (array)$this->cacheTags,
             (array)config('decorators.cache.default_tags'),
-            $this->resolveRequestTags()
+            $this->resolveRequestTags(),
         );
     }
 
@@ -175,7 +175,7 @@ trait HasCaching
             $this->getCacheTags() !== array_merge(
                 $cacheTags,
                 (array)config('decorators.cache.default_tags'),
-                $this->resolveRequestTags()
+                $this->resolveRequestTags(),
             )
         ) {
             $this->resetCacheKey();
@@ -252,7 +252,7 @@ trait HasCaching
                 $forcedTagsEnabled && !$cacheTags,
                 InvalidCacheDataException::class,
                 'Cache tags are required.',
-                500
+                500,
             );
         }
 
@@ -264,13 +264,13 @@ trait HasCaching
             $return = cache()->tags($cacheTags)->remember(
                 $cacheKey,
                 $cacheTime,
-                $callback
+                $callback,
             );
         } else {
             $return = cache()->remember(
                 $cacheKey,
                 $cacheTime,
-                $callback
+                $callback,
             );
         }
 
@@ -319,7 +319,7 @@ trait HasCaching
 
     /**
      * @param string $method
-     * @param mixed  ...$args
+     * @param mixed ...$args
      *
      * @return mixed
      * @throws Exception

@@ -41,14 +41,14 @@ class DecoratorServiceProvider extends ServiceProvider
             Decorator::class,
             function () {
                 return new Decorator($this->app);
-            }
+            },
         );
 
         $this->app->singleton(
             Module::class,
             function () {
                 return new Module($this->app);
-            }
+            },
         );
 
         Module::boot();
@@ -133,7 +133,7 @@ class DecoratorServiceProvider extends ServiceProvider
                         ? new DefinitionResource(new $configPathOrDefinition)
                         : abort(500);
                 });
-            }
+            },
         );
     }
 }

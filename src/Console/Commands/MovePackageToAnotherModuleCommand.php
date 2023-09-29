@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
+use FilesystemIterator;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -125,11 +126,11 @@ class MovePackageToAnotherModuleCommand extends Command
 
                 // Remove the original file
                 @unlink($from);
-                if (!(new \FilesystemIterator($fromPath))->valid()) {
+                if (!(new FilesystemIterator($fromPath))->valid()) {
                     // If there are no more files in the directory, remove the directory
                     @unlink($fromPath);
 
-                    if (!(new \FilesystemIterator($fromParentPath))->valid()) {
+                    if (!(new FilesystemIterator($fromParentPath))->valid()) {
                         $this->info('Removed empty directory: ' . $this->pathFromProjectRoot($fromParentPath));
 
                         // If there are no more files in the parent directory, remove the parent directory as well

@@ -92,7 +92,7 @@ class DecoratorMakeCommand extends AbstractCommand
                 $this->rootNamespace(),
                 $this->option('command'),
             ],
-            $stub
+            $stub,
         );
     }
 

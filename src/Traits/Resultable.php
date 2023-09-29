@@ -346,9 +346,7 @@ trait Resultable
             ),
         ) ?? config('decorators.pagination');
 
-        return (int)($perPage > $maximum
-            ? $maximum
-            : $perPage);
+        return $perPage ?? $maximum;
     }
 
     /**

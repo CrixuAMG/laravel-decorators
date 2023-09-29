@@ -34,6 +34,7 @@ class ControllerMakeCommand extends AbstractCommand
     protected function getStub()
     {
         $type = $this->option('web') ? 'web' : 'api';
+        if ($this->option('decorated')) $type .= '_decorated';
 
         return $this->option('request')
             ? __DIR__ . '/../../stubs/' . $type . '/' . 'controller_requests.stub'
@@ -137,6 +138,12 @@ class ControllerMakeCommand extends AbstractCommand
                 'web',
                 InputOption::VALUE_NONE,
                 'Create a web controller instead of an API focussed controller.',
+            ],
+            [
+                'decorated',
+                'decorated',
+                InputOption::VALUE_NONE,
+                'Opt into controller based configuration.',
             ],
         ];
     }

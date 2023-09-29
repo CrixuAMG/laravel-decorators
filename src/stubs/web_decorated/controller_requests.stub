@@ -1,0 +1,77 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Models\Models\DummyModuleDummyModel;
+use App\Contracts\Contracts\DummyModuleDummyModelContract;
+use App\Definitions\Definitions\DummyModuleDummyModelDefinition;
+use App\Repositories\Repositories\DummyModuleDummyModelRepository;
+use App\Caches\Caches\DummyModuleDummyModelCache;
+use App\Decorators\Decorators\DummyModuleDummyModelDecorator;
+use App\Http\Requests\DummyModuleDummyModel\ShowRequest;
+use App\Http\Requests\DummyModuleDummyModel\StoreRequest;
+use App\Http\Requests\DummyModuleDummyModel\UpdateRequest;
+use App\Http\Requests\DummyModuleDummyModel\DeleteRequest;
+use App\Http\Resources\DummyModuleDummyModelResource;
+use DummyModelNamespace;
+use CrixuAMG\Decorators\Http\Controllers\AbstractController;
+
+class DummyClass extends AbstractController
+{
+    public function __construct()
+    {
+        $this->setup([
+            'model'      => DummyModuleDummyModel::class,
+            'contract'   => DummyModuleDummyModelContract::class,
+            'definition' => DummyModuleDummyModelDefinition::class,
+            'arguments'  => [
+                 DummyModuleDummyModelRepository::class,
+                 DummyModuleDummyModelCache::class,
+                 DummyModuleDummyModelDecorator::class,
+            ],
+        ], DummyModelResource::class);
+    }
+
+    public function index()
+    {
+        return $this->forwardResourceful(__FUNCTION__);
+    }
+
+    public function create()
+    {
+        // TODO
+    }
+
+    public function show(DummyModel $DummyModelVariable, ShowRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
+    }
+
+    public function store(StoreRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $request->validated());
+    }
+
+    public function edit(DummyModel $DummyModelVariable)
+    {
+        // TODO
+    }
+
+    public function update(DummyModel $DummyModelVariable, UpdateRequest $request)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable, $request->validated());
+    }
+
+    public function destroy(DummyModel $DummyModelVariable, DeleteRequest $request)
+    {
+        return $this->forwardWithCallback(
+            __FUNCTION__,
+            function ($result) {
+                return $result
+                    ? response()->json([], 204)
+                    : response()->json(['message' => __('DummyModel could not be deleted')], 500);
+            },
+            $DummyModelVariable
+        );
+    }
+}

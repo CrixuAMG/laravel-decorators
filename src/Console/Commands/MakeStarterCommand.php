@@ -93,6 +93,9 @@ class MakeStarterCommand extends Command
                 if ($this->option('request')) {
                     $append .= ' --request';
                 }
+                if ($this->option('web')) {
+                    $append .= ' --web';
+                }
             }
             if ($commandToExecute === 'decorators:route-file') {
                 $className = $module;
@@ -326,9 +329,9 @@ class MakeStarterCommand extends Command
         $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
             ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
             : '';
-        
+
         $moduleRouteText = $module ? <<< MODULE
-Register the route module by putting the following in your routes/api.php: 
+Register the route module by putting the following in your routes/api.php:
 
 Route::module('$snakedModule', [
     'namespace' => '$module',

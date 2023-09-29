@@ -33,7 +33,7 @@ class CacheMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/cache.stub';
+        return __DIR__ . '/../../stubs/cache.stub';
     }
 
     /**

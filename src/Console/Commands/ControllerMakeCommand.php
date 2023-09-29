@@ -33,9 +33,11 @@ class ControllerMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
+        $type = $this->option('web') ? 'web' : 'api';
+
         return $this->option('request')
-            ? __DIR__ . '/stubs/controller_requests.stub'
-            : __DIR__ . '/stubs/controller.stub';
+            ? __DIR__ . '/../../stubs/' . $type . '/' . 'controller_requests.stub'
+            : __DIR__ . '/../../stubs/' . $type . '/' . 'controller.stub';
     }
 
     /**
@@ -93,7 +95,7 @@ class ControllerMakeCommand extends AbstractCommand
                 $this->rootNamespace(),
                 $this->option('command'),
             ],
-            $stub
+            $stub,
         );
     }
 
@@ -129,6 +131,12 @@ class ControllerMakeCommand extends AbstractCommand
                 'request',
                 InputOption::VALUE_NONE,
                 'Whether or not to add requests into the controller method signatures.',
+            ],
+            [
+                'web',
+                'web',
+                InputOption::VALUE_NONE,
+                'Create a web controller instead of an API focussed controller.',
             ],
         ];
     }

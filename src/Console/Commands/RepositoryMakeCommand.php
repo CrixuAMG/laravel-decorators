@@ -32,7 +32,7 @@ class RepositoryMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/repository.stub';
+        return __DIR__ . '/../../stubs/repository.stub';
     }
 
     /**

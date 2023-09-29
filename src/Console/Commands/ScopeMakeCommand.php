@@ -34,7 +34,7 @@ class ScopeMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/scope.stub';
+        return __DIR__ . '/../../stubs/scope.stub';
     }
 
     /**

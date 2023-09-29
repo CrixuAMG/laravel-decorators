@@ -35,12 +35,14 @@ trait HasResources
             return $data->toResponse();
         }
 
-        if (is_callable($this->inertia) && class_exists(Inertia::class)) {
-            return Inertia::render(...call_user_func($this->inertia, $data));
-        }
+        if (!request()->wantsJson() || request()->header('X-Inertia')) {
+            if (is_callable($this->inertia) && class_exists(Inertia::class)) {
+                return Inertia::render(...call_user_func($this->inertia, $data));
+            }
 
-        if (is_callable($this->redirect)) {
-            return call_user_func($this->redirect, $data);
+            if (is_callable($this->redirect)) {
+                return call_user_func($this->redirect, $data);
+            }
         }
 
         if ($this->resource) {

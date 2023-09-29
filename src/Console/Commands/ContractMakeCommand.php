@@ -32,7 +32,7 @@ class ContractMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/contract.stub';
+        return __DIR__ . '/../../stubs/contract.stub';
     }
 
     /**

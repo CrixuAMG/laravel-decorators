@@ -34,7 +34,7 @@ class ObserverMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/observer.stub';
+        return __DIR__ . '/../../stubs/observer.stub';
     }
 
     /**

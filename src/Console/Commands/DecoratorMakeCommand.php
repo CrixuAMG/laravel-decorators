@@ -38,7 +38,7 @@ class DecoratorMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/decorator.stub';
+        return __DIR__ . '/../../stubs/decorator.stub';
     }
 
     /**

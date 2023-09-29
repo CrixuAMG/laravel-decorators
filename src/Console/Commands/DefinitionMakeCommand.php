@@ -32,7 +32,7 @@ class DefinitionMakeCommand extends AbstractCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/stubs/definition.stub';
+        return __DIR__ . '/../../stubs/definition.stub';
     }
 
     /**

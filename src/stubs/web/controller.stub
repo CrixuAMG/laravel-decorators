@@ -1,0 +1,58 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Http\Resources\DummyModuleDummyModelResource;
+use DummyModelNamespace;
+use CrixuAMG\Decorators\Http\Controllers\AbstractController;
+
+class DummyClass extends AbstractController
+{
+    public function __construct()
+    {
+        $this->setup('DummyDecoratorConfig', DummyModelResource::class);
+    }
+
+    public function index()
+    {
+        return $this->forwardResourceful(__FUNCTION__);
+    }
+
+    public function create()
+    {
+        // TODO
+    }
+
+    public function show(DummyModel $DummyModelVariable)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
+    }
+
+    public function store()
+    {
+        return $this->forwardResourceful(__FUNCTION__);
+    }
+
+    public function edit(DummyModel $DummyModelVariable)
+    {
+        // TODO
+    }
+
+    public function update(DummyModel $DummyModelVariable)
+    {
+        return $this->forwardResourceful(__FUNCTION__, $DummyModelVariable);
+    }
+
+    public function destroy(DummyModel $DummyModelVariable)
+    {
+        return $this->forwardWithCallback(
+            __FUNCTION__,
+            function ($result) {
+                return $result
+                    ? response()->json([], 204)
+                    : response()->json(['message' => __('DummyModel could not be deleted')], 500);
+            },
+            $DummyModelVariable
+        );
+    }
+}

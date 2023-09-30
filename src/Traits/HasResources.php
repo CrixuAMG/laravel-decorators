@@ -99,6 +99,7 @@ trait HasResources
         return $this;
     }
 
+    /** @deprecated  */
     public function withRedirect(callable $callback)
     {
         $this->redirect = $callback;
@@ -106,6 +107,7 @@ trait HasResources
         return $this;
     }
 
+    /** @deprecated  */
     public function inertia(callable $callback)
     {
         $this->inertia = $callback;

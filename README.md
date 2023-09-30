@@ -35,7 +35,7 @@ After publishing the config file, register your decorators as shown in the botto
         }
 
         public function index() {
-           return $this->forwardCachedResourceful(__FUNCTION__);
+           return $this->forwardResourceful(__FUNCTION__);
         }
      }
     ```

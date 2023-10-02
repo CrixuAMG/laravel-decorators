@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0badea4cdaac20e0f51bca6c3e072d58",
+    "content-hash": "bdbd553b84415feb8ef4167b7dcfa8c2",
     "packages": [
         {
             "name": "brick/math",
@@ -63,16 +63,16 @@
         },
         {
             "name": "crixuamg/laravel-responsable",
-            "version": "0.0.2",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CrixuAMG/laravel-responsable.git",
-                "reference": "dbca7fd0cae50ead56e40c05d8112d77ec29420c"
+                "reference": "14930c82392b9e28c81fa9c062c708be97c556a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CrixuAMG/laravel-responsable/zipball/dbca7fd0cae50ead56e40c05d8112d77ec29420c",
-                "reference": "dbca7fd0cae50ead56e40c05d8112d77ec29420c",
+                "url": "https://api.github.com/repos/CrixuAMG/laravel-responsable/zipball/14930c82392b9e28c81fa9c062c708be97c556a9",
+                "reference": "14930c82392b9e28c81fa9c062c708be97c556a9",
                 "shasum": ""
             },
             "type": "library",
@@ -97,9 +97,9 @@
             ],
             "support": {
                 "issues": "https://github.com/CrixuAMG/laravel-responsable/issues",
-                "source": "https://github.com/CrixuAMG/laravel-responsable/tree/0.0.2"
+                "source": "https://github.com/CrixuAMG/laravel-responsable/tree/0.0.3"
             },
-            "time": "2023-09-30T19:09:28+00:00"
+            "time": "2023-10-02T10:45:34+00:00"
         },
         {
             "name": "dflydev/dot-access-data",

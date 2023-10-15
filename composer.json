@@ -24,7 +24,7 @@
     "illuminate/validation": "*",
     "illuminate/pagination": "*",
     "illuminate/support": "*",
-    "crixuamg/laravel-responsable": "^0.0.3"
+    "crixuamg/laravel-responsable": "^0.0.4"
   },
   "require-dev": {
     "phpmd/phpmd": "^2.13",

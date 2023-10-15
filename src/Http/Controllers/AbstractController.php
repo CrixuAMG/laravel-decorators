@@ -54,7 +54,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $result = $this->forward($method, ...$args);
 
-        return Responsable::from($this->resourceful($result));
+        return Responsable::from($this->resourceful($result))
+            ->render();
     }
 
     /**

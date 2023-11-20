@@ -43,11 +43,8 @@ return [
 
         'query_params' => [
             '__resource' => '__resource',
-            '__smart'    => '__smart',
-            'paginate'   => 'paginate',
             'filters'    => 'filters',
             'per_page'   => 'per_page',
-            'request'    => 'request',
         ],
     ],
 
@@ -55,20 +52,4 @@ return [
      * The maximum amount of items that will be returned by a query that is set to paginate the results
      */
     'pagination'    => (int)env('APP_PAGINATION', 25),
-
-    /**
-     * Below is an example of how decorators can automatically be matched using `$this->setup('users')` in a
-     * controller extending the CrixuAMG\Decorators\Http\Controllers\AbstractController class
-     */
-    'tree'          => [
-        //        'users' => [
-        //            'enabled'  => true,
-        //            'contract'  => UserContract::class,
-        //            'arguments' => [
-        //                UserRepository::class,
-        //                UserCache::class,
-        //                UserDecorator::class,
-        //            ],
-        //        ],
-    ],
 ];

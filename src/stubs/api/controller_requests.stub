@@ -2,6 +2,11 @@
 
 namespace DummyNamespace;
 
+use App\Contracts\DummyModuleDummyModelContract;
+use App\Definitions\DummyModuleDummyModelDefinition;
+use App\Repositories\DummyModuleDummyModelRepository;
+use App\Caches\DummyModuleDummyModelCache;
+use App\Decorators\DummyModuleDummyModelDecorator;
 use App\Http\Requests\DummyModuleDummyModel\ShowRequest;
 use App\Http\Requests\DummyModuleDummyModel\StoreRequest;
 use App\Http\Requests\DummyModuleDummyModel\UpdateRequest;
@@ -14,7 +19,16 @@ class DummyClass extends AbstractController
 {
     public function __construct()
     {
-        $this->setup('DummyDecoratorConfig', DummyModelResource::class);
+        $this->setup([
+            'model'      => DummyModel::class,
+            'contract'   => DummyModelContract::class,
+            'definition' => DummyModelDefinition::class,
+            'arguments'  => [
+                 DummyModelRepository::class,
+                 DummyModelCache::class,
+                 DummyModelDecorator::class,
+            ],
+        ], DummyModelResource::class);
     }
 
     public function index()

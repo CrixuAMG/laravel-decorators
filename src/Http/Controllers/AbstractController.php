@@ -7,7 +7,6 @@ use Closure;
 use Throwable;
 use CrixuAMG\Responsable\Responsable;
 use CrixuAMG\Decorators\Traits\HasCaching;
-use CrixuAMG\Decorators\Traits\SmartReturns;
 use CrixuAMG\Decorators\Traits\HasResources;
 use CrixuAMG\Decorators\Traits\HasForwarding;
 use CrixuAMG\Decorators\Http\Resource\DefinitionResource;
@@ -20,7 +19,7 @@ use CrixuAMG\Decorators\Services\AbstractDecoratorContainer;
  */
 abstract class AbstractController extends AbstractDecoratorContainer
 {
-    use HasForwarding, HasCaching, HasResources, SmartReturns;
+    use HasForwarding, HasCaching, HasResources;
 
     /**
      * @param                   $next
@@ -54,8 +53,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $result = $this->forward($method, ...$args);
 
-        return Responsable::from($this->resourceful($result))
-            ->render();
+        return Responsable::from($this->resourceful($result));
     }
 
     /**

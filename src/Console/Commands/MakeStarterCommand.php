@@ -21,7 +21,7 @@ class MakeStarterCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:starter {--module=} {--definition} {--web} {--decorated}';
+    protected $name = 'decorators:starter {--module=} {--definition} {--web}';
     /**
      * The console command description.
      *
@@ -92,7 +92,6 @@ class MakeStarterCommand extends Command
 
                 if ($this->option('request')) $append .= ' --request';
                 if ($this->option('web')) $append .= ' --web';
-                if ($this->option('decorated')) $append .= ' --decorated';
             }
             if ($commandToExecute === 'decorators:route-file') {
                 $className = $module;
@@ -136,8 +135,6 @@ class MakeStarterCommand extends Command
 
             $this->createMigration();
         }
-
-        if (!$this->option('decorated')) $this->showConfigInfo();
 
         $this->info('All done!');
     }
@@ -319,35 +316,6 @@ class MakeStarterCommand extends Command
         ]);
     }
 
-    private function showConfigInfo()
-    {
-        $output = ConfigResolver::generateConfiguration($this->generatedClasses);
-
-        $module = $this->option('module');
-        $snakedModule = Str::snake($module);
-        $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
-            ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
-            : '';
-
-        $moduleRouteText = $module ? <<< MODULE
-Register the route module by putting the following in your routes/api.php:
-
-Route::module('$snakedModule', [
-    'namespace' => '$module',
-]);
-MODULE: '';
-
-        echo <<< CONFIG
-
-To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
-
-$output
-
-$moduleRouteText
-
-CONFIG;
-    }
-
     /**
      * Get the console command arguments.
      *
@@ -420,12 +388,6 @@ CONFIG;
                 's',
                 InputOption::VALUE_NONE,
                 'Create a new seeder class for the model.',
-            ],
-            [
-                'decorated',
-                'decorated',
-                InputOption::VALUE_NONE,
-                'Opt into controller based configuration.',
             ],
         ];
     }

@@ -21,7 +21,7 @@ class FullMakeCommand extends Command
      *
      * @var string
      */
-    protected $name = 'decorators:full {--module=} {--web} {--decorated}';
+    protected $name = 'decorators:full {--module=} {--web}';
     /**
      * The console command description.
      *
@@ -89,7 +89,6 @@ class FullMakeCommand extends Command
                 $append .= ' --request';
 
                 if ($this->option('web')) $append .= ' --web';
-                if ($this->option('decorated')) $append .= ' --decorated';
             }
             if ($commandToExecute === 'decorators:route-file') {
                 $className = $module;
@@ -121,8 +120,6 @@ class FullMakeCommand extends Command
         $this->info('Creating the migration');
 
         $this->createMigration();
-
-        if (!$this->option('decorated')) $this->showConfigInfo();
 
         $this->info('All done!');
     }
@@ -280,35 +277,6 @@ class FullMakeCommand extends Command
         $this->call('make:migration', [
             'name' => "create_{$table}_table",
         ]);
-    }
-
-    private function showConfigInfo()
-    {
-        $output = ConfigResolver::generateConfiguration($this->generatedClasses);
-
-        $module = $this->option('module');
-        $snakedModule = Str::snake($module);
-        $moduleText = !empty($snakedModule) && config('decorators.tree.' . $snakedModule)
-            ? PHP_EOL . "Note: Add the inner array to the decorators.tree.$snakedModule array if it already exists"
-            : '';
-
-        $moduleRouteText = $module ? <<< MODULE
-Register the route module by putting the following in your routes/api.php:
-
-Route::module('$snakedModule', [
-    'namespace' => '$module',
-]);
-MODULE: '';
-
-        echo <<< CONFIG
-
-To enable the classes generated, simply add the array listed below to the tree array in your decorators.php $moduleText
-
-$output
-
-$moduleRouteText
-
-CONFIG;
     }
 
     /**

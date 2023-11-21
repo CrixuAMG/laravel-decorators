@@ -49,7 +49,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
      *
      * @return mixed
      */
-    public function forwardResourceful(string $method, ...$args)
+    public function forwardResourceful(string $method, ...$args): Responsable
     {
         $result = $this->forward($method, ...$args);
 

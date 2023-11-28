@@ -34,7 +34,7 @@ class DummyClass extends AbstractController
 
     public function create()
     {
-        // TODO
+        return $this->render();
     }
 
     public function show(DummyModel $DummyModelVariable)
@@ -49,7 +49,9 @@ class DummyClass extends AbstractController
 
     public function edit(DummyModel $DummyModelVariable)
     {
-        // TODO
+        return $this->render([
+            'DummyModelVariable' => $DummyModelVariable,
+        ]);
     }
 
     public function update(DummyModel $DummyModelVariable)

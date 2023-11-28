@@ -43,6 +43,11 @@ abstract class AbstractController extends AbstractDecoratorContainer
             ->setCacheTags(...$cacheTags);
     }
 
+    public function render(mixed $data = null)
+    {
+        return Responsable::from($data);
+    }
+
     /**
      * @param string $method
      * @param mixed ...$args
@@ -53,7 +58,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $result = $this->forward($method, ...$args);
 
-        return Responsable::from($this->resourceful($result));
+        return $this->render($this->resourceful($result));
     }
 
     /**

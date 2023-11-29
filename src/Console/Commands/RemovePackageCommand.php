@@ -2,6 +2,7 @@
 
 namespace CrixuAMG\Decorators\Console\Commands;
 
+use Throwable;
 use FilesystemIterator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
@@ -9,26 +10,25 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class MovePackageToAnotherModuleCommand extends Command
+class RemovePackageCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'decorators:move {model} --from --to';
+    protected $name = 'decorators:remove {model} --from';
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Publish stubs';
+    protected $description = 'Remove an entire package';
 
     public function handle()
     {
         $model = $this->argument('model');
         $fromModule = $this->option('from');
-        $toModule = $this->option('to');
 
         $files = [
             [
@@ -76,12 +76,6 @@ class MovePackageToAnotherModuleCommand extends Command
                 'name_ext' => 'Factory',
                 'prefix'   => 'database',
             ],
-            [
-                'path'                => 'module',
-                'file_name_formatter' => fn($module) => Str::snake($module),
-                'prefix'              => 'routes',
-                'moduled'             => false,
-            ],
         ];
 
         $requests = ['Show', 'Store', 'Update', 'Delete'];
@@ -96,104 +90,61 @@ class MovePackageToAnotherModuleCommand extends Command
 
         foreach ($files as $file) {
             $from = $this->getFilePath($file, $file['prefix'] ?? 'app')['from'];
-            $to = $this->getFilePath($file, $file['prefix'] ?? 'app')['to'];
 
             if (file_exists($from)) {
                 $message = '';
-
                 try {
+                    unlink($from);
+
                     $pathParts = Str::of($from)->explode('/');
                     $pathParts->pop();
-                    $fromPath = $pathParts->join('/');
-                    $pathParts->pop();
                     $fromParentPath = $pathParts->join('/');
-                    @mkdir($fromPath, 0777, true);
 
-                    $pathParts = Str::of($to)->explode('/');
-                    $pathParts->pop();
-                    $toPath = $pathParts->join('/');
-                    @mkdir($toPath, 0777, true);
+                    if (!(new FilesystemIterator($fromParentPath))->valid()) {
+                        $this->info('Removed empty directory: ' . $this->pathFromProjectRoot($fromParentPath));
 
-                    $replacedSlashesPath = str_replace('/', "\\", $file['path']);
-
-                    // Move file and update namespace
-                    file_put_contents(
-                        $to,
-                        Str::of(file_get_contents($from))
-                            ->replace(
-                                "App\\{$replacedSlashesPath}\\{$fromModule}",
-                                "App\\{$replacedSlashesPath}\\{$toModule}",
-                            )
-                            ->replaceMatches(
-                                "/\\\\" . $fromModule . "\\\\/",
-                                "\\" . $toModule . "\\",
-                            ),
-                    );
-
-                    // Remove the original file
-                    @unlink($from);
-                    if (!(new FilesystemIterator($fromPath))->valid()) {
-                        // If there are no more files in the directory, remove the directory
-                        rmdir($fromPath);
-
-                        if (!(new FilesystemIterator($fromParentPath))->valid()) {
-                            $this->info('Removed empty directory: ' . $this->pathFromProjectRoot($fromParentPath));
-
-                            // If there are no more files in the parent directory, remove the parent directory as well
-                            rmdir($fromParentPath);
-                        } else {
-                            $this->info('Removed empty directory: ' . $this->pathFromProjectRoot($fromPath));
-                        }
+                        // If there are no more files in the parent directory, remove the parent directory as well
+                        rmdir($fromParentPath);
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $message = $e->getMessage();
                 }
 
                 $fileRows[] = [
                     $this->pathFromProjectRoot($from),
-                    $this->pathFromProjectRoot($to),
                     $message,
                 ];
             } else {
                 $fileRows[] = [
                     $this->pathFromProjectRoot($from),
-                    '',
                     'skipped',
                 ];
             }
         }
 
-        $this->table(['from', 'to', 'errors'], $fileRows);
+        $this->table(['from', 'errors'], $fileRows);
 
         $this->info('Done!');
-        $this->info('To finalize moving the package to another module, test your code, import any missing or update incorrect imports and enjoy!');
     }
 
     private function getFilePath(array $file, string $prefix = 'app')
     {
         $model = $this->argument('model');
         $fromModule = $this->option('from');
-        $toModule = $this->option('to');
         $ext = '.php';
 
-        $fileNameFrom = $model . ($file['name_ext'] ?? '');
-        $fileNameTo = $model . ($file['name_ext'] ?? '');
+        $fileName = $model . ($file['name_ext'] ?? '');
 
         if (isset($file['file_name_formatter']) && is_callable($file['file_name_formatter'])) {
-            $fileNameFrom = $file['file_name_formatter']($fromModule);
-            $fileNameTo = $file['file_name_formatter']($toModule);
+            $fileName = $file['file_name_formatter']();
         }
 
-        $moduledFromPath = Arr::get($file, 'moduled', true)
-            ? $fromModule . '/' . $fileNameFrom
-            : $fileNameFrom;
-        $moduledToPath = Arr::get($file, 'moduled', true)
-            ? $toModule . '/' . $fileNameTo
-            : $fileNameTo;
+        $moduledPath = Arr::get($file, 'moduled', true)
+            ? $fromModule . '/' . $fileName
+            : $fileName;
 
         return [
-            'from' => base_path($prefix . '/' . $file['path'] . '/' . $moduledFromPath . $ext),
-            'to'   => base_path($prefix . '/' . $file['path'] . '/' . $moduledToPath . $ext),
+            'from' => base_path($prefix . '/' . $file['path'] . '/' . $moduledPath . $ext),
         ];
     }
 
@@ -232,12 +183,6 @@ class MovePackageToAnotherModuleCommand extends Command
                 'from',
                 InputOption::VALUE_REQUIRED,
                 'Move from module.',
-            ],
-            [
-                'to',
-                'to',
-                InputOption::VALUE_REQUIRED,
-                'Move to module.',
             ],
         ];
     }

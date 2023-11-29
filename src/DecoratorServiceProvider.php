@@ -18,6 +18,7 @@ use CrixuAMG\Decorators\Console\Commands\PublishStubsCommand;
 use CrixuAMG\Decorators\Console\Commands\FullMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\RouteFileMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorMakeCommand;
+use CrixuAMG\Decorators\Console\Commands\RemovePackageCommand;
 use CrixuAMG\Decorators\Console\Commands\ControllerMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DecoratorsMakeCommand;
 use CrixuAMG\Decorators\Console\Commands\DefinitionMakeCommand;
@@ -106,6 +107,8 @@ class DecoratorServiceProvider extends ServiceProvider
 
             // decorators:move
             MovePackageToAnotherModuleCommand::class,
+            // decorators:remove
+            RemovePackageCommand::class,
 
             // decorators:stubs
             PublishStubsCommand::class,

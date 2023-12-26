@@ -21,6 +21,8 @@ abstract class AbstractController extends AbstractDecoratorContainer
 {
     use HasForwarding, HasCaching, HasResources;
 
+    protected string|null $templateRoot;
+
     /**
      * @param                   $next
      * @param string|array|null $resourceClass
@@ -30,7 +32,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
      * @return void
      * @throws Throwable
      */
-    public function setup($next, $resourceClass = null, $definition = null, string ...$cacheTags): void
+    protected function setup($next, $resourceClass = null, $definition = null, string ...$cacheTags): void
     {
         $definition = $definition ??
             (is_array($next) || $next instanceof Collection)
@@ -43,9 +45,25 @@ abstract class AbstractController extends AbstractDecoratorContainer
             ->setCacheTags(...$cacheTags);
     }
 
-    public function render(mixed $data = null)
+    protected function setTemplateRoot(string $templateRoot): AbstractController
     {
-        return Responsable::from($data);
+        $this->templateRoot = $templateRoot;
+        return $this;
+    }
+
+    protected function withoutTemplateRoot(): AbstractController
+    {
+        $this->templateRoot = null;
+        return $this;
+    }
+
+    protected function render(mixed $data = null)
+    {
+        $responsable = Responsable::from($data);
+
+        if ($this->templateRoot) $responsable->setTemplateRoot($this->templateRoot);
+
+        return $responsable;
     }
 
     /**
@@ -54,7 +72,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
      *
      * @return mixed
      */
-    public function forwardResourceful(string $method, ...$args): Responsable
+    protected function forwardResourceful(string $method, ...$args): Responsable
     {
         $result = $this->forward($method, ...$args);
 
@@ -69,7 +87,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
      * @return mixed
      * @throws Throwable
      */
-    public function forwardCachedCallback(string $method, Closure $callback, ...$args)
+    protected function forwardCachedCallback(string $method, Closure $callback, ...$args)
     {
         // Forward the data and cache the result.
         return $this->cache(
@@ -91,7 +109,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
      * @return mixed
      * @throws Throwable
      */
-    public function forwardWithCallback(string $method, Closure $callback, ...$args)
+    protected function forwardWithCallback(string $method, Closure $callback, ...$args)
     {
         // Forward the data
         $result = $this->forward($method, ...$args);
@@ -103,7 +121,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
     /**
      * @return array
      */
-    public function definition()
+    protected function definition()
     {
         return $this->setResource(DefinitionResource::class)
             ->forwardResourceful(__FUNCTION__);

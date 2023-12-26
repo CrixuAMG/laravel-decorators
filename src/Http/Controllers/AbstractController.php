@@ -61,7 +61,7 @@ abstract class AbstractController extends AbstractDecoratorContainer
     {
         $responsable = Responsable::from($data);
 
-        if ($this->templateRoot) $responsable->setTemplateRoot($this->templateRoot);
+        if (!empty($this->templateRoot)) $responsable->setTemplateRoot($this->templateRoot);
 
         return $responsable;
     }

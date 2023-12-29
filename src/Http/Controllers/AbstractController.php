@@ -66,6 +66,12 @@ abstract class AbstractController extends AbstractDecoratorContainer
         return $responsable;
     }
 
+    protected function renderWithoutWrapping(mixed $data = null)
+    {
+        return $this->render($data)
+            ->setWithoutWrapping();
+    }
+
     /**
      * @param string $method
      * @param mixed ...$args

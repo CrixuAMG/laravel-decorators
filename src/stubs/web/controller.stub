@@ -49,7 +49,7 @@ class DummyClass extends AbstractController
 
     public function edit(DummyModel $DummyModelVariable)
     {
-        return $this->render([
+        return $this->renderWithoutWrapping([
             'DummyModelVariable' => $DummyModelVariable,
         ]);
     }
